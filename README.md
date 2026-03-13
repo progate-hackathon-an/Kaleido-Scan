@@ -25,6 +25,17 @@
 - Go 1.21+
 - Node.js 20+
 
+### コードフォーマッター
+
+| 対象 | ツール | 設定ファイル |
+|------|--------|------------|
+| TypeScript / TSX / CSS / JSON | [Prettier](https://prettier.io/) | `frontend/.prettierrc` |
+| Go | gofmt（Go標準） | — |
+
+VSCode では保存時（Cmd+S / Ctrl+S）に自動フォーマットが走る（`.vscode/settings.json`）。推奨拡張は `.vscode/extensions.json` を参照。
+
+Claude Code では `Write` / `Edit` ツール実行後に自動フォーマットが走る（`.claude/settings.json`）。
+
 ### 起動手順
 
 ```bash
