@@ -1,10 +1,17 @@
 ## プロジェクト概要
 
-[プロダクトの概要を記入]
+**Kaleid Scan** — カメラで商品をスキャンして、売上データに基づいたオーラを表示する買い物体験アプリ。新しい商品との出会いをゲーム感覚で促進するハッカソンプロダクト。
+
+詳細は `docs/product-overview.md` を参照。
 
 ## 技術スタック
 
-[技術スタックを記入]
+- **フロントエンド**: React + TypeScript（Vite）+ PWA
+- **バックエンド**: Go + Gin
+- **データベース**: PostgreSQL（ローカル） → RDS（AWS 本番）
+- **AI**: Gemini 2.0 Flash Vision API（ローカル） → AWS Bedrock Claude Sonnet（本番）
+- **開発環境**: Docker Compose
+- **本番環境**: AWS（Lambda + API Gateway + Amplify Hosting + RDS）
 
 ## コーディング規約
 

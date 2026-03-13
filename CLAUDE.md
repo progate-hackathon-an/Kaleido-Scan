@@ -1,10 +1,10 @@
-# item-scouter - AI開発ガイド
+# Kaleid Scan - AI開発ガイド
 
 このファイルはAIアシスタントがコーディング支援を行う際に常に参照する。
 
 ## プロジェクト概要
 
-**商品との出会いをエンタメにする** — カメラでアイテムをスキャンして、売上データ基づいたオーラスコアを表示。新しい商品発見をゲーム感覚で促進するハッカソンプロダクト。
+**商品との出会いをエンタメにする** — カメラで商品をスキャンして、売上データに基づいたオーラを表示。新しい商品発見をゲーム感覚で促進するハッカソンプロダクト。
 
 詳細は [docs/product-overview.md](docs/product-overview.md) を参照。
 
@@ -24,9 +24,9 @@
 - **フロントエンド**: React + TypeScript
 - **バックエンド**: Go + Gin
 - **データベース**: PostgreSQL（ローカル） → RDS（AWS 本番）
-- **画像認識**: Gemini Vision API（MVP） → AWS Rekognition（本番）
+- **AI**: Gemini 2.0 Flash Vision API（ローカル） → AWS Bedrock Claude Sonnet（本番）
 - **開発環境**: Docker Compose
-- **本番環境**: AWS（Lambda + AppSync）
+- **本番環境**: AWS（Lambda + API Gateway + Amplify Hosting + RDS）
 
 ## コーディング規約
 
