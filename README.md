@@ -37,7 +37,11 @@ cp .env.example .env
 # .env を編集して GEMINI_API_KEY 等を設定
 
 # 起動
-docker compose up
+docker compose up --build
+
+# 動作確認
+# フロントエンド: http://localhost:5173にアクセスして200 OK を確認
+# バックエンド: http://localhost:8080/health にアクセスして{"status":"ok"}が返ることを確認
 ```
 
 | サービス | URL |
@@ -48,11 +52,15 @@ docker compose up
 
 ### DBのセットアップ
 
+`docker compose up` だけで完結する。追加の手動操作は不要。
+
+- **マイグレーション**: `db/migrations/` 以下の SQL が DB コンテナの初回起動時に自動実行される
+- **シードデータ**: バックエンド起動時に自動投入される（`SEED_ON_STARTUP=true` がデフォルト）
+
+DB を完全にリセットしたい場合は volume を削除して再起動する。
+
 ```bash
-# マイグレーション + シードデータ投入
-docker compose exec db psql -U postgres -d kaleid_scan -f /db/migrations/0001_create_products.sql
-docker compose exec db psql -U postgres -d kaleid_scan -f /db/migrations/0002_create_weekly_sales.sql
-docker compose exec db psql -U postgres -d kaleid_scan -f /db/seed.sql
+docker compose down -v && docker compose up --build
 ```
 
 ## ディレクトリ構造
@@ -78,8 +86,7 @@ Kaleid-Scan/
 │   ├── Dockerfile
 │   └── package.json
 ├── db/
-│   ├── migrations/          # マイグレーションファイル
-│   └── seed.sql
+│   └── migrations/          # マイグレーションファイル
 ├── docs/                    # 設計ドキュメント一式
 ├── docker-compose.yml
 ├── .env.example

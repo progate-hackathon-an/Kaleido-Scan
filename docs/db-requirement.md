@@ -238,3 +238,14 @@ INSERT INTO weekly_sales (product_id, week_start, quantity) VALUES
 - マイグレーションファイルは `db/migrations/` に連番で管理
 - 形式: `0001_create_products.sql`, `0002_create_weekly_sales.sql`
 - ロールバック用の `down` ファイルも用意する
+
+---
+
+## シードデータの投入方針
+
+- シードデータは `backend/database/seed.go` に Go コードとして実装する
+  - 既存の DB 接続設定を再利用でき、アプリと同じビルドに含められるため
+  - SQL ファイルとは異なりコンパイル時に型チェックが効く
+- `main.go` で `--seed` フラグを受け取り、起動時に `database.Seed(db)` を呼ぶ形で実行する
+- 冪等性を保つため、`INSERT ... ON CONFLICT DO NOTHING` を使用する
+- 投入データの内容は上記「シードデータ（seed.sql）」セクションの値をそのまま使用する
