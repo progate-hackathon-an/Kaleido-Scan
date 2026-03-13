@@ -116,6 +116,16 @@ GROUP BY p.id, p.name, p.description, p.category;
 
 ### 急上昇ランキング（直近1週 vs 前週の増加率）
 
+**増加率の計算式:**
+
+```
+増加率(%) = (今週の売上 - 先週の売上) ÷ 先週の売上 × 100
+```
+
+例: 先週1,300個 → 今週1,700個の場合、増加率 = (1700 - 1300) ÷ 1300 × 100 ≒ **30.8%**
+
+増加率が高い商品ほど上位になり、オーラが強くなる。先週データがない商品は先週売上 = 0 として扱うため、分母がゼロになり `NULL` → `NULLS LAST` で最下位扱い。
+
 ```sql
 WITH latest_week AS (
     SELECT MAX(week_start) AS w FROM weekly_sales
