@@ -73,7 +73,7 @@ lefthook install
 
 ## テスト
 
-TDDで進めることを基本とする。負担が大きければ無理に徹底しない。
+t-wadaのTDDに従い、RED-GREEN-REFACTORサイクルを厳守する。テストは実装コードと同時に作成すること。
 
 ---
 

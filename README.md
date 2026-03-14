@@ -25,17 +25,6 @@
 - Go 1.21+
 - Node.js 20+
 
-### コードフォーマッター
-
-| 対象 | ツール | 設定ファイル |
-|------|--------|------------|
-| TypeScript / TSX / CSS / JSON | [Prettier](https://prettier.io/) | `frontend/.prettierrc` |
-| Go | gofmt（Go標準） | — |
-
-VSCode では保存時（Cmd+S / Ctrl+S）に自動フォーマットが走る（`.vscode/settings.json`）。推奨拡張は `.vscode/extensions.json` を参照。
-Claude Code では `Write` / `Edit` ツール実行後に自動フォーマットが走る（`.claude/settings.json`）。
-また、コミット前に lefthook が自動でフォーマット・リント・テストを実行するよう設定されている（[CONTRIBUTING.md](CONTRIBUTING.md) にセットアップ手順あり）。
-
 ### 起動手順
 
 ```bash
@@ -71,14 +60,18 @@ make build
 | `make lint` | フロント・バック両リント実行 |
 | `make fmt` | フロント・バック両フォーマット実行 |
 
-### 自動フォーマット・テスト
-
-コミット前に lefthook が以下を自動実行します（[CONTRIBUTING.md](CONTRIBUTING.md) にセットアップ手順あり）。
+### フォーマット・リント・テスト
 
 | | フォーマット | リント | テスト |
 |-|-------------|--------|--------|
 | フロント | Prettier | ESLint | Vitest |
 | バック | gofmt | golangci-lint | go test |
+
+- **IDE（VSCode）**: 保存時（Cmd+S / Ctrl+S）に自動フォーマット（`.vscode/settings.json`）
+- **Claude Code**: `Write` / `Edit` ツール実行後に自動フォーマット（`.claude/settings.json`）
+- **コミット前**: lefthook が自動でフォーマット・リント・テストを実行（[CONTRIBUTING.md](CONTRIBUTING.md) にセットアップ手順あり）
+
+### 接続先URL
 
 | サービス | URL |
 |---------|-----|
@@ -132,11 +125,15 @@ Kaleid-Scan/
 
 ## ドキュメント
 
-| ファイル | 内容 |
-|----------|------|
-| [docs/product-overview.md](docs/product-overview.md) | プロダクトコンセプト・ターゲット・ペルソナ |
-| [docs/requirement.md](docs/requirement.md) | 機能要件・技術スタック・アーキテクチャ |
-| [docs/api-requirement.md](docs/api-requirement.md) | API仕様書 |
-| [docs/db-requirement.md](docs/db-requirement.md) | DB設計書 |
-| [docs/development-schedule.md](docs/development-schedule.md) | 開発スケジュール |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | 開発ルール・コーディング規約・Git運用 |
+各ファイルの責任範囲を明確にする。迷ったらここを参照し、重複して書かない。
+
+| ファイル | 書くこと | 書かないこと |
+|----------|---------|------------|
+| [README.md](README.md) | セットアップ手順・make コマンド・ディレクトリ構造 | 機能仕様・設計判断の根拠 |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | コーディング規約・Git運用・テスト方針・チーム役割分担 | 機能仕様・技術選定理由 |
+| [docs/product-overview.md](docs/product-overview.md) | Why（コンセプト・ターゲット・ペルソナ・ゲイン） | 画面構成・技術仕様 |
+| [docs/requirement.md](docs/requirement.md) | What（機能要件・非機能要件・スコープ・技術スタック・アーキテクチャ・技術判断の根拠） | セットアップ手順・ディレクトリ構造 |
+| [docs/api-requirement.md](docs/api-requirement.md) | エンドポイント仕様・リクエスト/レスポンス定義・エラー仕様 | DB設計・フロントの実装詳細 |
+| [docs/db-requirement.md](docs/db-requirement.md) | テーブル定義・ER図・主要クエリ・シードデータ | API仕様・フロントの実装詳細 |
+| [docs/development-schedule.md](docs/development-schedule.md) | ハッカソンのタイムライン・フェーズ目標・リスク対応策 | 機能仕様・技術仕様 |
+| [docs/todo.md](docs/todo.md) | Issue単位の実装タスク一覧・進捗 | 仕様の詳細・設計判断 |

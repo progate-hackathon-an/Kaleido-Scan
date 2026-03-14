@@ -6,7 +6,7 @@
 
 > **画面設計参照**: `docs/screen-design/Home.png`
 
-- アプリはスキャン画面の**1画面のみ**で構成するå
+- アプリはスキャン画面の**1画面のみ**で構成する
 - 画面遷移は「スキャン画面 → 商品詳細ボトムシート（オーバーレイ）」のみ
 
 ### 1. カメラスキャン
@@ -195,36 +195,4 @@
 
 ## ディレクトリ構造
 
-```
-Kaleid-Scan/
-├── backend/
-│   ├── main.go              # エントリーポイント
-│   ├── config/              # 環境変数・設定読み込み
-│   ├── database/            # DB接続・マイグレーション
-│   ├── handlers/            # HTTPハンドラー（scan, products）
-│   ├── middleware/          # CORS等
-│   ├── models/              # データモデル
-│   ├── routes/              # ルーティング定義
-│   ├── services/            # ビジネスロジック（AI API呼び出しはここ）
-│   ├── Dockerfile
-│   ├── .air.toml            # Air（ホットリロード）設定
-│   └── go.mod / go.sum
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   │   └── manifest.json    # PWA設定
-│   ├── Dockerfile
-│   └── package.json
-├── db/
-│   ├── migrations/          # マイグレーションファイル（0001_*.sql ...）
-│   └── seed.sql             # ダミーデータ投入
-├── docs/                    # 設計ドキュメント一式
-│   └── screen-design/       # 画面デザイン画像
-├── docker-compose.yml
-├── .env                     # ローカル環境変数（gitignore済み）
-├── .env.example             # 環境変数テンプレート
-├── .gitignore
-├── CLAUDE.md
-├── CONTRIBUTING.md
-└── README.md
-```
+→ [README.md](../README.md#ディレクトリ構造) を参照。

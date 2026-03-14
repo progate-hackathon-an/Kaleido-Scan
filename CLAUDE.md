@@ -17,35 +17,12 @@
 | `docs/db-requirement.md` | DB設計書 |
 | `docs/product-overview.md` | プロダクトコンセプト・ターゲット・ペルソナ |
 | `docs/development-schedule.md` | 開発スケジュール |
+| `docs/todo.md` | 実装タスク一覧 |
 | `CONTRIBUTING.md` | 開発ルール・コーディング規約・Git運用 |
 
-## 技術スタック
+## 開発ルール・規約
 
-- **フロントエンド**: React + TypeScript
-- **バックエンド**: Go + Gin
-- **データベース**: PostgreSQL（ローカル） → RDS（AWS 本番）
-- **AI**: Gemini 2.0 Flash Vision API（ローカル） → AWS Bedrock Claude Sonnet（本番）
-- **開発環境**: Docker Compose
-- **本番環境**: AWS（Lambda + API Gateway + Amplify Hosting + RDS）
-
-## コーディング規約
-
-規約は省略なく厳密に適用すること。
-
-### フロントエンド（React + TypeScript）
-
-- React コンポーネント・ファイル名・`type` 型名: `UpperCamelCase`
-- 変数・関数名・`.ts` ファイル名: `camelCase`
-- 定数: `CONSTANT_CASE`
-- リンター・フォーマッター: ESLint + Prettier
-
-### バックエンド（Go）
-
-- [Effective Go](https://go.dev/doc/effective_go) に準拠
-- ファイル名: `lower_snake_case`
-- 公開関数・定数: `UpperCamelCase`
-- 非公開関数・変数: `lowerCamelCase`
-- リンター・フォーマッター: golangci-lint
+技術スタック・コーディング規約・Gitルールは [docs/requirement.md](docs/requirement.md) および [CONTRIBUTING.md](CONTRIBUTING.md) を参照すること。
 
 ## 開発原則
 
@@ -62,13 +39,6 @@ make lint   # フロント（ESLint）+ バック（golangci-lint）
 ```
 
 いずれかが失敗した場合はタスク完了としない。修正してから再度確認すること。
-
-## Gitルール
-
-- `main` ブランチは常にデプロイ可能に保つ
-- ブランチ名: `feat/<Issue番号>`
-- コミットメッセージ: `[タグ] #<Issue番号> 実装内容`
-  - タグ例: `add`, `fix`, `update`, `remove`, `clean`
 
 ## スキル
 

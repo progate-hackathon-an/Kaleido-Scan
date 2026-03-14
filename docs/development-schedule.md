@@ -1,4 +1,4 @@
-# item-scouter 開発スケジュール
+# Kaleid Scan 開発スケジュール
 
 ## ハッカソン概要
 
