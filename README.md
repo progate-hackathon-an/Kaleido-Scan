@@ -33,8 +33,8 @@
 | Go | gofmt（Go標準） | — |
 
 VSCode では保存時（Cmd+S / Ctrl+S）に自動フォーマットが走る（`.vscode/settings.json`）。推奨拡張は `.vscode/extensions.json` を参照。
-
 Claude Code では `Write` / `Edit` ツール実行後に自動フォーマットが走る（`.claude/settings.json`）。
+また、コミット前に lefthook が自動でフォーマット・リント・テストを実行するよう設定されている（[CONTRIBUTING.md](CONTRIBUTING.md) にセットアップ手順あり）。
 
 ### 起動手順
 
@@ -48,12 +48,37 @@ cp .env.example .env
 # .env を編集して GEMINI_API_KEY 等を設定
 
 # 起動
-docker compose up --build
+make build
 
 # 動作確認
 # フロントエンド: http://localhost:5173にアクセスして200 OK を確認
 # バックエンド: http://localhost:8080/health にアクセスして{"status":"ok"}が返ることを確認
 ```
+
+### make コマンド一覧
+開発を効率化するための便利な make コマンドを用意しています。
+
+| コマンド | 内容 |
+|----------|------|
+| `make up` | 開発サーバー起動 |
+| `make down` | 停止 |
+| `make build` | 再ビルドして起動 |
+| `make logs-fe` | フロントのログを追跡 |
+| `make logs-be` | バックのログを追跡 |
+| `make db-shell` | PostgreSQL に接続 |
+| `make test` | フロント・バック両テスト実行 |
+| `make test-fe` / `make test-be` | 個別テスト実行 |
+| `make lint` | フロント・バック両リント実行 |
+| `make fmt` | フロント・バック両フォーマット実行 |
+
+### 自動フォーマット・テスト
+
+コミット前に lefthook が以下を自動実行します（[CONTRIBUTING.md](CONTRIBUTING.md) にセットアップ手順あり）。
+
+| | フォーマット | リント | テスト |
+|-|-------------|--------|--------|
+| フロント | Prettier | ESLint | Vitest |
+| バック | gofmt | golangci-lint | go test |
 
 | サービス | URL |
 |---------|-----|

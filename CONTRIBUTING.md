@@ -1,5 +1,26 @@
 # 開発ルール
 
+## 初回セットアップ
+
+```bash
+# Mac
+brew install lefthook
+
+# Ubuntu
+curl -1sLf 'https://dl.cloudsmith.io/public/evilmartians/lefthook/setup.deb.sh' | sudo -E bash
+sudo apt install lefthook
+
+# Gitフックを有効化（リポジトリルートで実行）
+lefthook install
+```
+
+コミット前に以下が自動実行されます。
+
+- **フロント**: Prettier（フォーマット）・ESLint（リント）・Vitest（テスト）
+- **バック**: gofmt（フォーマット）・golangci-lint（リント）・go test（テスト）
+
+---
+
 ## 役割分担
 
 | 担当 | 領域 |
