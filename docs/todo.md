@@ -79,20 +79,20 @@
 
 **🔴 RED**
 
-- [ ] `backend/database/db_test.go` に `TestNewDB_Connect` テスト作成（DSNが正しく構築されること・`sql.Open` が成功すること）
-- [ ] `backend/database/seed_test.go` に `TestSeed_Insert_Idempotent` テスト作成（2回呼んでもエラーにならないこと。`ON CONFLICT DO NOTHING` の動作確認）
+- [x] `backend/database/db_test.go` に `TestNewDB_Connect` テスト作成（DSNが正しく構築されること・`sql.Open` が成功すること）
+- [x] `backend/database/seed_test.go` に `TestSeed_Insert_Idempotent` テスト作成（2回呼んでもエラーにならないこと。`ON CONFLICT DO NOTHING` の動作確認）
 
 **🟢 GREEN**
 
-- [ ] `backend/database/db.go` に `NewDB(cfg *config.Config) (*sql.DB, error)` 実装（DSN: `host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`）
-- [ ] `backend/database/migrate.go` に `RunMigrations(db *sql.DB, migrationsDir string) error` 実装（`db/migrations/*.sql` をファイル名順に実行）
-- [ ] `backend/database/seed.go` に `Seed(db *sql.DB) error` 実装（`INSERT INTO products ... ON CONFLICT (name) DO NOTHING`・`INSERT INTO weekly_sales ... ON CONFLICT (product_id, week_start) DO NOTHING`。シードデータは `docs/db-requirement.md` の値を使用）
-- [ ] `backend/config/config.go` に `DBHost`, `DBPort`, `DBUser`, `DBPassword`, `DBName` フィールド追加
-- [ ] `backend/main.go` に `--seed` フラグ追加（`flag.Bool("seed", false, "Run seed data")` で受け取り `database.Seed(db)` を呼ぶ）
+- [x] `backend/database/db.go` に `NewDB(cfg *config.Config) (*sql.DB, error)` 実装（DSN: `host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`）
+- [x] `backend/database/migrate.go` に `RunMigrations(db *sql.DB, migrationsDir string) error` 実装（`db/migrations/*.sql` をファイル名順に実行）
+- [x] `backend/database/seed.go` に `Seed(db *sql.DB) error` 実装（`INSERT INTO products ... ON CONFLICT (name) DO NOTHING`・`INSERT INTO weekly_sales ... ON CONFLICT (product_id, week_start) DO NOTHING`。シードデータは `docs/db-requirement.md` の値を使用）
+- [x] `backend/config/config.go` に `DBHost`, `DBPort`, `DBUser`, `DBPassword`, `DBName` フィールド追加
+- [x] `backend/main.go` に `--seed` フラグ追加（`flag.Bool("seed", false, "Run seed data")` で受け取り `database.Seed(db)` を呼ぶ）
 
 **🔵 REFACTOR**
 
-- [ ] `config.Config` の環境変数マッピングを整理（`DB_*` プレフィックス統一）
+- [x] `config.Config` の環境変数マッピングを整理（`DB_*` プレフィックス統一）
 
 ---
 
