@@ -110,8 +110,25 @@ Kaleid-Scan/
 │   └── go.mod / go.sum
 ├── frontend/
 │   ├── src/
+│   │   ├── api/                    # APIクライアント
+│   │   │   ├── client.ts           # 共通設定（BaseURL等）
+│   │   │   └── scanApi.ts             # スキャン・商品取得API
+│   │   ├── components/             # 再利用可能なUIコンポーネント
+│   │   │   ├── common/             # Button, Modal, LoadingSpinner 等
+│   │   │   └── layout/             # AppShell, BottomSheet 等
+│   │   ├── features/               # 機能単位の垂直分割
+│   │   │   ├── camera/             # カメラ制御・シャッター・プレビュー
+│   │   │   ├── aura/               # オーラ描画（Canvas API・5段階）
+│   │   │   └── product/            # 商品詳細BottomSheet・未検出エラーModal
+│   │   ├── pages/                  # ルート対応のページコンポーネント
+│   │   │   └── ScanPage.tsx        # メイン撮影画面
+│   │   ├── hooks/                  # 横断的カスタムフック（useCamera等）
+│   │   ├── utils/                  # 純粋関数（座標変換・画像変換等）
+│   │   ├── types/                  # 型定義（*.d.ts）
+│   │   ├── App.tsx
+│   │   └── main.tsx                # エントリーポイント
 │   ├── public/
-│   │   └── manifest.json    # PWA設定
+│   │   └── manifest.json           # PWA設定
 │   ├── Dockerfile
 │   └── package.json
 ├── db/
