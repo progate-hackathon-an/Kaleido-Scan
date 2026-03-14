@@ -93,9 +93,5 @@ cd backend && golangci-lint run  # golangci-lint
 
 | エージェント | ファイル | 担当領域 |
 |---|---|---|
-| architect | `.claude/agents/architect.md` | アーキテクチャ設計・技術選定・DB設計・実装計画 |
-| backend-dev | `.claude/agents/backend-dev.md` | Go/Gin API実装・DB操作・認証・バックエンドデバッグ |
-| frontend-dev | `.claude/agents/frontend-dev.md` | React/TS UI実装・コンポーネント作成・スタイリング・状態管理 |
 | code-reviewer | `.claude/agents/code-reviewer.md` | コードレビュー（可読性・DRY・セキュリティ・テスト観点） |
-| project-manager | `.claude/agents/project-manager.md` | タスク分解・優先順位付け・進捗整理・スプリント計画 |
 | test-runner | `.claude/agents/test-runner.md` | テスト作成・実行・失敗デバッグ・カバレッジ改善 |

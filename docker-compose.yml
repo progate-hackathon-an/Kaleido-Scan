@@ -3,7 +3,7 @@ services:
     build:
       context: ./frontend
     ports:
-      - "${FRONTEND_PORT:-5173}:5173"
+      - '${FRONTEND_PORT:-5173}:5173'
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -16,7 +16,7 @@ services:
     build:
       context: ./backend
     ports:
-      - "${BACKEND_PORT:-8080}:8080"
+      - '${BACKEND_PORT:-8080}:8080'
     volumes:
       - ./backend:/app
     environment:
@@ -31,7 +31,7 @@ services:
   db:
     image: postgres:16-alpine
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - '${DB_PORT:-5432}:5432'
     environment:
       - POSTGRES_USER=${DB_USER:-kaleid}
       - POSTGRES_PASSWORD=${DB_PASSWORD:-kaleid}
@@ -40,7 +40,7 @@ services:
       - db_data:/var/lib/postgresql/data
       - ./db/migrations:/docker-entrypoint-initdb.d
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-kaleid} -d ${DB_NAME:-kaleid_scan}" ]
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-kaleid} -d ${DB_NAME:-kaleid_scan}']
       interval: 5s
       timeout: 5s
       retries: 5
