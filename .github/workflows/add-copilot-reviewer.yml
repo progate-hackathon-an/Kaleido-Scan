@@ -6,6 +6,7 @@ on:
 
 jobs:
   add-reviewer:
+    if: ${{ github.event.pull_request.draft == false }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
