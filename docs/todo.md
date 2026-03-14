@@ -36,10 +36,10 @@
 
 **🟢 GREEN**
 
-- [ ] `backend/handlers/scan_handler.go` に `ScanRanking` スタブ実装（`docs/api-requirement.md` の形式に従い、固定の5商品・`aura_level` 1〜5 を返す）
-- [ ] `backend/handlers/product_handler.go` に `GetProduct` スタブ実装（固定の商品詳細を返す）
-- [ ] `backend/routes/routes.go` に `POST /scan/ranking`・`GET /products/:id` ルート追加
-- [ ] `backend/main.go` でサーバーが起動できる最低限の構成を整える（DB接続不要）
+- [x] `backend/handlers/scan_handler.go` に `ScanRanking` スタブ実装（`docs/api-requirement.md` の形式に従い、固定の5商品・`aura_level` 1〜5 を返す）
+- [x] `backend/handlers/product_handler.go` に `GetProduct` スタブ実装（固定の商品詳細を返す）
+- [x] `backend/routes/routes.go` に `POST /scan/ranking`・`GET /products/:id` ルート追加
+- [x] `backend/main.go` でサーバーが起動できる最低限の構成を整える（DB接続不要）
 
 ---
 
