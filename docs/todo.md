@@ -169,18 +169,18 @@
 
 **🔴 RED**
 
-- [ ] `frontend/src/api/scanApi.test.ts` に `TestPostScanRanking_Success` テスト作成（`fetch` をモックし、`ScanResponse` 型のオブジェクトが返ること）
-- [ ] `frontend/src/api/scanApi.test.ts` に `TestPostScanRanking_NetworkError` テスト作成（fetch失敗時にエラーがthrowされること）
+- [x] `frontend/src/api/scanApi.test.ts` に `TestPostScanRanking_Success` テスト作成（`fetch` をモックし、`ScanResponse` 型のオブジェクトが返ること）
+- [x] `frontend/src/api/scanApi.test.ts` に `TestPostScanRanking_NetworkError` テスト作成（fetch失敗時にエラーがthrowされること）
 
 **🟢 GREEN**
 
-- [ ] `frontend/src/types/scan.ts` に `BoundingBox`, `DetectedItem`, `ScanResponse`, `ApiError` 型定義
-- [ ] `frontend/src/api/scanApi.ts` に `postScanRanking(imageFile: File): Promise<ScanResponse>` 実装（`multipart/form-data` でPOST）
-- [ ] `frontend/src/api/scanApi.ts` に `getProduct(id: string): Promise<DetectedItem>` 実装
+- [x] `frontend/src/types/scan.ts` に `BoundingBox`, `DetectedItem`, `ScanResponse`, `ApiError` 型定義
+- [x] `frontend/src/api/scanApi.ts` に `postScanRanking(imageFile: File): Promise<ScanResponse>` 実装（`multipart/form-data` でPOST）
+- [x] `frontend/src/api/scanApi.ts` に `getProduct(id: string): Promise<ProductDetail>` 実装（`DetectedItem` から `ProductDetail` に変更: `GET /products/:id` レスポンスに `bounding_box` は含まれないため）
 
 **🔵 REFACTOR**
 
-- [ ] ベースURL取得を `import.meta.env.VITE_API_BASE_URL` に統一
+- [x] ベースURL取得を `import.meta.env.VITE_API_BASE_URL` に統一
 
 ---
 
