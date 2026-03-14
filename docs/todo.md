@@ -271,17 +271,17 @@ AI解析中のローディング演出と、商品未検出時のエラーモー
 
 **🔴 RED**
 
-- [ ] `frontend/src/components/ErrorModal.test.tsx` に `TestErrorModal_ShowMessage` テスト作成（`isOpen=true` で「商品が検出できませんでした」が表示されること）
-- [ ] `frontend/src/components/LoadingOverlay.test.tsx` に `TestLoadingOverlay_ShowWhileLoading` テスト作成（`isLoading=true` でローディング要素が表示されること）
+- [x] `frontend/src/components/ErrorModal.test.tsx` に `TestErrorModal_ShowMessage` テスト作成（`isOpen=true` で「商品が検出できませんでした」が表示されること）
+- [x] `frontend/src/components/LoadingOverlay.test.tsx` に `TestLoadingOverlay_ShowWhileLoading` テスト作成（`isLoading=true` でローディング要素が表示されること）
 
 **🟢 GREEN**
 
-- [ ] `frontend/src/components/ErrorModal.tsx` に `ErrorModal` コンポーネント実装（props: `isOpen: boolean`, `message: string`, `onClose: () => void`）
-- [ ] `frontend/src/components/LoadingOverlay.tsx` に `LoadingOverlay` コンポーネント実装（props: `isLoading: boolean`。AI解析中のアニメーション表示）
+- [x] `frontend/src/components/ErrorModal.tsx` に `ErrorModal` コンポーネント実装（props: `isOpen: boolean`, `message: string`, `onClose: () => void`）
+- [x] `frontend/src/components/LoadingOverlay.tsx` に `LoadingOverlay` コンポーネント実装（props: `isLoading: boolean`。AI解析中のアニメーション表示）
 
 **🔵 REFACTOR**
 
-- [ ] `ErrorModal` と `LoadingOverlay` のオーバーレイ共通スタイルを抽出
+- [x] `ErrorModal` と `LoadingOverlay` のオーバーレイ共通スタイルを `Overlay` コンポーネント（`src/components/Overlay.tsx`）に抽出し、両コンポーネントで共用
 
 ---
 
