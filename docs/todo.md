@@ -52,21 +52,21 @@
 
 **🔴 RED**
 
-- [ ] `backend/models/product_test.go` に `TestProduct_Fields` テスト作成（`ID`, `Name`, `Description`, `Category`, `CreatedAt` フィールドの存在確認）
-- [ ] `backend/models/weekly_sales_test.go` に `TestWeeklySales_Fields` テスト作成（`ID`, `ProductID`, `WeekStart`, `Quantity`, `CreatedAt` フィールドの存在確認）
+- [x] `backend/models/product_test.go` に `TestProduct_Fields` テスト作成（`ID`, `Name`, `Description`, `Category`, `CreatedAt` フィールドの存在確認）
+- [x] `backend/models/weekly_sales_test.go` に `TestWeeklySales_Fields` テスト作成（`ID`, `ProductID`, `WeekStart`, `Quantity`, `CreatedAt` フィールドの存在確認）
 
 **🟢 GREEN**
 
-- [ ] `db/migrations/0001_create_products.sql` 作成（`products` テーブルDDL。`id UUID PK`, `name VARCHAR(100) NOT NULL UNIQUE`, `description TEXT`, `category VARCHAR(50) NOT NULL`, `created_at TIMESTAMPTZ`）
-- [ ] `db/migrations/0001_create_products_down.sql` 作成（`DROP TABLE IF EXISTS products`）
-- [ ] `db/migrations/0002_create_weekly_sales.sql` 作成（`weekly_sales` テーブルDDL。`UNIQUE(product_id, week_start)` 制約・インデックス含む）
-- [ ] `db/migrations/0002_create_weekly_sales_down.sql` 作成（`DROP TABLE IF EXISTS weekly_sales`）
-- [ ] `backend/models/product.go` に `Product` struct 定義（フィールド: `ID uuid.UUID`, `Name string`, `Description string`, `Category string`, `CreatedAt time.Time`）
-- [ ] `backend/models/weekly_sales.go` に `WeeklySales` struct 定義（フィールド: `ID uuid.UUID`, `ProductID uuid.UUID`, `WeekStart time.Time`, `Quantity int`, `CreatedAt time.Time`）
+- [x] `db/migrations/0001_create_products.sql` 作成（`products` テーブルDDL。`id UUID PK`, `name VARCHAR(100) NOT NULL UNIQUE`, `description TEXT`, `category VARCHAR(50) NOT NULL`, `created_at TIMESTAMPTZ`）
+- [x] `db/migrations/0001_create_products_down.sql` 作成（`DROP TABLE IF EXISTS products`）
+- [x] `db/migrations/0002_create_weekly_sales.sql` 作成（`weekly_sales` テーブルDDL。`UNIQUE(product_id, week_start)` 制約・インデックス含む）
+- [x] `db/migrations/0002_create_weekly_sales_down.sql` 作成（`DROP TABLE IF EXISTS weekly_sales`）
+- [x] `backend/models/product.go` に `Product` struct 定義（フィールド: `ID uuid.UUID`, `Name string`, `Description string`, `Category string`, `CreatedAt time.Time`）
+- [x] `backend/models/weekly_sales.go` に `WeeklySales` struct 定義（フィールド: `ID uuid.UUID`, `ProductID uuid.UUID`, `WeekStart time.Time`, `Quantity int`, `CreatedAt time.Time`）
 
 **🔵 REFACTOR**
 
-- [ ] DBタグ（`db:"..."`）・JSONタグの整合性確認
+- [x] DBタグ（`db:"..."`）・JSONタグの整合性確認
 
 ---
 
