@@ -1,4 +1,4 @@
-CREATE TABLE weekly_sales (
+CREATE TABLE IF NOT EXISTS weekly_sales (
     id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     product_id  UUID        NOT NULL REFERENCES products(id),
     week_start  DATE        NOT NULL,
@@ -7,5 +7,5 @@ CREATE TABLE weekly_sales (
     UNIQUE (product_id, week_start)
 );
 
-CREATE INDEX idx_weekly_sales_product_id ON weekly_sales(product_id);
-CREATE INDEX idx_weekly_sales_week_start ON weekly_sales(week_start);
+CREATE INDEX IF NOT EXISTS idx_weekly_sales_product_id ON weekly_sales(product_id);
+CREATE INDEX IF NOT EXISTS idx_weekly_sales_week_start ON weekly_sales(week_start);

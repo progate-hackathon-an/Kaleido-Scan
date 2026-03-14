@@ -27,7 +27,7 @@
 | フロントエンド | React + TypeScript（Vite）+ PWA |
 | バックエンド | Go + Gin |
 | データベース | PostgreSQL（Docker ローカル / RDS 本番） |
-| AI | Gemini 2.0 Flash（ローカル） → AWS Bedrock Claude Sonnet（本番） |
+| AI | Gemini 2.5 Flash（ローカル、無料枠: 10 RPM / 250 req/日） → AWS Bedrock Claude Sonnet（本番） |
 | 開発環境 | Docker Compose |
 | 本番環境 | AWS Lambda + API Gateway + Amplify Hosting + RDS |
 

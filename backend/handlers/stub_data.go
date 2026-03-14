@@ -85,19 +85,3 @@ var stubProducts = []detectedItem{
 		BoundingBox:   boundingBox{XMin: 0.65, YMin: 0.10, XMax: 0.90, YMax: 0.55},
 	},
 }
-
-// errorResponse はAPIエラーレスポンスの統一形式を表す。
-type errorResponse struct {
-	Error errorDetail `json:"error"`
-}
-
-type errorDetail struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
-}
-
-func newErrorResponse(code, message string) errorResponse {
-	return errorResponse{
-		Error: errorDetail{Code: code, Message: message},
-	}
-}
