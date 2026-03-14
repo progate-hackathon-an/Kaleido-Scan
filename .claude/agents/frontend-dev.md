@@ -79,6 +79,56 @@ When implementing features:
 [How to use the implemented components]
 ```
 
+## Project Context
+
+### アプリ構成
+
+- **1画面のみ**: スキャン画面（カメラ表示）+ 商品詳細ボトムシート（オーバーレイ）
+- **PWA**: `manifest.json` 設定済み、バックカメラ使用（`getUserMedia`）
+- **描画**: Canvas API でオーラ（円形ハローグロー）をバウンディングボックス座標に描画
+
+### オーラ表示仕様
+
+| aura_level | 見た目 |
+|------------|--------|
+| 5（1位）   | 金・暖色・大きな円形ハロー |
+| 4（2位）   | 青・寒色・やや大きめ |
+| 3（3位）   | 緑・中程度 |
+| 2（4位）   | 紫・小さめ |
+| 1（5位）   | グレー・薄く控えめ |
+
+### スキャンフロー
+
+1. ユーザーがシャッターを押す
+2. 静止画を取得 → `POST /scan/ranking`（multipart/form-data）へ送信
+3. AI解析中はローディング演出を表示
+4. レスポンスの `detected_items` を受け取り、Canvas API でオーラを描画
+5. オーラをタップ → 商品詳細ボトムシートを表示（下スワイプで閉じる）
+6. 未検出（`detected_items` が空）時はエラーモーダル「商品が検出できませんでした」
+
+### APIレスポンス型（参考）
+
+```typescript
+type DetectedItem = {
+  product_id: string;      // UUID
+  name: string;
+  description: string;
+  category: 'food' | 'drink' | 'snack';
+  rank: number;            // 1〜5
+  total_quantity: number;
+  aura_level: number;      // 1〜5（= 6 - rank）
+  bounding_box: {
+    x_min: number; y_min: number; // 相対座標 0.0〜1.0
+    x_max: number; y_max: number;
+  };
+};
+```
+
+### 対応環境
+
+- iOS Safari / Android Chrome（モバイルブラウザ前提）
+- HTTPS 必須（カメラアクセス要件）
+
 ## Important Guidelines
 
 - Read existing code first to understand the project's patterns, styling approach, and component conventions.

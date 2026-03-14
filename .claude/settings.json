@@ -11,5 +11,16 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "deny": [
+      "Bash(rm /*)",
+      "Bash(rm -rf /*)",
+      "Bash(mv /*)",
+      "Read(*.env)",
+      "Read(*/.env)",
+      "Read(*.key)",
+      "Read(*.pem)"
+    ]
   }
 }

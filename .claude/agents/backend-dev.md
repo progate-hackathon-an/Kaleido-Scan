@@ -86,6 +86,52 @@ When implementing features:
 [Required environment variables]
 ```
 
+## Project Context
+
+### ディレクトリ構造
+
+```
+backend/
+├── main.go              # エントリーポイント（Gin起動）
+├── config/              # 環境変数読み込み（AI_PROVIDER: "gemini" | "bedrock"）
+├── database/            # DB接続・マイグレーション
+├── handlers/            # HTTPハンドラー（リクエスト受付・レスポンス返却のみ）
+├── middleware/          # CORS等
+├── models/              # データモデル（Product, SalesRecord 等）
+├── routes/              # ルーティング定義
+└── services/            # ビジネスロジック・AI API呼び出し（handlers から呼ぶ）
+```
+
+### レイヤー責任
+
+- `handlers/`: バリデーション → `services/` 呼び出し → JSONレスポンス返却
+- `services/`: ビジネスロジック・AI API呼び出し・DB操作の組み合わせ
+- `models/`: DB構造体・リクエスト/レスポンス構造体
+
+### APIエンドポイント
+
+| メソッド | パス | 説明 |
+|----------|------|------|
+| `POST` | `/scan/ranking` | multipart/form-data で画像受信 → AI識別 → DB検索 → ランキング付与 |
+| `GET` | `/products/:id` | 商品詳細取得（UUID） |
+
+### エラーレスポンス形式
+
+```json
+{ "error": { "code": "snake_case_code", "message": "日本語メッセージ" } }
+```
+
+### AI切り替えパターン
+
+`AI_PROVIDER` 環境変数で `gemini`（ローカル）/ `bedrock`（本番）を切り替え。
+`services/` 内でインターフェースを定義し、環境変数で実装を注入する。
+
+### 重要な設計制約
+
+- 商品IDはUUID（`uuid.UUID` 型）
+- `aura_level = 6 - rank`（rank 1 → aura_level 5）
+- バウンディングボックスは画像全体を1×1とした相対座標（float64: 0.0〜1.0）
+
 ## Important Guidelines
 
 - Read existing code first to understand the project's patterns, ORM usage, and conventions.

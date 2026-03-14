@@ -20,9 +20,42 @@
 | `docs/todo.md` | 実装タスク一覧 |
 | `CONTRIBUTING.md` | 開発ルール・コーディング規約・Git運用 |
 
-## 開発ルール・規約
+## 技術スタック
 
-技術スタック・コーディング規約・Gitルールは [docs/requirement.md](docs/requirement.md) および [CONTRIBUTING.md](CONTRIBUTING.md) を参照すること。
+| レイヤー | 技術 |
+|----------|------|
+| フロントエンド | React + TypeScript（Vite）+ PWA |
+| バックエンド | Go + Gin |
+| データベース | PostgreSQL（Docker ローカル / RDS 本番） |
+| AI | Gemini 2.0 Flash（ローカル） → AWS Bedrock Claude Sonnet（本番） |
+| 開発環境 | Docker Compose |
+| 本番環境 | AWS Lambda + API Gateway + Amplify Hosting + RDS |
+
+## コーディング規約（抜粋）
+
+詳細は [CONTRIBUTING.md](CONTRIBUTING.md) を参照。
+
+- **フロントエンド**: コンポーネント・型 → `UpperCamelCase` / 変数・関数 → `camelCase` / 定数 → `CONSTANT_CASE`
+- **バックエンド（Go）**: ファイル → `lower_snake_case` / 公開 → `UpperCamelCase` / 非公開 → `lowerCamelCase`
+
+## 現在のスコープ（MVP）
+
+**実装する**: カメラ撮影・AI商品識別（5商品）・オーラ表示（5段階）・商品詳細ボトムシート・未検出エラーモーダル・PWA対応
+
+**実装しない**: X共有（Phase 3）・掘り出し物モード・急上昇モードは一切実装しないこと。`docs/requirement.md` の OUT スコープに従う。
+
+## アーキテクチャ方針
+
+- フロントエンドは表示に徹し、ビジネスロジックはバックエンド（`services/`）に集約する
+- AI呼び出しは `services/` に閉じ込め、`handlers/` からは直接呼ばない
+- AI プロバイダーは `AI_PROVIDER` 環境変数で切り替える（`gemini`: ローカル / `bedrock`: 本番）
+
+## フロントエンド 実装パターン
+
+- カメラ: `navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })`（バックカメラ固定）
+- スキャン: シャッター押下で静止画取得 → `POST /scan/ranking`（`multipart/form-data`）へ送信
+- オーラ描画: Canvas API を使用。`bounding_box` の相対座標（0.0〜1.0）を実ピクセルに変換してから描画する
+- AI解析中はローディング演出を表示すること
 
 ## 開発原則
 
@@ -34,11 +67,16 @@
 コーディングタスクを完了とみなす前に、以下を必ず実行してすべてパスさせること。
 
 ```bash
-make test   # フロント（Vitest）+ バック（go test）
-make lint   # フロント（ESLint）+ バック（golangci-lint）
+# フロントエンド
+cd frontend && npm run test   # Vitest
+cd frontend && npm run lint   # ESLint
+
+# バックエンド
+cd backend && go test ./...   # go test
+cd backend && golangci-lint run  # golangci-lint
 ```
 
-いずれかが失敗した場合はタスク完了としない。修正してから再度確認すること。
+`make test` / `make lint` でも同様に実行できる。いずれかが失敗した場合はタスク完了としない。修正してから再度確認すること。
 
 ## スキル
 

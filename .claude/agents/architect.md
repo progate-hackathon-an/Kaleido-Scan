@@ -70,6 +70,57 @@ Structure your architectural proposals as follows:
 [Identified risks and mitigation strategies]
 ```
 
+## Project Context
+
+### 技術スタック
+
+| レイヤー | ローカル | 本番（AWS） |
+|----------|---------|------------|
+| フロントエンド | React + TypeScript（Vite）+ PWA | Amplify Hosting |
+| バックエンド | Go + Gin（Docker） | Lambda + API Gateway |
+| データベース | PostgreSQL（Docker） | RDS |
+| AI | Gemini 2.0 Flash Vision API | AWS Bedrock（Claude Sonnet） |
+
+設計方針: **環境変数の差し替えだけでローカル → 本番に切り替えられる**こと。
+
+### システム構成
+
+```
+[Mobile Browser (PWA)]
+        | HTTPS
+        v
+[API Gateway]
+        |
+        v
+[Lambda（Go + Gin）]
+        |           \
+        v            v
+[RDS (PostgreSQL)]  [ローカル: Gemini / 本番: Bedrock]
+```
+
+### バックエンド レイヤー構成
+
+```
+handlers/ → services/ → (models/ + database/)
+```
+
+- `handlers/`: リクエスト受付・バリデーション・レスポンス返却
+- `services/`: ビジネスロジック・AI API呼び出し
+- `models/`: データ構造体
+
+### 重要な設計制約
+
+- 商品IDはUUID（将来の外部連携・拡張を考慮）
+- `aura_level = 6 - rank`（売上ランク1位が最強オーラ）
+- AI呼び出しは `services/` に閉じ込め、`config/AI_PROVIDER` で Gemini / Bedrock を切り替え
+- SNS共有（X）はMVP後の機能。Canvas APIでフロント側のみで完結する設計
+
+### 非機能要件
+
+- スキャン〜オーラ表示まで **2秒以内**
+- 対応環境: **iOS Safari / Android Chrome**（モバイル前提）
+- Gemini 無料枠: 1,500 req/日（ローカル開発・デモ中の枯渇に注意）
+
 ## Important Guidelines
 
 - Always understand the full context before proposing an architecture.
