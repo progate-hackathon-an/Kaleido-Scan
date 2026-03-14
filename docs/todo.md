@@ -193,18 +193,18 @@
 
 **🔴 RED**
 
-- [ ] `frontend/src/hooks/useCamera.test.ts` に `TestUseCamera_StartCamera` テスト作成（`navigator.mediaDevices.getUserMedia` がモックで呼ばれること）
-- [ ] `frontend/src/hooks/useCamera.test.ts` に `TestUseCamera_CapturePhoto` テスト作成（`capturePhoto()` 呼び出しで `File` オブジェクトが返ること）
-- [ ] `frontend/src/components/CameraView.test.tsx` に `TestCameraView_RenderShutterButton` テスト作成（シャッターボタンが描画されること）
+- [x] `frontend/src/hooks/useCamera.test.ts` に `TestUseCamera_StartCamera` テスト作成（`navigator.mediaDevices.getUserMedia` がモックで呼ばれること）
+- [x] `frontend/src/hooks/useCamera.test.ts` に `TestUseCamera_CapturePhoto` テスト作成（`capturePhoto()` 呼び出しで `File` オブジェクトが返ること）
+- [x] `frontend/src/components/CameraView.test.tsx` に `TestCameraView_RenderShutterButton` テスト作成（シャッターボタンが描画されること）
 
 **🟢 GREEN**
 
-- [ ] `frontend/src/hooks/useCamera.ts` に `useCamera(): { videoRef: RefObject<HTMLVideoElement>, isReady: boolean, startCamera: () => Promise<void>, capturePhoto: () => File | null }` 実装（`facingMode: "environment"` でバックカメラ指定）
-- [ ] `frontend/src/components/CameraView.tsx` に `CameraView` コンポーネント実装（`<video>` + シャッターボタン）
+- [x] `frontend/src/hooks/useCamera.ts` に `useCamera(): { videoRef: RefObject<HTMLVideoElement>, isReady: boolean, startCamera: () => Promise<void>, capturePhoto: () => File | null }` 実装（`facingMode: "environment"` でバックカメラ指定）
+- [x] `frontend/src/components/CameraView.tsx` に `CameraView` コンポーネント実装（`<video>` + シャッターボタン）
 
 **🔵 REFACTOR**
 
-- [ ] カメラ停止処理（`srcObject.getTracks().forEach(t => t.stop())`）をunmount時に確実に呼ぶよう整理
+- [x] カメラ停止処理（`srcObject.getTracks().forEach(t => t.stop())`）をunmount時に確実に呼ぶよう整理（`streamRef` に stream を保持し cleanup で確実に停止）
 
 ---
 
