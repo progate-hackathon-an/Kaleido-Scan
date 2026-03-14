@@ -20,5 +20,10 @@ export function useScan() {
     }
   };
 
-  return { scan, result, isLoading, error };
+  const reset = () => {
+    setResult(null);
+    setError(null);
+  };
+
+  return { scan, result, isLoading, error, reset };
 }

@@ -5,20 +5,24 @@ import { renderAura } from '../utils/auraRenderer';
 type Props = {
   items: DetectedItem[];
   onItemSelect: (item: DetectedItem) => void;
+  width?: number;
+  height?: number;
 };
 
-export function AuraCanvas({ items, onItemSelect }: Props) {
+export function AuraCanvas({ items, onItemSelect, width, height }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (width) canvas.width = width;
+    if (height) canvas.height = height;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     items.forEach((item) => renderAura(ctx, item, canvas.width, canvas.height));
-  }, [items]);
+  }, [items, width, height]);
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
