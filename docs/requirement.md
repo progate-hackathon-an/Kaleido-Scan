@@ -21,7 +21,7 @@
 
 | 項目 | 内容 |
 |------|------|
-| 使用API | ローカル: Gemini 2.0 Flash Vision API / 本番: AWS Bedrock（Claude Sonnet） |
+| 使用API | ローカル: Gemini 2.5 Flash Vision API / 本番: AWS Bedrock（Claude Sonnet） |
 | 識別方式 | 静止画をバックエンド経由でAI APIに送信 |
 | 識別対象 | コンビニ商品5種（おにぎり×2・飲み物×2・お菓子×1） |
 | 返却情報 | 商品名 + バウンディングボックス（座標）|
@@ -88,7 +88,7 @@
 |------|--------|
 | **レスポンス時間** | スキャン〜オーラ表示まで 2秒以内 |
 | **対応環境** | iOS Safari / Android Chrome（モバイル前提） |
-| **API使用量** | ローカル: Gemini 2.0 Flash 無料枠内（1,500 req/日）。本番: Bedrock 従量課金 |
+| **API使用量** | ローカル: Gemini 2.5 Flash 無料枠内（10 RPM / 250 req/日）。本番: Bedrock 従量課金 |
 
 ---
 
@@ -122,7 +122,7 @@
 | フロントエンド | React + TypeScript（Vite）+ PWA |
 | バックエンド | Go + Gin |
 | データベース | PostgreSQL（Docker） |
-| AI | Gemini 2.0 Flash Vision API（無料枠） |
+| AI | Gemini 2.5 Flash Vision API（無料枠: 10 RPM / 250 req/日） |
 | 環境管理 | Docker Compose |
 
 ### AWS 本番環境
@@ -184,7 +184,7 @@
 
 | 判断 | 採用 | 理由 |
 |------|------|------|
-| **AI（ローカル）** | Gemini 2.0 Flash | Gemini 1.5 Pro は無料枠50 req/日。ローカル開発中のテスト+デモで枯渇リスクが高い。Flash は1,500 req/日で現実的 |
+| **AI（ローカル）** | Gemini 2.5 Flash | gemini-2.0-flash は新規ユーザー向けに提供終了。2.5 Flash は最新の安定版 Flash モデルで無料枠（10 RPM / 250 req/日）あり。画像認識精度も向上 |
 | **AI（本番）** | AWS Bedrock（Claude Sonnet） | 事前の概念検証でうまくいきそうだったから |
 | **X共有の画像添付** | Web Share API | `navigator.share({ files })` でS3アップロード不要。モバイルブラウザ（iOS Safari / Android Chrome）で画像ファイルをXへ直接渡せる |
 | **DB** | PostgreSQL（RDS） | 週次売上集計・ランキング計算にSQLが適切。DynamoDB は集計クエリが複雑になるため不採用 |

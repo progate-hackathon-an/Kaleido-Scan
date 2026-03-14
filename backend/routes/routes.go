@@ -7,11 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Setup(r *gin.Engine) {
+// Setup はルーティングを設定する。
+func Setup(r *gin.Engine, scanHandler *handlers.ScanHandler) {
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
-	r.POST("/scan/ranking", handlers.ScanRanking)
+	r.POST("/scan/ranking", scanHandler.ScanRanking)
 	r.GET("/products/:id", handlers.GetProduct)
 }

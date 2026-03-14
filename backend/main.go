@@ -6,8 +6,10 @@ import (
 
 	"github.com/Hiru-ge/Kaleid-Scan/backend/config"
 	"github.com/Hiru-ge/Kaleid-Scan/backend/database"
+	"github.com/Hiru-ge/Kaleid-Scan/backend/handlers"
 	"github.com/Hiru-ge/Kaleid-Scan/backend/middleware"
 	"github.com/Hiru-ge/Kaleid-Scan/backend/routes"
+	"github.com/Hiru-ge/Kaleid-Scan/backend/services"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -20,27 +22,36 @@ func main() {
 
 	cfg := config.Load()
 
-	if *seed {
-		db, err := database.NewDB(cfg)
-		if err != nil {
-			log.Fatalf("Failed to connect to database: %v", err)
+	db, err := database.NewDB(cfg)
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Printf("db.Close: %v", err)
 		}
-		defer func() {
-			if err := db.Close(); err != nil {
-				log.Printf("db.Close: %v", err)
-			}
-		}()
+	}()
 
+	if err := database.RunMigrations(db, "/db/migrations"); err != nil {
+		log.Fatalf("Failed to run migrations: %v", err)
+	}
+	log.Println("Migrations applied")
+
+	if *seed || cfg.SeedOnStartup {
 		if err := database.Seed(db); err != nil {
 			log.Fatalf("Failed to seed database: %v", err)
 		}
 		log.Println("Seed data inserted successfully")
 	}
 
+	ai := services.NewAIService(cfg.AIProvider, cfg.GeminiAPIKey)
+	svc := services.NewScanService(ai, db)
+	scanHandler := handlers.NewScanHandler(svc)
+
 	r := gin.Default()
 	r.Use(middleware.SetupCORS(cfg.FrontendURL))
 
-	routes.Setup(r)
+	routes.Setup(r, scanHandler)
 
 	log.Printf("Server starting on :%s", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {

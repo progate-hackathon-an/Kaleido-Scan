@@ -105,30 +105,30 @@
 
 **🔴 RED**
 
-- [ ] `backend/services/ai_service_test.go` に `TestGeminiService_Recognize_Success` テスト作成（モックHTTPサーバーでGemini APIレスポンスを再現し、`[]AIItem` が正しくパースされること）
-- [ ] `backend/services/ai_service_test.go` に `TestGeminiService_Recognize_EmptyItems` テスト作成（`items: []` のレスポンスで空スライスが返ること）
-- [ ] `backend/services/scan_service_test.go` に `TestScanService_GetRanking_AuraLevel` テスト作成（rank=1→aura_level=5, rank=5→aura_level=1 になること）
-- [ ] `backend/handlers/scan_handler_test.go` に `TestScanRanking_Success` テスト作成（期待: HTTP 200, `detected_items` が配列で返ること）
-- [ ] `backend/handlers/scan_handler_test.go` に `TestScanRanking_NoImage` テスト作成（期待: HTTP 400, `{"error":{"code":"invalid_image",...}}`）
-- [ ] `backend/handlers/scan_handler_test.go` に `TestScanRanking_AIError` テスト作成（期待: HTTP 500, `{"error":{"code":"ai_error",...}}`）
+- [x] `backend/services/ai_service_test.go` に `TestGeminiService_Recognize_Success` テスト作成（モックHTTPサーバーでGemini APIレスポンスを再現し、`[]AIItem` が正しくパースされること）
+- [x] `backend/services/ai_service_test.go` に `TestGeminiService_Recognize_EmptyItems` テスト作成（`items: []` のレスポンスで空スライスが返ること）
+- [x] `backend/services/scan_service_test.go` に `TestScanService_GetRanking_AuraLevel` テスト作成（rank=1→aura_level=5, rank=5→aura_level=1 になること）
+- [x] `backend/handlers/scan_handler_test.go` に `TestScanRanking_Success` テスト作成（期待: HTTP 200, `detected_items` が配列で返ること）
+- [x] `backend/handlers/scan_handler_test.go` に `TestScanRanking_NoImage` テスト作成（期待: HTTP 400, `{"error":{"code":"invalid_image",...}}`）
+- [x] `backend/handlers/scan_handler_test.go` に `TestScanRanking_AIError` テスト作成（期待: HTTP 500, `{"error":{"code":"ai_error",...}}`）
 
 **🟢 GREEN**
 
-- [ ] `backend/services/ai_service.go` に `AIService` interface 定義（`Recognize(ctx context.Context, imageData []byte, productNames []string) ([]AIItem, error)`）
-- [ ] `backend/services/ai_service.go` に `AIItem` struct 定義（`ProductName string`, `BoundingBox BoundingBox`）
-- [ ] `backend/services/ai_service.go` に `BoundingBox` struct 定義（`XMin, YMin, XMax, YMax float64`）
-- [ ] `backend/services/gemini_service.go` に `GeminiService` struct 実装（Gemini 2.0 Flash Vision API呼び出し。プロンプトは `docs/api-requirement.md` の形式に従う）
-- [ ] `backend/services/scan_service.go` に `ScanService` struct 定義（`ai AIService`, `db *sql.DB`）
-- [ ] `backend/services/scan_service.go` に `GetRanking(ctx context.Context, imageData []byte) ([]ScanResult, error)` 実装（AI呼び出し → DB検索 → `aura_level = 6 - rank` 計算）
-- [ ] `backend/services/scan_service.go` に `ScanResult` struct 定義（`api-requirement.md` の `detected_items` 要素に対応）
-- [ ] `backend/handlers/scan_handler.go` に `ScanHandler` struct 定義（`svc *services.ScanService`）
-- [ ] `backend/handlers/scan_handler.go` に `ScanRanking(c *gin.Context)` 実装（`c.FormFile("image")` でファイル取得 → `svc.GetRanking` 呼び出し → JSONレスポンス）
-- [ ] `backend/routes/routes.go` に `POST /scan/ranking` ルート追加
+- [x] `backend/services/ai_service.go` に `AIService` interface 定義（`Recognize(ctx context.Context, imageData []byte, productNames []string) ([]AIItem, error)`）
+- [x] `backend/services/ai_service.go` に `AIItem` struct 定義（`ProductName string`, `BoundingBox BoundingBox`）
+- [x] `backend/services/ai_service.go` に `BoundingBox` struct 定義（`XMin, YMin, XMax, YMax float64`）
+- [x] `backend/services/gemini_service.go` に `GeminiService` struct 実装（Gemini 2.5 Flash Vision API呼び出し。プロンプトは `docs/api-requirement.md` の形式に従う）
+- [x] `backend/services/scan_service.go` に `ScanService` struct 定義（`ai AIService`, `db *sql.DB`）
+- [x] `backend/services/scan_service.go` に `GetRanking(ctx context.Context, imageData []byte) ([]ScanResult, error)` 実装（AI呼び出し → DB検索 → `aura_level = 6 - rank` 計算）
+- [x] `backend/services/scan_service.go` に `ScanResult` struct 定義（`api-requirement.md` の `detected_items` 要素に対応）
+- [x] `backend/handlers/scan_handler.go` に `ScanHandler` struct 定義（`svc *services.ScanService`）
+- [x] `backend/handlers/scan_handler.go` に `ScanRanking(c *gin.Context)` 実装（`c.FormFile("image")` でファイル取得 → `svc.GetRanking` 呼び出し → JSONレスポンス）
+- [x] `backend/routes/routes.go` に `POST /scan/ranking` ルート追加
 
 **🔵 REFACTOR**
 
-- [ ] エラーレスポンス生成を `handlers/response.go` の `ErrorResponse(c, status, code, message string)` ヘルパーに切り出し
-- [ ] `AIService` の実装選択ロジック（`NewAIService(cfg) AIService`）を `services/ai_service.go` に集約
+- [x] エラーレスポンス生成を `handlers/response.go` の `ErrorResponse(c, status, code, message string)` ヘルパーに切り出し
+- [x] `AIService` の実装選択ロジック（`NewAIService(cfg) AIService`）を `services/ai_service.go` に集約
 
 ---
 

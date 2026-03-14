@@ -19,11 +19,17 @@ services:
       - '${BACKEND_PORT:-8080}:8080'
     volumes:
       - ./backend:/app
+      - ./db/migrations:/db/migrations
     environment:
       - BACKEND_PORT=8080
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - SEED_ON_STARTUP=${SEED_ON_STARTUP:-true}
+      - DB_HOST=db
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USER=${DB_USER:-kaleid}
+      - DB_PASSWORD=${DB_PASSWORD:-kaleid}
+      - DB_NAME=${DB_NAME:-kaleid_scan}
     depends_on:
       db:
         condition: service_healthy
@@ -38,7 +44,6 @@ services:
       - POSTGRES_DB=${DB_NAME:-kaleid_scan}
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./db/migrations:/docker-entrypoint-initdb.d
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-kaleid} -d ${DB_NAME:-kaleid_scan}']
       interval: 5s
