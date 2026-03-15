@@ -247,3 +247,166 @@ aura_level = 6 - rank
 |----------|------|------|
 | `POST` | `/scan/trending` | 急上昇モード（直近1週 vs 前週の増加率ベースのオーラ表示） |
 | `POST` | `/scan/hidden-gems` | 掘り出し物モード（売上下位商品ベースのオーラ表示） |
+
+---
+
+### POST `/scan/trending`
+
+カメラで撮影した静止画を送信し、検出された商品の**急上昇ランキング**情報を返す。AI画像認識による商品識別は `/scan/ranking` と同一。その後「直近1週の売上個数」と「その前週の売上個数」をもとに増加率を算出し、増加率が高いほど強いオーラを返す。前週データがない場合は増加率 `null` とし、最下位扱いでオーラも最弱。
+
+**リクエスト**
+
+```
+Content-Type: multipart/form-data
+```
+
+| フィールド | 型 | 必須 | 説明 |
+|------------|-----|------|------|
+| `image` | file | ✅ | 撮影した静止画（JPEG / PNG / WebP） |
+
+**AI処理フロー**
+
+`/scan/ranking` と同一（Gemini 2.5 Flash / AWS Bedrock でのプロンプト・スキーマ定義も共通）。
+
+**レスポンス 200 OK**
+
+```json
+{
+  "detected_items": [
+    {
+      "product_id": "44444444-4444-4444-4444-444444444444",
+      "name": "オレンジ 500ml",
+      "description": "大人も子供もゴクゴク飲めるすっきりした味わい。果実の味を楽しめるオレンジの低果汁飲料。",
+      "category": "drink",
+      "trending_rank": 1,
+      "current_quantity": 1700,
+      "prev_quantity": 1300,
+      "growth_rate": 30.8,
+      "aura_level": 5,
+      "bounding_box": {
+        "x_min": 0.5,
+        "y_min": 0.1,
+        "x_max": 0.8,
+        "y_max": 0.6
+      }
+    }
+  ]
+}
+```
+
+| フィールド | 型 | 説明 |
+|------------|-----|------|
+| `detected_items` | array | 検出された商品の配列。未検出時は空配列 |
+| `product_id` | string (UUID) | 商品ID |
+| `name` | string | 商品名 |
+| `description` | string | 商品説明 |
+| `category` | string | カテゴリ（`food` / `drink` / `snack`） |
+| `trending_rank` | integer | 急上昇ランキング（1〜5。増加率が高いほど上位） |
+| `current_quantity` | integer | 直近週の売上個数 |
+| `prev_quantity` | integer | 前週の売上個数（データなし時は `0`） |
+| `growth_rate` | number \| null | 増加率（%）。前週データなし（`prev_quantity = 0`）の場合は `null` |
+| `aura_level` | integer | オーラ強度（1〜5。`trending_rank 1` → `aura_level 5`） |
+| `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
+
+**aura_level の計算式**
+
+```
+aura_level = 6 - trending_rank
+```
+
+**増加率の計算式**
+
+```
+growth_rate(%) = (current_quantity - prev_quantity) ÷ prev_quantity × 100
+```
+
+前週データが存在しない（`prev_quantity = 0`）場合は `growth_rate = null` とし、`trending_rank` は最下位（`NULLS LAST`）扱い。
+
+**エラーレスポンス**
+
+| ステータス | エラーコード | 発生条件 |
+|-----------|------------|---------|
+| `400` | `invalid_image` | 画像が送信されていない、またはサポート外の形式 |
+| `500` | `ai_error` | AI API（Gemini / Bedrock）の呼び出し失敗 |
+| `500` | `internal_error` | その他のサーバーエラー |
+
+---
+
+### POST `/scan/hidden-gems`
+
+カメラで撮影した静止画を送信し、検出された商品の**掘り出し物ランキング**情報を返す。AI画像認識による商品識別は `/scan/ranking` と同一。その後、全期間累計売上の**下位**商品ほど上位になる逆ランキングを算出し、売れていない（＝まだ知られていない）商品ほど強いオーラを返す。
+
+**リクエスト**
+
+```
+Content-Type: multipart/form-data
+```
+
+| フィールド | 型 | 必須 | 説明 |
+|------------|-----|------|------|
+| `image` | file | ✅ | 撮影した静止画（JPEG / PNG / WebP） |
+
+**AI処理フロー**
+
+`/scan/ranking` と同一（Gemini 2.5 Flash / AWS Bedrock でのプロンプト・スキーマ定義も共通）。
+
+**レスポンス 200 OK**
+
+```json
+{
+  "detected_items": [
+    {
+      "product_id": "55555555-5555-5555-5555-555555555555",
+      "name": "セブンプレミアム チョコっとマシュマロ",
+      "description": "ふんわり食感のマシュマロをチョコレートでつつみました。",
+      "category": "snack",
+      "sales_rank": 5,
+      "hidden_rank": 1,
+      "total_quantity": 4850,
+      "aura_level": 5,
+      "bounding_box": {
+        "x_min": 0.2,
+        "y_min": 0.3,
+        "x_max": 0.6,
+        "y_max": 0.8
+      }
+    }
+  ]
+}
+```
+
+| フィールド | 型 | 説明 |
+|------------|-----|------|
+| `detected_items` | array | 検出された商品の配列。未検出時は空配列 |
+| `product_id` | string (UUID) | 商品ID |
+| `name` | string | 商品名 |
+| `description` | string | 商品説明 |
+| `category` | string | カテゴリ（`food` / `drink` / `snack`） |
+| `sales_rank` | integer | 通常の売上ランキング（1〜5。売上が多いほど上位） |
+| `hidden_rank` | integer | 掘り出し物ランキング（1〜5。売上が少ないほど上位） |
+| `total_quantity` | integer | 累計売上個数 |
+| `aura_level` | integer | オーラ強度（1〜5。`hidden_rank 1` → `aura_level 5`） |
+| `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
+
+**hidden_rank・aura_level の計算式**
+
+```
+hidden_rank = 6 - sales_rank   （売上最下位 = sales_rank 5 → hidden_rank 1）
+aura_level  = 6 - hidden_rank
+```
+
+| sales_rank | hidden_rank | aura_level |
+|-----------|------------|------------|
+| 5（最下位） | 1 | 5 |
+| 4 | 2 | 4 |
+| 3 | 3 | 3 |
+| 2 | 4 | 2 |
+| 1（最上位） | 5 | 1 |
+
+**エラーレスポンス**
+
+| ステータス | エラーコード | 発生条件 |
+|-----------|------------|---------|
+| `400` | `invalid_image` | 画像が送信されていない、またはサポート外の形式 |
+| `500` | `ai_error` | AI API（Gemini / Bedrock）の呼び出し失敗 |
+| `500` | `internal_error` | その他のサーバーエラー |
