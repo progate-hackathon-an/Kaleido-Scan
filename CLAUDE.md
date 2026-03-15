@@ -88,7 +88,7 @@ cd backend && golangci-lint run  # golangci-lint
 |--------|------|-----------|
 | clean-code-principles | `.claude/skills/clean-code-principles/SKILL.md` | **コード作成・レビュー時は必ず参照・適用すること**。リーダブルコード・DRY・YAGNI・SOLID原則を適用する |
 | create-worktree-env | `.claude/skills/create-worktree-env/SKILL.md` | Git worktree作成後に `.env` 等のgitignore済みファイルをコピーする（スクリプトあり） |
-
+| design-guide | `.claude/skills/design-guide/SKILL.md` | **フロントエンドスタイリングやコンポーネント作成は必ず参照・適用すること**。UI/UXデザインの品質向上と、プロジェクトのデザインルールを把握し、デザインを設計する |
 ## エージェント
 
 `.claude/agents/` に以下のサブエージェントが配置されている。複雑・専門的な作業はタスクとして委譲すること。
