@@ -281,7 +281,7 @@ Content-Type: multipart/form-data
       "trending_rank": 1,
       "current_quantity": 1700,
       "prev_quantity": 1300,
-      "growth_rate": 30.8,
+      "growth_rate": 130.8,
       "aura_level": 5,
       "bounding_box": {
         "x_min": 0.5,
@@ -304,7 +304,7 @@ Content-Type: multipart/form-data
 | `trending_rank` | integer | 急上昇ランキング（1〜5。増加率が高いほど上位） |
 | `current_quantity` | integer | 直近週の売上個数 |
 | `prev_quantity` | integer | 前週の売上個数（データなし時は `0`） |
-| `growth_rate` | number \| null | 増加率（%）。前週データなし（`prev_quantity = 0`）の場合は `null` |
+| `growth_rate` | number \| null | 前週比（%）。前週データなし（`prev_quantity = 0`）の場合は `null` |
 | `aura_level` | integer | オーラ強度（1〜5。`trending_rank 1` → `aura_level 5`） |
 | `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
 
@@ -314,10 +314,10 @@ Content-Type: multipart/form-data
 aura_level = 6 - trending_rank
 ```
 
-**増加率の計算式**
+**前週比の計算式**
 
 ```
-growth_rate(%) = (current_quantity - prev_quantity) ÷ prev_quantity × 100
+growth_rate(%) = current_quantity ÷ prev_quantity × 100
 ```
 
 前週データが存在しない（`prev_quantity = 0`）場合は `growth_rate = null` とし、`trending_rank` は最下位（`NULLS LAST`）扱い。

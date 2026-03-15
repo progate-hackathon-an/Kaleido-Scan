@@ -116,15 +116,15 @@ GROUP BY p.id, p.name, p.description, p.category;
 
 ### 急上昇ランキング（直近1週 vs 前週の増加率）
 
-**増加率の計算式:**
+**前週比の計算式:**
 
 ```
-増加率(%) = (今週の売上 - 先週の売上) ÷ 先週の売上 × 100
+前週比(%) = 今週の売上 ÷ 先週の売上 × 100
 ```
 
-例: 先週1,300個 → 今週1,700個の場合、増加率 = (1700 - 1300) ÷ 1300 × 100 ≒ **30.8%**
+例: 先週1,300個 → 今週1,700個の場合、前週比 = 1700 ÷ 1300 × 100 ≒ **130.8%**（先週の1.3倍）
 
-増加率が高い商品ほど上位になり、オーラが強くなる。先週データがない商品は先週売上 = 0 として扱うため、分母がゼロになり `NULL` → `NULLS LAST` で最下位扱い。
+前週比が高い商品ほど上位になり、オーラが強くなる。先週データがない商品は先週売上 = 0 として扱うため、分母がゼロになり `NULL` → `NULLS LAST` で最下位扱い。
 
 ```sql
 WITH latest_week AS (
@@ -147,7 +147,7 @@ SELECT
     cw.quantity AS current_quantity,
     COALESCE(pw.quantity, 0) AS prev_quantity,
     ROUND(
-        (cw.quantity - COALESCE(pw.quantity, 0))::NUMERIC
+        cw.quantity::NUMERIC
         / NULLIF(COALESCE(pw.quantity, 0), 0) * 100,
         1
     ) AS growth_rate
