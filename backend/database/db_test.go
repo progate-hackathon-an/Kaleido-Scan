@@ -1,6 +1,7 @@
 package database_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/Hiru-ge/Kaleid-Scan/backend/config"
@@ -8,7 +9,13 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// TestNewDB_Connect は実際のPostgreSQL接続を必要とする統合テスト。
+// DATABASE_URL 環境変数が未設定の場合はスキップする。
 func TestNewDB_Connect(t *testing.T) {
+	if os.Getenv("DATABASE_URL") == "" {
+		t.Skip("DATABASE_URL not set, skipping integration test")
+	}
+
 	cfg := &config.Config{
 		DBHost:     "localhost",
 		DBPort:     "5432",

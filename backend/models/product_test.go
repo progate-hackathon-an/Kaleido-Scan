@@ -1,18 +1,33 @@
 package models_test
 
 import (
+	"encoding/json"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/Hiru-ge/Kaleid-Scan/backend/models"
+	"github.com/google/uuid"
 )
 
-func TestProduct_Fields(t *testing.T) {
-	p := models.Product{}
+func TestProduct_JSONTags(t *testing.T) {
+	p := models.Product{
+		ID:          uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+		Name:        "テスト商品",
+		Description: "説明文",
+		Category:    "food",
+		CreatedAt:   time.Time{},
+	}
 
-	// ID, Name, Description, Category, CreatedAt フィールドの存在確認
-	_ = p.ID
-	_ = p.Name
-	_ = p.Description
-	_ = p.Category
-	_ = p.CreatedAt
+	b, err := json.Marshal(p)
+	if err != nil {
+		t.Fatalf("json.Marshal: %v", err)
+	}
+	s := string(b)
+
+	for _, key := range []string{`"id"`, `"name"`, `"description"`, `"category"`, `"created_at"`} {
+		if !strings.Contains(s, key) {
+			t.Errorf("JSON key %s not found in %s", key, s)
+		}
+	}
 }

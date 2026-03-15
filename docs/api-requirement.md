@@ -32,7 +32,7 @@ Content-Type: multipart/form-data
 
 | フィールド | 型 | 必須 | 説明 |
 |------------|-----|------|------|
-| `image` | file | ✅ | 撮影した静止画（JPEG / PNG / WebP） |
+| `image` | file | ✅ | 撮影した静止画（JPEG / PNG / WebP）。上限 10MB |
 
 **AIへのプロンプト（バックエンド内部）**
 
@@ -185,6 +185,7 @@ aura_level = 6 - rank
 | ステータス | エラーコード | 発生条件 |
 |-----------|------------|---------|
 | `400` | `invalid_image` | 画像が送信されていない、またはサポート外の形式 |
+| `400` | `image_too_large` | 画像サイズが上限（10MB）を超えている |
 | `500` | `ai_error` | AI API（Gemini / Bedrock）の呼び出し失敗 |
 | `500` | `internal_error` | その他のサーバーエラー |
 
@@ -262,7 +263,7 @@ Content-Type: multipart/form-data
 
 | フィールド | 型 | 必須 | 説明 |
 |------------|-----|------|------|
-| `image` | file | ✅ | 撮影した静止画（JPEG / PNG / WebP） |
+| `image` | file | ✅ | 撮影した静止画（JPEG / PNG / WebP）。上限 10MB |
 
 **AI処理フロー**
 
@@ -327,6 +328,7 @@ growth_rate(%) = current_quantity ÷ prev_quantity × 100
 | ステータス | エラーコード | 発生条件 |
 |-----------|------------|---------|
 | `400` | `invalid_image` | 画像が送信されていない、またはサポート外の形式 |
+| `400` | `image_too_large` | 画像サイズが上限（10MB）を超えている |
 | `500` | `ai_error` | AI API（Gemini / Bedrock）の呼び出し失敗 |
 | `500` | `internal_error` | その他のサーバーエラー |
 
@@ -344,7 +346,7 @@ Content-Type: multipart/form-data
 
 | フィールド | 型 | 必須 | 説明 |
 |------------|-----|------|------|
-| `image` | file | ✅ | 撮影した静止画（JPEG / PNG / WebP） |
+| `image` | file | ✅ | 撮影した静止画（JPEG / PNG / WebP）。上限 10MB |
 
 **AI処理フロー**
 
@@ -408,5 +410,6 @@ aura_level  = 6 - hidden_rank
 | ステータス | エラーコード | 発生条件 |
 |-----------|------------|---------|
 | `400` | `invalid_image` | 画像が送信されていない、またはサポート外の形式 |
+| `400` | `image_too_large` | 画像サイズが上限（10MB）を超えている |
 | `500` | `ai_error` | AI API（Gemini / Bedrock）の呼び出し失敗 |
 | `500` | `internal_error` | その他のサーバーエラー |

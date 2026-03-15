@@ -40,51 +40,12 @@ func (s *ScanService) GetRanking(ctx context.Context, imageData []byte) ([]ScanR
 		return []ScanResult{}, nil
 	}
 
-	rankings, err := s.fetchRankings(ctx)
+	rankings, err := fetchSalesRankings(ctx, s.db)
 	if err != nil {
-		return nil, fmt.Errorf("fetchRankings: %w", err)
+		return nil, fmt.Errorf("fetchSalesRankings: %w", err)
 	}
 
 	return s.mergeResults(aiItems, rankings), nil
-}
-
-// rankingRow はランキングクエリの1行を表す内部型。
-type rankingRow struct {
-	id            string
-	name          string
-	description   string
-	category      string
-	totalQuantity int
-	rank          int
-}
-
-func (s *ScanService) fetchRankings(ctx context.Context) ([]rankingRow, error) {
-	const query = `
-		SELECT p.id, p.name, p.description, p.category,
-		       SUM(ws.quantity) AS total_quantity,
-		       RANK() OVER (ORDER BY SUM(ws.quantity) DESC) AS rank
-		FROM products p
-		JOIN weekly_sales ws ON p.id = ws.product_id
-		GROUP BY p.id, p.name, p.description, p.category`
-
-	rows, err := s.db.QueryContext(ctx, query)
-	if err != nil {
-		return nil, fmt.Errorf("db.QueryContext rankings: %w", err)
-	}
-	defer func() { _ = rows.Close() }()
-
-	var rankings []rankingRow
-	for rows.Next() {
-		var r rankingRow
-		if err := rows.Scan(&r.id, &r.name, &r.description, &r.category, &r.totalQuantity, &r.rank); err != nil {
-			return nil, fmt.Errorf("rows.Scan: %w", err)
-		}
-		rankings = append(rankings, r)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows.Err: %w", err)
-	}
-	return rankings, nil
 }
 
 // mergeResults はAI識別結果とランキング情報を突合してScanResultのスライスを生成する。
@@ -107,7 +68,7 @@ func (s *ScanService) mergeResults(aiItems []AIItem, rankings []rankingRow) []Sc
 			Category:      r.category,
 			Rank:          r.rank,
 			TotalQuantity: r.totalQuantity,
-			AuraLevel:     CalcAuraLevel(r.rank, "ranking"),
+			AuraLevel:     CalcAuraLevel(r.rank),
 			BoundingBox:   item.BoundingBox,
 		})
 	}

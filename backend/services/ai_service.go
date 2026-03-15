@@ -1,6 +1,9 @@
 package services
 
-import "context"
+import (
+	"context"
+	"log"
+)
 
 // AIItem はAI認識結果の1商品エントリを表す。
 type AIItem struct {
@@ -44,6 +47,7 @@ func NewAIService(provider, geminiAPIKey string) AIService {
 	switch provider {
 	case "bedrock":
 		// TODO: Bedrock実装（本番Phase）
+		log.Println("warn: bedrock is not yet implemented, falling back to gemini")
 		return NewGeminiService(geminiAPIKey)
 	default:
 		return NewGeminiService(geminiAPIKey)

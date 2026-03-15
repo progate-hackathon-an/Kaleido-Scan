@@ -154,7 +154,7 @@ func (s *TrendingService) mergeTrendingResults(aiItems []AIItem, rankings []tren
 			CurrentQuantity: r.currentQuantity,
 			PrevQuantity:    r.prevQuantity,
 			GrowthRate:      growthRate,
-			AuraLevel:       CalcAuraLevel(r.trendingRank, "trending"),
+			AuraLevel:       CalcAuraLevel(r.trendingRank),
 			BoundingBox:     item.BoundingBox,
 		})
 	}
