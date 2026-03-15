@@ -48,12 +48,15 @@ func main() {
 	svc := services.NewScanService(ai, db)
 	scanHandler := handlers.NewScanHandler(svc)
 
+	hiddenGemsSvc := services.NewHiddenGemsService(ai, db)
+	hiddenGemsHandler := handlers.NewHiddenGemsHandler(hiddenGemsSvc)
+
 	productHandler := handlers.NewProductHandler(db)
 
 	r := gin.Default()
 	r.Use(middleware.SetupCORS(cfg.FrontendURL))
 
-	routes.Setup(r, scanHandler, productHandler)
+	routes.Setup(r, scanHandler, hiddenGemsHandler, productHandler)
 
 	log.Printf("Server starting on :%s", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {

@@ -25,11 +25,29 @@ func (m *mockScanRanker) GetRanking(_ context.Context, _ []byte) ([]services.Sca
 	return m.results, m.err
 }
 
+// mockHiddenGemsGetter はテスト用のHiddenGemsGetterモック実装。
+type mockHiddenGemsGetter struct {
+	results []services.HiddenGemResult
+	err     error
+}
+
+func (m *mockHiddenGemsGetter) GetHiddenGemsRanking(_ context.Context, _ []byte) ([]services.HiddenGemResult, error) {
+	return m.results, m.err
+}
+
 func newTestRouter(svc handlers.ScanRanker) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
 	h := handlers.NewScanHandler(svc)
 	r.POST("/scan/ranking", h.ScanRanking)
+	return r
+}
+
+func newHiddenGemsTestRouter(svc handlers.HiddenGemsGetter) *gin.Engine {
+	gin.SetMode(gin.TestMode)
+	r := gin.New()
+	h := handlers.NewHiddenGemsHandler(svc)
+	r.POST("/scan/hidden-gems", h.ScanHiddenGems)
 	return r
 }
 
@@ -113,6 +131,63 @@ func TestScanRanking_NoImage(t *testing.T) {
 	}
 	if errObj["code"] != "invalid_image" {
 		t.Errorf("expected error code 'invalid_image', got '%s'", errObj["code"])
+	}
+}
+
+func buildHiddenGemsRequest(t *testing.T) *http.Request {
+	t.Helper()
+	var buf bytes.Buffer
+	mw := multipart.NewWriter(&buf)
+	fw, err := mw.CreateFormFile("image", "test.jpg")
+	if err != nil {
+		t.Fatalf("failed to create form file: %v", err)
+	}
+	_, _ = io.WriteString(fw, "fake image data")
+	if err := mw.Close(); err != nil {
+		t.Fatalf("failed to close multipart writer: %v", err)
+	}
+	req := httptest.NewRequest(http.MethodPost, "/scan/hidden-gems", &buf)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	return req
+}
+
+func TestScanHiddenGems_Success(t *testing.T) {
+	mock := &mockHiddenGemsGetter{
+		results: []services.HiddenGemResult{
+			{
+				ProductID:     "55555555-5555-5555-5555-555555555555",
+				Name:          "セブンプレミアム チョコっとマシュマロ",
+				Description:   "ふんわり食感のマシュマロをチョコレートでつつみました。",
+				Category:      "snack",
+				SalesRank:     5,
+				HiddenRank:    1,
+				TotalQuantity: 4850,
+				AuraLevel:     5,
+				BoundingBox:   services.BoundingBox{XMin: 0.2, YMin: 0.3, XMax: 0.6, YMax: 0.8},
+			},
+		},
+	}
+	r := newHiddenGemsTestRouter(mock)
+
+	req := buildHiddenGemsRequest(t)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("expected status 200, got %d", w.Code)
+	}
+
+	var body map[string][]map[string]any
+	if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil {
+		t.Fatalf("failed to parse response body: %v", err)
+	}
+
+	items, ok := body["detected_items"]
+	if !ok {
+		t.Fatal("expected 'detected_items' key in response")
+	}
+	if len(items) != 1 {
+		t.Errorf("expected 1 detected item, got %d", len(items))
 	}
 }
 

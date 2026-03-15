@@ -15,6 +15,11 @@ type ScanRanker interface {
 	GetRanking(ctx context.Context, imageData []byte) ([]services.ScanResult, error)
 }
 
+// HiddenGemsGetter はHiddenGemsHandlerが依存するサービスインターフェース（DIP原則）。
+type HiddenGemsGetter interface {
+	GetHiddenGemsRanking(ctx context.Context, imageData []byte) ([]services.HiddenGemResult, error)
+}
+
 // ScanHandler は /scan/ranking エンドポイントのハンドラ。
 type ScanHandler struct {
 	svc ScanRanker
@@ -46,6 +51,52 @@ func (h *ScanHandler) ScanRanking(c *gin.Context) {
 	}
 
 	results, err := h.svc.GetRanking(c.Request.Context(), imageData)
+	if err != nil {
+		var aiErr *services.AIError
+		if errors.As(err, &aiErr) {
+			c.Error(err) //nolint:errcheck
+			ErrorResponse(c, http.StatusInternalServerError, "ai_error", "AI APIの呼び出しに失敗しました")
+		} else {
+			c.Error(err) //nolint:errcheck
+			ErrorResponse(c, http.StatusInternalServerError, "internal_error", "サーバー内部エラーが発生しました")
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"detected_items": results})
+}
+
+// HiddenGemsHandler は /scan/hidden-gems エンドポイントのハンドラ。
+type HiddenGemsHandler struct {
+	svc HiddenGemsGetter
+}
+
+// NewHiddenGemsHandler はHiddenGemsHandlerを生成する。
+func NewHiddenGemsHandler(svc HiddenGemsGetter) *HiddenGemsHandler {
+	return &HiddenGemsHandler{svc: svc}
+}
+
+// ScanHiddenGems は POST /scan/hidden-gems を処理する。
+// multipart/form-data の image フィールドを受け取り、AI識別と掘り出し物ランキング取得を行う。
+func (h *HiddenGemsHandler) ScanHiddenGems(c *gin.Context) {
+	file, _, err := c.Request.FormFile("image")
+	if err != nil {
+		ErrorResponse(c, http.StatusBadRequest, "invalid_image", "画像ファイルが送信されていません")
+		return
+	}
+	defer func() {
+		if err := file.Close(); err != nil {
+			_ = err
+		}
+	}()
+
+	imageData, err := io.ReadAll(file)
+	if err != nil {
+		ErrorResponse(c, http.StatusInternalServerError, "internal_error", "画像の読み込みに失敗しました")
+		return
+	}
+
+	results, err := h.svc.GetHiddenGemsRanking(c.Request.Context(), imageData)
 	if err != nil {
 		var aiErr *services.AIError
 		if errors.As(err, &aiErr) {
