@@ -42,41 +42,12 @@ func (s *HiddenGemsService) GetHiddenGemsRanking(ctx context.Context, imageData 
 		return []HiddenGemResult{}, nil
 	}
 
-	rankings, err := s.fetchSalesRankings(ctx)
+	rankings, err := fetchSalesRankings(ctx, s.db)
 	if err != nil {
 		return nil, fmt.Errorf("fetchSalesRankings: %w", err)
 	}
 
 	return s.mergeHiddenGemsResults(aiItems, rankings), nil
-}
-
-func (s *HiddenGemsService) fetchSalesRankings(ctx context.Context) ([]rankingRow, error) {
-	const query = `
-		SELECT p.id, p.name, p.description, p.category,
-		       SUM(ws.quantity) AS total_quantity,
-		       RANK() OVER (ORDER BY SUM(ws.quantity) DESC) AS rank
-		FROM products p
-		JOIN weekly_sales ws ON p.id = ws.product_id
-		GROUP BY p.id, p.name, p.description, p.category`
-
-	rows, err := s.db.QueryContext(ctx, query)
-	if err != nil {
-		return nil, fmt.Errorf("db.QueryContext rankings: %w", err)
-	}
-	defer func() { _ = rows.Close() }()
-
-	var rankings []rankingRow
-	for rows.Next() {
-		var r rankingRow
-		if err := rows.Scan(&r.id, &r.name, &r.description, &r.category, &r.totalQuantity, &r.rank); err != nil {
-			return nil, fmt.Errorf("rows.Scan: %w", err)
-		}
-		rankings = append(rankings, r)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows.Err: %w", err)
-	}
-	return rankings, nil
 }
 
 // mergeHiddenGemsResults はAI識別結果とランキング情報を突合してHiddenGemResultのスライスを生成する。
@@ -103,7 +74,7 @@ func (s *HiddenGemsService) mergeHiddenGemsResults(aiItems []AIItem, rankings []
 			SalesRank:     r.rank,
 			HiddenRank:    hiddenRank,
 			TotalQuantity: r.totalQuantity,
-			AuraLevel:     CalcAuraLevel(hiddenRank, "hidden-gems"),
+			AuraLevel:     CalcAuraLevel(hiddenRank),
 			BoundingBox:   item.BoundingBox,
 		})
 	}

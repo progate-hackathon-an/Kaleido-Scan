@@ -19,6 +19,9 @@ func NewDB(cfg *config.Config) (*sql.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("sql.Open: %w", err)
 	}
+	if err := db.Ping(); err != nil {
+		return nil, fmt.Errorf("db.Ping: %w", err)
+	}
 
 	return db, nil
 }

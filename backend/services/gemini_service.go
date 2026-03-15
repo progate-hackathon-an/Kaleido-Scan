@@ -13,7 +13,7 @@ import (
 
 const geminiDefaultBaseURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
-// GeminiService はGemini 2.0 Flash Vision APIを使ったAIService実装。
+// GeminiService はGemini 2.5 Flash Vision APIを使ったAIService実装。
 type GeminiService struct {
 	apiKey  string
 	baseURL string
@@ -71,12 +71,13 @@ func (s *GeminiService) Recognize(ctx context.Context, imageData []byte, product
 		return nil, fmt.Errorf("json.Marshal: %w", err)
 	}
 
-	url := fmt.Sprintf("%s?key=%s", s.baseURL, s.apiKey)
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.baseURL, bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequest: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	// APIキーはクエリパラメータではなくヘッダーで渡す（アクセスログへの漏洩防止）。
+	req.Header.Set("x-goog-api-key", s.apiKey)
 
 	resp, err := s.client.Do(req)
 	if err != nil {

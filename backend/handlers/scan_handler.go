@@ -4,11 +4,14 @@ import (
 	"context"
 	"errors"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/Hiru-ge/Kaleid-Scan/backend/services"
 	"github.com/gin-gonic/gin"
 )
+
+const maxImageSize = 10 * 1024 * 1024 // 10MB
 
 // ScanRanker はScanHandlerが依存するScanServiceインターフェース（DIP原則）。
 type ScanRanker interface {
@@ -36,13 +39,13 @@ func NewScanHandler(svc ScanRanker, trending TrendingRanker) *ScanHandler {
 	return &ScanHandler{svc: svc, trending: trending}
 }
 
-// ScanRanking は POST /scan/ranking を処理する。
-// multipart/form-data の image フィールドを受け取り、AI識別とランキング取得を行う。
-func (h *ScanHandler) ScanRanking(c *gin.Context) {
+// readImageFromForm は multipart フォームから "image" フィールドを読み取り、バイト列を返す。
+// エラー時はレスポンスを書き込み false を返す。
+func readImageFromForm(c *gin.Context) ([]byte, bool) {
 	file, _, err := c.Request.FormFile("image")
 	if err != nil {
 		ErrorResponse(c, http.StatusBadRequest, "invalid_image", "画像ファイルが送信されていません")
-		return
+		return nil, false
 	}
 	defer func() {
 		if err := file.Close(); err != nil {
@@ -50,22 +53,42 @@ func (h *ScanHandler) ScanRanking(c *gin.Context) {
 		}
 	}()
 
-	imageData, err := io.ReadAll(file)
+	imageData, err := io.ReadAll(io.LimitReader(file, maxImageSize+1))
 	if err != nil {
 		ErrorResponse(c, http.StatusInternalServerError, "internal_error", "画像の読み込みに失敗しました")
+		return nil, false
+	}
+	if len(imageData) > maxImageSize {
+		ErrorResponse(c, http.StatusBadRequest, "image_too_large", "画像サイズが上限（10MB）を超えています")
+		return nil, false
+	}
+	return imageData, true
+}
+
+// handleScanServiceError はサービス層のエラーを適切なHTTPレスポンスに変換する。
+func handleScanServiceError(c *gin.Context, err error) {
+	var aiErr *services.AIError
+	if errors.As(err, &aiErr) {
+		log.Printf("AI service error: %v", err)
+		c.Error(err) //nolint:errcheck
+		ErrorResponse(c, http.StatusInternalServerError, "ai_error", "AI APIの呼び出しに失敗しました")
+	} else {
+		c.Error(err) //nolint:errcheck
+		ErrorResponse(c, http.StatusInternalServerError, "internal_error", "サーバー内部エラーが発生しました")
+	}
+}
+
+// ScanRanking は POST /scan/ranking を処理する。
+// multipart/form-data の image フィールドを受け取り、AI識別とランキング取得を行う。
+func (h *ScanHandler) ScanRanking(c *gin.Context) {
+	imageData, ok := readImageFromForm(c)
+	if !ok {
 		return
 	}
 
 	results, err := h.svc.GetRanking(c.Request.Context(), imageData)
 	if err != nil {
-		var aiErr *services.AIError
-		if errors.As(err, &aiErr) {
-			c.Error(err) //nolint:errcheck
-			ErrorResponse(c, http.StatusInternalServerError, "ai_error", "AI APIの呼び出しに失敗しました")
-		} else {
-			c.Error(err) //nolint:errcheck
-			ErrorResponse(c, http.StatusInternalServerError, "internal_error", "サーバー内部エラーが発生しました")
-		}
+		handleScanServiceError(c, err)
 		return
 	}
 
@@ -85,33 +108,14 @@ func NewHiddenGemsHandler(svc HiddenGemsGetter) *HiddenGemsHandler {
 // ScanHiddenGems は POST /scan/hidden-gems を処理する。
 // multipart/form-data の image フィールドを受け取り、AI識別と掘り出し物ランキング取得を行う。
 func (h *HiddenGemsHandler) ScanHiddenGems(c *gin.Context) {
-	file, _, err := c.Request.FormFile("image")
-	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, "invalid_image", "画像ファイルが送信されていません")
-		return
-	}
-	defer func() {
-		if err := file.Close(); err != nil {
-			_ = err
-		}
-	}()
-
-	imageData, err := io.ReadAll(file)
-	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "internal_error", "画像の読み込みに失敗しました")
+	imageData, ok := readImageFromForm(c)
+	if !ok {
 		return
 	}
 
 	results, err := h.svc.GetHiddenGemsRanking(c.Request.Context(), imageData)
 	if err != nil {
-		var aiErr *services.AIError
-		if errors.As(err, &aiErr) {
-			c.Error(err) //nolint:errcheck
-			ErrorResponse(c, http.StatusInternalServerError, "ai_error", "AI APIの呼び出しに失敗しました")
-		} else {
-			c.Error(err) //nolint:errcheck
-			ErrorResponse(c, http.StatusInternalServerError, "internal_error", "サーバー内部エラーが発生しました")
-		}
+		handleScanServiceError(c, err)
 		return
 	}
 
@@ -121,33 +125,14 @@ func (h *HiddenGemsHandler) ScanHiddenGems(c *gin.Context) {
 // ScanTrending は POST /scan/trending を処理する。
 // multipart/form-data の image フィールドを受け取り、AI識別と急上昇ランキング取得を行う。
 func (h *ScanHandler) ScanTrending(c *gin.Context) {
-	file, _, err := c.Request.FormFile("image")
-	if err != nil {
-		ErrorResponse(c, http.StatusBadRequest, "invalid_image", "画像ファイルが送信されていません")
-		return
-	}
-	defer func() {
-		if err := file.Close(); err != nil {
-			_ = err
-		}
-	}()
-
-	imageData, err := io.ReadAll(file)
-	if err != nil {
-		ErrorResponse(c, http.StatusInternalServerError, "internal_error", "画像の読み込みに失敗しました")
+	imageData, ok := readImageFromForm(c)
+	if !ok {
 		return
 	}
 
 	results, err := h.trending.GetTrendingRanking(c.Request.Context(), imageData)
 	if err != nil {
-		var aiErr *services.AIError
-		if errors.As(err, &aiErr) {
-			c.Error(err) //nolint:errcheck
-			ErrorResponse(c, http.StatusInternalServerError, "ai_error", "AI APIの呼び出しに失敗しました")
-		} else {
-			c.Error(err) //nolint:errcheck
-			ErrorResponse(c, http.StatusInternalServerError, "internal_error", "サーバー内部エラーが発生しました")
-		}
+		handleScanServiceError(c, err)
 		return
 	}
 

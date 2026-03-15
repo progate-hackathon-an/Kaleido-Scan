@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Hiru-ge/Kaleid-Scan/backend/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -79,6 +80,6 @@ func (h *ProductHandler) queryProductByID(ctx context.Context, id uuid.UUID) (*p
 		return nil, fmt.Errorf("queryProductByID: %w", err)
 	}
 
-	d.AuraLevel = 6 - d.Rank
+	d.AuraLevel = services.CalcAuraLevel(d.Rank)
 	return &d, nil
 }
