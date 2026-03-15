@@ -8,11 +8,11 @@ import (
 )
 
 // Setup はルーティングを設定する。
-func Setup(r *gin.Engine, scanHandler *handlers.ScanHandler) {
+func Setup(r *gin.Engine, scanHandler *handlers.ScanHandler, productHandler *handlers.ProductHandler) {
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
 	r.POST("/scan/ranking", scanHandler.ScanRanking)
-	r.GET("/products/:id", handlers.GetProduct)
+	r.GET("/products/:id", productHandler.GetProduct)
 }

@@ -141,22 +141,22 @@
 
 **🔴 RED**
 
-- [ ] `backend/handlers/product_handler_test.go` に `TestGetProduct_Success` テスト作成（期待: HTTP 200, `product_id`・`name`・`rank`・`aura_level` が含まれること）
-- [ ] `backend/handlers/product_handler_test.go` に `TestGetProduct_NotFound` テスト作成（期待: HTTP 404, `{"error":{"code":"product_not_found",...}}`）
-- [ ] `backend/handlers/product_handler_test.go` に `TestGetProduct_InvalidUUID` テスト作成（期待: HTTP 400）
+- [x] `backend/handlers/product_handler_test.go` に `TestGetProduct_Success` テスト作成（期待: HTTP 200, `product_id`・`name`・`rank`・`aura_level` が含まれること）
+- [x] `backend/handlers/product_handler_test.go` に `TestGetProduct_NotFound` テスト作成（期待: HTTP 404, `{"error":{"code":"product_not_found",...}}`）
+- [x] `backend/handlers/product_handler_test.go` に `TestGetProduct_InvalidUUID` テスト作成（期待: HTTP 400）
 
 **🟢 GREEN**
 
-- [ ] `backend/services/product_service.go` に `ProductService` struct 定義
-- [ ] `backend/services/product_service.go` に `GetProductByID(ctx context.Context, id uuid.UUID) (*ProductDetail, error)` 実装（`docs/db-requirement.md` の「商品1件のランキングを取得」クエリを使用）
-- [ ] `backend/services/product_service.go` に `ProductDetail` struct 定義（`api-requirement.md` の GET レスポンスに対応）
-- [ ] `backend/handlers/product_handler.go` に `ProductHandler` struct 定義（`svc *services.ProductService`）
-- [ ] `backend/handlers/product_handler.go` に `GetProduct(c *gin.Context)` 実装
-- [ ] `backend/routes/routes.go` に `GET /products/:id` ルート追加
+- [x] `backend/handlers/product_handler.go` に `productDetail` struct 定義（`api-requirement.md` の GET レスポンスに対応、`bounding_box` なし）
+- [x] `backend/handlers/product_handler.go` に `ProductHandler` struct 定義（`db *sql.DB` を直接保持。サービス層は不要と判断しhandler内に集約）
+- [x] `backend/handlers/product_handler.go` に `queryProductByID` メソッド実装（`docs/db-requirement.md` の「商品1件のランキングを取得」クエリを使用）
+- [x] `backend/handlers/product_handler.go` に `GetProduct(c *gin.Context)` 実装
+- [x] `backend/routes/routes.go` に `GET /products/:id` ルート追加
 
 **🔵 REFACTOR**
 
-- [ ] `ErrorResponse` ヘルパーをIssue #5で作成したものに統一
+- [x] `ErrorResponse` ヘルパーをIssue #5で作成したものに統一
+- [x] サービス層を廃止し handler に直接 DB クエリを集約（Fat Model 方針に統一）
 
 ---
 
