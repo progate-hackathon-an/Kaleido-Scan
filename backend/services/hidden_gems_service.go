@@ -31,16 +31,11 @@ func NewHiddenGemsService(ai AIService, db *sql.DB) *HiddenGemsService {
 }
 
 // GetHiddenGemsRanking は画像データからAI識別→累計売上ランキング取得→逆順オーラ付与を行い、HiddenGemResultのスライスを返す。
-// 売上下位商品ほど hidden_rank が高く、aura_level が強くなる。
+// 売上下位商品ほど hidden_rank が低く（最下位=1）、aura_level が強くなる。
 func (s *HiddenGemsService) GetHiddenGemsRanking(ctx context.Context, imageData []byte) ([]HiddenGemResult, error) {
-	productNames, err := s.fetchProductNames(ctx)
+	aiItems, err := recognizeProducts(ctx, s.ai, s.db, imageData)
 	if err != nil {
-		return nil, fmt.Errorf("fetchProductNames: %w", err)
-	}
-
-	aiItems, err := s.ai.Recognize(ctx, imageData, productNames)
-	if err != nil {
-		return nil, &AIError{Cause: err}
+		return nil, err
 	}
 
 	if len(aiItems) == 0 {
@@ -53,27 +48,6 @@ func (s *HiddenGemsService) GetHiddenGemsRanking(ctx context.Context, imageData 
 	}
 
 	return s.mergeHiddenGemsResults(aiItems, rankings), nil
-}
-
-func (s *HiddenGemsService) fetchProductNames(ctx context.Context) ([]string, error) {
-	rows, err := s.db.QueryContext(ctx, "SELECT name FROM products ORDER BY name")
-	if err != nil {
-		return nil, fmt.Errorf("db.QueryContext products: %w", err)
-	}
-	defer func() { _ = rows.Close() }()
-
-	var names []string
-	for rows.Next() {
-		var name string
-		if err := rows.Scan(&name); err != nil {
-			return nil, fmt.Errorf("rows.Scan: %w", err)
-		}
-		names = append(names, name)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows.Err: %w", err)
-	}
-	return names, nil
 }
 
 func (s *HiddenGemsService) fetchSalesRankings(ctx context.Context) ([]rankingRow, error) {
@@ -106,7 +80,8 @@ func (s *HiddenGemsService) fetchSalesRankings(ctx context.Context) ([]rankingRo
 }
 
 // mergeHiddenGemsResults はAI識別結果とランキング情報を突合してHiddenGemResultのスライスを生成する。
-// hidden_rank = 6 - sales_rank, aura_level = 6 - hidden_rank = sales_rank
+// hidden_rank = (maxRank+1) - sales_rank（売上最下位=sales_rank:5 → hidden_rank=1）。
+// aura_level は hidden_rank を CalcAuraLevel に渡すことで逆転計算する（hidden_rank=1 → aura_level=5）。
 func (s *HiddenGemsService) mergeHiddenGemsResults(aiItems []AIItem, rankings []rankingRow) []HiddenGemResult {
 	rankingByName := make(map[string]rankingRow, len(rankings))
 	for _, r := range rankings {
@@ -119,7 +94,7 @@ func (s *HiddenGemsService) mergeHiddenGemsResults(aiItems []AIItem, rankings []
 		if !found {
 			continue
 		}
-		hiddenRank := 6 - r.rank
+		hiddenRank := (maxRank + 1) - r.rank
 		results = append(results, HiddenGemResult{
 			ProductID:     r.id,
 			Name:          r.name,
@@ -128,7 +103,7 @@ func (s *HiddenGemsService) mergeHiddenGemsResults(aiItems []AIItem, rankings []
 			SalesRank:     r.rank,
 			HiddenRank:    hiddenRank,
 			TotalQuantity: r.totalQuantity,
-			AuraLevel:     6 - hiddenRank,
+			AuraLevel:     CalcAuraLevel(hiddenRank, "hidden-gems"),
 			BoundingBox:   item.BoundingBox,
 		})
 	}

@@ -31,14 +31,9 @@ func NewScanService(ai AIService, db *sql.DB) *ScanService {
 
 // GetRanking は画像データからAI識別→ランキング取得→結果突合を行い、ScanResultのスライスを返す。
 func (s *ScanService) GetRanking(ctx context.Context, imageData []byte) ([]ScanResult, error) {
-	productNames, err := fetchProductNames(ctx, s.db)
+	aiItems, err := recognizeProducts(ctx, s.ai, s.db, imageData)
 	if err != nil {
-		return nil, fmt.Errorf("fetchProductNames: %w", err)
-	}
-
-	aiItems, err := s.ai.Recognize(ctx, imageData, productNames)
-	if err != nil {
-		return nil, &AIError{Cause: err}
+		return nil, err
 	}
 
 	if len(aiItems) == 0 {
@@ -61,28 +56,6 @@ type rankingRow struct {
 	category      string
 	totalQuantity int
 	rank          int
-}
-
-// fetchProductNames は全商品名をDBから取得するパッケージ共通ヘルパー。
-func fetchProductNames(ctx context.Context, db *sql.DB) ([]string, error) {
-	rows, err := db.QueryContext(ctx, "SELECT name FROM products ORDER BY name")
-	if err != nil {
-		return nil, fmt.Errorf("db.QueryContext products: %w", err)
-	}
-	defer func() { _ = rows.Close() }()
-
-	var names []string
-	for rows.Next() {
-		var name string
-		if err := rows.Scan(&name); err != nil {
-			return nil, fmt.Errorf("rows.Scan: %w", err)
-		}
-		names = append(names, name)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("rows.Err: %w", err)
-	}
-	return names, nil
 }
 
 func (s *ScanService) fetchRankings(ctx context.Context) ([]rankingRow, error) {
@@ -134,7 +107,7 @@ func (s *ScanService) mergeResults(aiItems []AIItem, rankings []rankingRow) []Sc
 			Category:      r.category,
 			Rank:          r.rank,
 			TotalQuantity: r.totalQuantity,
-			AuraLevel:     6 - r.rank,
+			AuraLevel:     CalcAuraLevel(r.rank, "ranking"),
 			BoundingBox:   item.BoundingBox,
 		})
 	}

@@ -33,14 +33,9 @@ func NewTrendingService(ai AIService, db *sql.DB) *TrendingService {
 
 // GetTrendingRanking は画像データからAI識別→急上昇ランキング取得→結果突合を行い、TrendingResultのスライスを返す。
 func (s *TrendingService) GetTrendingRanking(ctx context.Context, imageData []byte) ([]TrendingResult, error) {
-	productNames, err := fetchProductNames(ctx, s.db)
+	aiItems, err := recognizeProducts(ctx, s.ai, s.db, imageData)
 	if err != nil {
-		return nil, fmt.Errorf("fetchProductNames: %w", err)
-	}
-
-	aiItems, err := s.ai.Recognize(ctx, imageData, productNames)
-	if err != nil {
-		return nil, &AIError{Cause: err}
+		return nil, err
 	}
 
 	if len(aiItems) == 0 {
@@ -159,7 +154,7 @@ func (s *TrendingService) mergeTrendingResults(aiItems []AIItem, rankings []tren
 			CurrentQuantity: r.currentQuantity,
 			PrevQuantity:    r.prevQuantity,
 			GrowthRate:      growthRate,
-			AuraLevel:       6 - r.trendingRank,
+			AuraLevel:       CalcAuraLevel(r.trendingRank, "trending"),
 			BoundingBox:     item.BoundingBox,
 		})
 	}
