@@ -48,10 +48,12 @@ func main() {
 	svc := services.NewScanService(ai, db)
 	scanHandler := handlers.NewScanHandler(svc)
 
+	productHandler := handlers.NewProductHandler(db)
+
 	r := gin.Default()
 	r.Use(middleware.SetupCORS(cfg.FrontendURL))
 
-	routes.Setup(r, scanHandler)
+	routes.Setup(r, scanHandler, productHandler)
 
 	log.Printf("Server starting on :%s", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {
