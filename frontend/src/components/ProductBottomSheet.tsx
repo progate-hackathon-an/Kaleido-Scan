@@ -8,18 +8,86 @@ type Props = {
   onClose: () => void;
 };
 
+function XIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
 export function ProductBottomSheet({ isOpen, item, croppedImageUrl, onClose }: Props) {
   const { onTouchStart, onTouchEnd } = useSwipeDown(onClose);
 
   if (!isOpen || !item) return null;
 
+  const handleShare = () => {
+    if (navigator.share) {
+      void navigator.share({ title: item.name, text: item.description });
+    }
+  };
+
   return (
-    <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-      <div aria-label="ドラッグハンドル" />
-      {croppedImageUrl && <img src={croppedImageUrl} alt={item.name} />}
-      <span>{`🏅 ${item.rank}位`}</span>
-      <h2>{item.name}</h2>
-      <p>{item.description}</p>
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 animate-[slide-up_0.3s_ease-out]"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
+      <div className="bg-sw-steel rounded-t-3xl px-6 pt-3 pb-12 flex flex-col gap-6">
+        {/* ドラッグハンドル + 閉じるボタン */}
+        <div className="relative flex justify-center pt-1">
+          <div className="w-10 h-1 bg-slate-500 rounded-full" aria-label="ドラッグハンドル" />
+          <button
+            onClick={onClose}
+            aria-label="閉じる"
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white active:scale-95 transition-all duration-100"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              aria-hidden="true"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        {/* ヘッダー: 商品名 + ランクバッジ */}
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="font-display text-xl text-white font-bold leading-tight">{item.name}</h2>
+          <span className="shrink-0 font-body text-xs text-slate-300 bg-sw-black/70 px-3 py-1.5 rounded-full border border-slate-600">
+            Rank {item.rank}
+          </span>
+        </div>
+
+        {/* 商品画像 */}
+        {croppedImageUrl && (
+          <div className="bg-sw-black rounded-2xl overflow-hidden">
+            <img src={croppedImageUrl} alt={item.name} className="w-full object-cover max-h-52" />
+          </div>
+        )}
+
+        {/* 商品説明 */}
+        <div className="bg-sw-black/50 rounded-2xl p-4">
+          <p className="font-body text-slate-300 text-sm leading-relaxed">{item.description}</p>
+        </div>
+
+        {/* 共有ボタン */}
+        <button
+          onClick={handleShare}
+          aria-label="商品を共有する"
+          className="w-full bg-white text-sw-black font-body font-medium rounded-full py-4 min-h-14 flex items-center justify-center gap-2 active:scale-95 transition-transform duration-100"
+        >
+          <XIcon />
+          共有する
+        </button>
+      </div>
     </div>
   );
 }

@@ -4,11 +4,11 @@ import { useScan } from './useScan';
 import type { ScanResponse } from '../types/scan';
 
 vi.mock('../api/scanApi', () => ({
-  postScanRanking: vi.fn(),
+  postScan: vi.fn(),
 }));
 
-import { postScanRanking } from '../api/scanApi';
-const mockPostScanRanking = vi.mocked(postScanRanking);
+import { postScan } from '../api/scanApi';
+const mockPostScan = vi.mocked(postScan);
 
 const mockResponse: ScanResponse = {
   detected_items: [
@@ -31,13 +31,13 @@ describe('useScan', () => {
   });
 
   it('TestUseScan_Success: scan成功時にresultにレスポンスが格納されること', async () => {
-    mockPostScanRanking.mockResolvedValue(mockResponse);
+    mockPostScan.mockResolvedValue(mockResponse);
 
     const { result } = renderHook(() => useScan());
     const file = new File(['dummy'], 'photo.jpg', { type: 'image/jpeg' });
 
     await act(async () => {
-      await result.current.scan(file);
+      await result.current.scan(file, 'ranking');
     });
 
     expect(result.current.result).toEqual(mockResponse);
@@ -46,7 +46,7 @@ describe('useScan', () => {
 
   it('TestUseScan_LoadingState: scan中はisLoadingがtrueになり、完了後にfalseに戻ること', async () => {
     let resolve!: (v: ScanResponse) => void;
-    mockPostScanRanking.mockReturnValue(
+    mockPostScan.mockReturnValue(
       new Promise((r) => {
         resolve = r;
       })
@@ -56,7 +56,7 @@ describe('useScan', () => {
     const file = new File(['dummy'], 'photo.jpg', { type: 'image/jpeg' });
 
     act(() => {
-      void result.current.scan(file);
+      void result.current.scan(file, 'ranking');
     });
     expect(result.current.isLoading).toBe(true);
 
@@ -67,13 +67,13 @@ describe('useScan', () => {
   });
 
   it('TestUseScan_ServerError: scan失敗時にerrorに「スキャンに失敗しました」が格納されること', async () => {
-    mockPostScanRanking.mockRejectedValue(new Error('Internal Server Error'));
+    mockPostScan.mockRejectedValue(new Error('Internal Server Error'));
 
     const { result } = renderHook(() => useScan());
     const file = new File(['dummy'], 'photo.jpg', { type: 'image/jpeg' });
 
     await act(async () => {
-      await result.current.scan(file);
+      await result.current.scan(file, 'ranking');
     });
 
     expect(result.current.error).toBe('スキャンに失敗しました');

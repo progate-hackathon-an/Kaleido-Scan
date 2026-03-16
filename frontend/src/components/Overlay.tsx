@@ -6,17 +6,7 @@ type Props = {
 
 export function Overlay({ children }: Props) {
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 100,
-      }}
-    >
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
       {children}
     </div>
   );
