@@ -192,15 +192,16 @@ func buildPrompt(productNames []string) string {
     {
       "product_name": "<対象商品リスト内の商品名のいずれか>",
       "bounding_box": {
-        "x_min": <0.0-1.0>,
-        "y_min": <0.0-1.0>,
-        "x_max": <0.0-1.0>,
-        "y_max": <0.0-1.0>
+        "x_min": <-1.5〜2.5>,
+        "y_min": <-1.5〜2.5>,
+        "x_max": <-1.5〜2.5>,
+        "y_max": <-1.5〜2.5>
       }
     }
   ]
 }`)
 	sb.WriteString("\n\nバウンディングボックスは画像全体を1×1とした相対座標で表現してください。\n")
+	sb.WriteString("商品が画像からはみ出している場合も、商品全体から推定した座標を返してください（-1.5〜2.5の範囲で指定）。\n")
 	sb.WriteString("商品が検出できない場合は items を空配列で返してください。\n")
 	sb.WriteString("対象商品リストにない商品名は絶対に返さないでください。\n")
 	return sb.String()
