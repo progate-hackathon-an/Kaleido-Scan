@@ -38,12 +38,6 @@
 - **フロントエンド**: コンポーネント・型 → `UpperCamelCase` / 変数・関数 → `camelCase` / 定数 → `CONSTANT_CASE`
 - **バックエンド（Go）**: ファイル → `lower_snake_case` / 公開 → `UpperCamelCase` / 非公開 → `lowerCamelCase`
 
-## 現在のスコープ（MVP）
-
-**実装する**: カメラ撮影・AI商品識別（5商品）・オーラ表示（5段階）・商品詳細ボトムシート・未検出エラーモーダル・PWA対応
-
-**実装しない**: X共有（Phase 3）・掘り出し物モード・急上昇モードは一切実装しないこと。`docs/requirement.md` の OUT スコープに従う。
-
 ## アーキテクチャ方針
 
 - フロントエンドは表示に徹し、ビジネスロジックはバックエンド（`services/`）に集約する
