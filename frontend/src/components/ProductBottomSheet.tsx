@@ -8,24 +8,10 @@ type Props = {
   onClose: () => void;
 };
 
-function ShareIcon() {
+function XIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="18" cy="5" r="3" />
-      <circle cx="6" cy="12" r="3" />
-      <circle cx="18" cy="19" r="3" />
-      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
     </svg>
   );
 }
@@ -48,9 +34,28 @@ export function ProductBottomSheet({ isOpen, item, croppedImageUrl, onClose }: P
       onTouchEnd={onTouchEnd}
     >
       <div className="bg-sw-steel rounded-t-3xl px-6 pt-3 pb-12 flex flex-col gap-6">
-        {/* ドラッグハンドル */}
-        <div className="flex justify-center pt-1">
+        {/* ドラッグハンドル + 閉じるボタン */}
+        <div className="relative flex justify-center pt-1">
           <div className="w-10 h-1 bg-slate-500 rounded-full" aria-label="ドラッグハンドル" />
+          <button
+            onClick={onClose}
+            aria-label="閉じる"
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white active:scale-95 transition-all duration-100"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              aria-hidden="true"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
         </div>
 
         {/* ヘッダー: 商品名 + ランクバッジ */}
@@ -79,7 +84,7 @@ export function ProductBottomSheet({ isOpen, item, croppedImageUrl, onClose }: P
           aria-label="商品を共有する"
           className="w-full bg-white text-sw-black font-body font-medium rounded-full py-4 min-h-14 flex items-center justify-center gap-2 active:scale-95 transition-transform duration-100"
         >
-          <ShareIcon />
+          <XIcon />
           共有する
         </button>
       </div>
