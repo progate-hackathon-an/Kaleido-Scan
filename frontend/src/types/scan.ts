@@ -1,3 +1,5 @@
+export type ScanMode = 'ranking' | 'hidden-gems' | 'trending';
+
 export type BoundingBox = {
   x_min: number;
   y_min: number;

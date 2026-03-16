@@ -24,7 +24,7 @@ describe('ProductBottomSheet', () => {
     expect(
       screen.getByText('味付海苔　炭火焼紅しゃけ', { normalizer: (s) => s })
     ).toBeInTheDocument();
-    expect(screen.getByText('🏅 1位')).toBeInTheDocument();
+    expect(screen.getByText('Rank 1')).toBeInTheDocument();
   });
 
   it('TestProductBottomSheet_HideOnClose: isOpen=falseで非表示になること', () => {
