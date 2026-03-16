@@ -23,7 +23,9 @@ export function ErrorModal({ isOpen, message, onClose }: Props) {
           </span>
         </div>
 
-        <p className="font-body text-slate-300 text-sm text-center leading-relaxed">{message}</p>
+        <p className="font-body text-slate-300 text-sm text-center leading-relaxed whitespace-pre-wrap break-all">
+          {message}
+        </p>
 
         <button
           onClick={onClose}

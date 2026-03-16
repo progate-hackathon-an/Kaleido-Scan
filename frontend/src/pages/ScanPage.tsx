@@ -16,9 +16,11 @@ export function ScanPage() {
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const [scanMode, setScanMode] = useState<ScanMode>('ranking');
   const imageRef = useRef<HTMLImageElement>(null);
 
   const handleCapture = (file: File, mode: ScanMode) => {
+    setScanMode(mode);
     setCapturedFile(file);
     setCapturedUrl(URL.createObjectURL(file));
     void scan(file, mode);
@@ -83,6 +85,7 @@ export function ScanPage() {
               }}
               width={imageDimensions.width}
               height={imageDimensions.height}
+              mode={scanMode}
             />
           </div>
 

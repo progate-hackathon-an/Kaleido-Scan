@@ -1,4 +1,4 @@
-import type { DetectedItem } from '../types/scan';
+import type { DetectedItem, ScanMode } from '../types/scan';
 
 export type AuraConfig = {
   color: string;
@@ -6,6 +6,7 @@ export type AuraConfig = {
   opacity: number;
 };
 
+/** 売り上げランキングモード: 順位に応じた王道カラー */
 export const AURA_LEVEL_CONFIG: Record<number, AuraConfig> = {
   5: { color: '#FFD700', radius: 1.0, opacity: 0.9 }, // 金・Lv5（1位）
   4: { color: '#4FC3F7', radius: 0.8, opacity: 0.8 }, // 青・Lv4（2位）
@@ -13,6 +14,20 @@ export const AURA_LEVEL_CONFIG: Record<number, AuraConfig> = {
   2: { color: '#CE93D8', radius: 0.4, opacity: 0.6 }, // 紫・Lv2（4位）
   1: { color: '#9E9E9E', radius: 0.2, opacity: 0.4 }, // グレー・Lv1（5位）
 };
+
+/** 掘り出し物モード: 宝石・レアリティ感のカラースキーム */
+export const HIDDEN_GEMS_AURA_CONFIG: Record<number, AuraConfig> = {
+  5: { color: '#00C851', radius: 1.0, opacity: 0.9 }, // エメラルド・Lv5
+  4: { color: '#AA00FF', radius: 0.8, opacity: 0.8 }, // アメジスト・Lv4
+  3: { color: '#2979FF', radius: 0.6, opacity: 0.7 }, // サファイア・Lv3
+  2: { color: '#FF1744', radius: 0.4, opacity: 0.6 }, // ルビー・Lv2
+  1: { color: '#FFAB00', radius: 0.2, opacity: 0.4 }, // トパーズ・Lv1
+};
+
+function getAuraConfig(auraLevel: number, mode: ScanMode): AuraConfig | undefined {
+  if (mode === 'hidden-gems') return HIDDEN_GEMS_AURA_CONFIG[auraLevel];
+  return AURA_LEVEL_CONFIG[auraLevel];
+}
 
 function hexToRgba(hex: string, opacity: number): string {
   const r = parseInt(hex.slice(1, 3), 16);
@@ -25,9 +40,10 @@ export function renderAura(
   ctx: CanvasRenderingContext2D,
   item: DetectedItem,
   canvasWidth: number,
-  canvasHeight: number
+  canvasHeight: number,
+  mode: ScanMode = 'ranking'
 ): void {
-  const config = AURA_LEVEL_CONFIG[item.aura_level];
+  const config = getAuraConfig(item.aura_level, mode);
   if (!config) return;
 
   const { x_min, y_min, x_max, y_max } = item.bounding_box;
