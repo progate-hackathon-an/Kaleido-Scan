@@ -133,7 +133,7 @@ Kaleid-Scan/
 │   └── package.json
 ├── db/
 │   └── migrations/          # マイグレーションファイル
-├── docs/                    # 設計ドキュメント一式
+├── docs/                    # 設計ドキュメント一式(サンプル画像もここにある)
 ├── docker-compose.yml
 ├── .env.example
 ├── CONTRIBUTING.md
