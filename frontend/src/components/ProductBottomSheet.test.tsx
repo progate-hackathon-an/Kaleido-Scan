@@ -6,7 +6,7 @@ import type { DetectedItem } from '../types/scan';
 const mockItem: DetectedItem = {
   product_id: '11111111-1111-1111-1111-111111111111',
   name: '味付海苔　炭火焼紅しゃけ',
-  description: '炭火で香ばしく焼き上げた紅しゃけを中具にした手巻おにぎり。',
+  description: '炭火で香ばしく焼き上げた紅しゃけを中の具にした手巻おにぎり。',
   category: 'food',
   rank: 1,
   total_quantity: 12500,

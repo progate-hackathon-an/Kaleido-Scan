@@ -167,8 +167,8 @@ func TestScanHiddenGems_Success(t *testing.T) {
 		results: []services.HiddenGemResult{
 			{
 				ProductID:     "55555555-5555-5555-5555-555555555555",
-				Name:          "セブンプレミアム チョコっとマシュマロ",
-				Description:   "ふんわり食感のマシュマロをチョコレートでつつみました。",
+				Name:          "セブンプレミアム アーモンドボール",
+				Description:   "アーモンドをホワイトチョコレートでコーティングしたひとくちサイズのスナック。香ばしいアーモンドとチョコレートの絶妙な組み合わせ。",
 				Category:      "snack",
 				SalesRank:     5,
 				HiddenRank:    1,
