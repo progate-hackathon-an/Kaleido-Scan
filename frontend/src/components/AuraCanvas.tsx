@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import type { DetectedItem } from '../types/scan';
+import type { DetectedItem, ScanMode } from '../types/scan';
 import { renderAura } from '../utils/auraRenderer';
 
 type Props = {
@@ -7,9 +7,10 @@ type Props = {
   onItemSelect: (item: DetectedItem) => void;
   width?: number;
   height?: number;
+  mode?: ScanMode;
 };
 
-export function AuraCanvas({ items, onItemSelect, width, height }: Props) {
+export function AuraCanvas({ items, onItemSelect, width, height, mode = 'ranking' }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -21,8 +22,8 @@ export function AuraCanvas({ items, onItemSelect, width, height }: Props) {
     if (!ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    items.forEach((item) => renderAura(ctx, item, canvas.width, canvas.height));
-  }, [items, width, height]);
+    items.forEach((item) => renderAura(ctx, item, canvas.width, canvas.height, mode));
+  }, [items, width, height, mode]);
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
