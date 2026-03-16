@@ -25,7 +25,10 @@ func seedProducts(db *sql.DB) error {
         ('33333333-3333-3333-3333-333333333333', 'ブラックコーヒー 500ml', 'ブラックコーヒー本来の飲みごたえと香り豊かで飲みやすい味わいを両立した無糖ブラックコーヒー。', 'drink'),
         ('44444444-4444-4444-4444-444444444444', 'オレンジ 500ml', '大人も子供もゴクゴク飲めるすっきりした味わい。果実の味を楽しめるオレンジの低果汁飲料。', 'drink'),
         ('55555555-5555-5555-5555-555555555555', 'セブンプレミアム アーモンドボール', 'アーモンドをホワイトチョコレートでコーティングしたひとくちサイズのスナック。香ばしいアーモンドとチョコレートの絶妙な組み合わせ。', 'snack')
-    ON CONFLICT (name) DO NOTHING`
+    ON CONFLICT (id) DO UPDATE SET
+        name        = EXCLUDED.name,
+        description = EXCLUDED.description,
+        category    = EXCLUDED.category`
 
 	if _, err := db.Exec(query); err != nil {
 		return err
