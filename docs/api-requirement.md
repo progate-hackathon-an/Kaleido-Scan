@@ -55,16 +55,17 @@ Gemini はプロンプト内に JSON 形式の指示を含める方式。
     {
       "product_name": "<対象商品リスト内の商品名のいずれか>",
       "bounding_box": {
-        "x_min": <0.0-1.0>,
-        "y_min": <0.0-1.0>,
-        "x_max": <0.0-1.0>,
-        "y_max": <0.0-1.0>
+        "x_min": <number>,
+        "y_min": <number>,
+        "x_max": <number>,
+        "y_max": <number>
       }
     }
   ]
 }
 
 バウンディングボックスは画像全体を1×1とした相対座標で表現してください。
+商品が画像からはみ出している場合も、商品全体から推定した座標を返してください（0.0〜1.0の範囲外も許容）。
 商品が検出できない場合は items を空配列で返してください。
 対象商品リストにない商品名は絶対に返さないでください。
 ```
@@ -92,10 +93,10 @@ Bedrock は API パラメータとして JSON Schema を渡すことで出力形
           "bounding_box": {
             "type": "object",
             "properties": {
-              "x_min": { "type": "number", "minimum": 0, "maximum": 1 },
-              "y_min": { "type": "number", "minimum": 0, "maximum": 1 },
-              "x_max": { "type": "number", "minimum": 0, "maximum": 1 },
-              "y_max": { "type": "number", "minimum": 0, "maximum": 1 }
+              "x_min": { "type": "number" },
+              "y_min": { "type": "number" },
+              "x_max": { "type": "number" },
+              "y_max": { "type": "number" }
             },
             "required": ["x_min", "y_min", "x_max", "y_max"]
           }
