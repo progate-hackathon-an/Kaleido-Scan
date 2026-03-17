@@ -94,10 +94,10 @@ export function ProductBottomSheet({ isOpen, item, croppedImageUrl, onClose }: P
       >
         <div
           ref={sheetRef}
-          className="bg-sw-steel rounded-t-3xl px-6 pt-3 pb-12 flex flex-col gap-6"
+          className="bg-sw-steel rounded-t-3xl px-6 pt-5 pb-12 flex flex-col gap-6"
         >
           {/* Drag handle + close button */}
-          <div className="relative flex justify-center pt-1">
+          <div className="relative flex justify-center items-center py-2">
             {/* Handle bar — indicates swipe-to-dismiss */}
             <div
               className="w-10 h-1.5 rounded-full bg-slate-500"
@@ -106,11 +106,11 @@ export function ProductBottomSheet({ isOpen, item, croppedImageUrl, onClose }: P
             <button
               onClick={onClose}
               aria-label="閉じる"
-              className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white active:scale-95 transition-all duration-100"
+              className="absolute right-0 w-11 h-11 mt-0.5 flex items-center justify-center rounded-full bg-white/10 text-slate-300 hover:bg-white/20 hover:text-white active:scale-95 transition-all duration-100"
             >
               <svg
-                width="16"
-                height="16"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
