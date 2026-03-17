@@ -92,10 +92,24 @@ export function ScanPage() {
           {/* 戻るボタン */}
           <button
             onClick={handleBack}
-            aria-label="カメラに戻る"
-            className="absolute bottom-8 left-6 w-12 h-12 rounded-full bg-sw-steel/80 backdrop-blur-sm flex items-center justify-center text-white text-lg active:scale-95 transition-transform duration-100"
+            aria-label="もう一度撮る"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 px-6 min-h-13 rounded-full bg-sw-black/70 backdrop-blur-sm border border-sw-orange text-white font-body font-medium text-sm shadow-[0_0_20px_rgba(255,145,0,0.35)] active:scale-95 transition-transform duration-100 whitespace-nowrap"
           >
-            ←
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+            もう一度撮る
           </button>
         </div>
       )}
