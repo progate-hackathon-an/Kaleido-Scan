@@ -6,6 +6,7 @@ const AuraEffect = lazy(() =>
 );
 import { CameraView } from '../components/CameraView';
 import { AuraCanvas } from '../components/AuraCanvas';
+import { TapHints } from '../components/TapHints';
 import { ProductBottomSheet } from '../components/ProductBottomSheet';
 import { ErrorModal } from '../components/ErrorModal';
 import { LoadingOverlay } from '../components/LoadingOverlay';
@@ -102,6 +103,9 @@ export function ScanPage() {
               height={imageDimensions.height}
             />
           </div>
+
+          {/* タップ誘導アイコン */}
+          <TapHints items={result.detected_items} />
 
           {/* 戻るボタン */}
           <button
