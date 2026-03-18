@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { CameraView } from '../components/CameraView';
 import { AuraCanvas } from '../components/AuraCanvas';
 import { ProductBottomSheet } from '../components/ProductBottomSheet';
@@ -17,7 +17,8 @@ export function ScanPage() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
   const [scanMode, setScanMode] = useState<ScanMode>('ranking');
-  const imageRef = useRef<HTMLImageElement>(null);
+  const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null);
+  const [auraCanvas, setAuraCanvas] = useState<HTMLCanvasElement | null>(null);
 
   const handleCapture = (file: File, mode: ScanMode) => {
     setScanMode(mode);
@@ -46,6 +47,7 @@ export function ScanPage() {
     if (capturedUrl) URL.revokeObjectURL(capturedUrl);
     setCapturedFile(null);
     setCapturedUrl(null);
+    setBackgroundImage(null);
   };
 
   const handleErrorClose = () => {
@@ -63,22 +65,19 @@ export function ScanPage() {
         <div className="relative w-full h-full">
           {capturedUrl && (
             <img
-              ref={imageRef}
+              ref={setBackgroundImage}
               src={capturedUrl}
               alt="撮影画像"
-              onLoad={() => {
-                if (imageRef.current) {
-                  setImageDimensions({
-                    width: imageRef.current.clientWidth,
-                    height: imageRef.current.clientHeight,
-                  });
-                }
+              onLoad={(e) => {
+                const img = e.currentTarget;
+                setImageDimensions({ width: img.clientWidth, height: img.clientHeight });
               }}
               className="absolute inset-0 w-full h-full object-cover"
             />
           )}
           <div className="absolute inset-0">
             <AuraCanvas
+              ref={setAuraCanvas}
               items={result.detected_items}
               onItemSelect={(item) => {
                 void handleItemSelect(item);
@@ -125,6 +124,9 @@ export function ScanPage() {
         item={selectedItem}
         croppedImageUrl={croppedImageUrl}
         onClose={handleSheetClose}
+        canvas={auraCanvas}
+        items={result?.detected_items ?? []}
+        backgroundImage={backgroundImage}
       />
     </div>
   );

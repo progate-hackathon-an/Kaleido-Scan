@@ -1,23 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import type { DetectedItem } from '../types/scan';
 import { useSwipeDown } from '../hooks/useSwipeDown';
+import { ShareButton } from './ShareButton';
 
 type Props = {
   isOpen: boolean;
   item: DetectedItem | null;
   croppedImageUrl: string | null;
   onClose: () => void;
+  canvas?: HTMLCanvasElement | null;
+  items?: DetectedItem[];
+  backgroundImage?: HTMLImageElement | null;
 };
 
-function XIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  );
-}
-
-export function ProductBottomSheet({ isOpen, item, croppedImageUrl, onClose }: Props) {
+export function ProductBottomSheet({
+  isOpen,
+  item,
+  croppedImageUrl,
+  onClose,
+  canvas,
+  items = [],
+  backgroundImage = null,
+}: Props) {
   const sheetRef = useRef<HTMLDivElement>(null);
 
   // シートの高さを state で管理し、レンダー中に ref を直接読まないようにする
@@ -54,12 +58,6 @@ export function ProductBottomSheet({ isOpen, item, croppedImageUrl, onClose }: P
 
   // Backdrop fades out proportionally as user drags (relative to sheet height)
   const backdropOpacity = Math.max(0, 0.6 * (1 - dragY / sheetHeight));
-
-  const handleShare = () => {
-    if (navigator.share) {
-      void navigator.share({ title: item.name, text: item.description });
-    }
-  };
 
   return (
     <>
@@ -145,14 +143,12 @@ export function ProductBottomSheet({ isOpen, item, croppedImageUrl, onClose }: P
           </div>
 
           {/* Share button */}
-          <button
-            onClick={handleShare}
-            aria-label="商品を共有する"
-            className="w-full bg-white text-sw-black font-body font-medium rounded-full py-4 min-h-14 flex items-center justify-center gap-2 active:scale-95 transition-transform duration-100"
-          >
-            <XIcon />
-            共有する
-          </button>
+          <ShareButton
+            canvas={canvas ?? null}
+            items={items}
+            topItem={item}
+            backgroundImage={backgroundImage}
+          />
         </div>
       </div>
     </>

@@ -427,17 +427,17 @@ Canvas APIでオーラ合成画像を生成し、Web Share API（`navigator.shar
 
 **🔴 RED**
 
-- [ ] `frontend/src/utils/shareImage.test.ts` に `TestGenerateShareImage_ReturnsFile` テスト作成（Canvasにオーラ合成した結果が `File` オブジェクトで返ること）
-- [ ] `frontend/src/hooks/useShare.test.ts` に `TestUseShare_CallsNavigatorShare` テスト作成（`navigator.share` がモックで呼ばれること・`files` と `text` が渡されること）
-- [ ] `frontend/src/hooks/useShare.test.ts` に `TestUseShare_UnsupportedBrowser` テスト作成（`navigator.share` が未定義の場合にエラー状態になること）
+- [x] `frontend/src/utils/shareImage.test.ts` に `TestGenerateShareImage_ReturnsFile` テスト作成（Canvasにオーラ合成した結果が `File` オブジェクトで返ること）
+- [x] `frontend/src/hooks/useShare.test.ts` に `TestUseShare_CallsNavigatorShare` テスト作成（`navigator.share` がモックで呼ばれること・`files` と `text` が渡されること）
+- [x] `frontend/src/hooks/useShare.test.ts` に `TestUseShare_UnsupportedBrowser` テスト作成（`navigator.share` が未定義の場合にエラー状態になること）
 
 **🟢 GREEN**
 
-- [ ] `frontend/src/utils/shareImage.ts` に `generateShareImage(canvas: HTMLCanvasElement, items: DetectedItem[]): Promise<File>` 実装（Canvas APIでオーラ合成画像を生成し `image/png` の `File` を返す）
-- [ ] `frontend/src/hooks/useShare.ts` に `useShare(): { share: (canvas, items, topItem) => Promise<void>, isSupported: boolean, error: string | null }` 実装（`navigator.share({ files: [imageFile], text: "KaleidScanで〇〇を発見しました！ #KaleidScan" })`）
-- [ ] `frontend/src/components/ShareButton.tsx` に `ShareButton` コンポーネント実装（props: `canvas: HTMLCanvasElement | null`, `items: DetectedItem[]`。`isSupported=false` 時は非表示）
-- [ ] `frontend/src/components/ProductBottomSheet.tsx` に `ShareButton` を追加（Issue #10で作成したボトムシートの下部に配置）
+- [x] `frontend/src/utils/shareImage.ts` に `generateShareImage(canvas: HTMLCanvasElement, items: DetectedItem[]): Promise<File>` 実装（Canvas APIでオーラ合成画像を生成し `image/png` の `File` を返す）
+- [x] `frontend/src/hooks/useShare.ts` に `useShare(): { share: (canvas, items, topItem) => Promise<void>, isSupported: boolean, error: string | null }` 実装（`navigator.share({ files: [imageFile], text: "KaleidScanで〇〇を発見しました！ #KaleidScan" })`）
+- [x] `frontend/src/components/ShareButton.tsx` に `ShareButton` コンポーネント実装（props: `canvas: HTMLCanvasElement | null`, `items: DetectedItem[]`。`isSupported=false` 時は非表示）
+- [x] `frontend/src/components/ProductBottomSheet.tsx` に `ShareButton` を追加（Issue #10で作成したボトムシートの下部に配置）
 
 **🔵 REFACTOR**
 
-- [ ] 投稿文言をテキスト定数として `constants/share.ts` に切り出し
+- [x] 投稿文言をテキスト定数として `constants/share.ts` に切り出し
