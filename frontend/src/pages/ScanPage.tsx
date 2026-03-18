@@ -1,4 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, lazy, Suspense } from 'react';
+
+// AuraEffect は Canvas ベースのため重くはないが、スキャン成功後にのみ必要。遅延読み込みで初回起動を守る
+const AuraEffect = lazy(() =>
+  import('../components/AuraEffect').then((m) => ({ default: m.AuraEffect }))
+);
 import { CameraView } from '../components/CameraView';
 import { AuraCanvas } from '../components/AuraCanvas';
 import { ProductBottomSheet } from '../components/ProductBottomSheet';
@@ -6,10 +11,15 @@ import { ErrorModal } from '../components/ErrorModal';
 import { LoadingOverlay } from '../components/LoadingOverlay';
 import { useScan } from '../hooks/useScan';
 import { cropImage } from '../utils/cropImage';
+import { MOCK_SCAN_RESULT } from '../fixtures/mockScanResult';
 import type { DetectedItem, ScanMode } from '../types/scan';
 
+// ?demo=1 が付いていれば全5レベルのモックデータで起動する（デザイン確認用）
+const IS_DEMO = new URLSearchParams(window.location.search).get('demo') === '1';
+
 export function ScanPage() {
-  const { scan, result, isLoading, error, reset } = useScan();
+  const { scan, result: scanResult, isLoading, error, reset } = useScan();
+  const result = IS_DEMO ? MOCK_SCAN_RESULT : scanResult;
   const [capturedFile, setCapturedFile] = useState<File | null>(null);
   const [capturedUrl, setCapturedUrl] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<DetectedItem | null>(null);
@@ -77,6 +87,12 @@ export function ScanPage() {
               className="absolute inset-0 w-full h-full object-cover"
             />
           )}
+          {/* Canvas オーラ（遅延読み込み / pointer-events: none） */}
+          <Suspense fallback={null}>
+            <AuraEffect items={result.detected_items} mode={scanMode} imageUrl={capturedUrl} />
+          </Suspense>
+
+          {/* クリック検知専用Canvas（視覚描画は AuraEffect が担当） */}
           <div className="absolute inset-0">
             <AuraCanvas
               items={result.detected_items}
@@ -85,7 +101,6 @@ export function ScanPage() {
               }}
               width={imageDimensions.width}
               height={imageDimensions.height}
-              mode={scanMode}
             />
           </div>
 
