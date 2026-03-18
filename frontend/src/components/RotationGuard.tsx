@@ -4,19 +4,48 @@ type LandscapeType = 'landscape-primary' | 'landscape-secondary';
 
 function useLandscapeType(): LandscapeType | null {
   const getLandscapeType = (): LandscapeType | null => {
-    const type = screen.orientation.type;
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
+    // スマホなどの coarse pointer デバイスのみを対象にする
+    if (!window.matchMedia || !window.matchMedia('(pointer: coarse)').matches) {
+      return null;
+    }
+
+    const orientation = window.screen?.orientation;
+    const type = orientation?.type;
+
     if (type === 'landscape-primary' || type === 'landscape-secondary') {
       return type;
     }
+
     return null;
   };
 
   const [landscapeType, setLandscapeType] = useState<LandscapeType | null>(getLandscapeType);
 
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    // デスクトップなどではリスナーを登録しない
+    if (!window.matchMedia || !window.matchMedia('(pointer: coarse)').matches) {
+      return;
+    }
+
+    const orientation = window.screen?.orientation;
+    if (!orientation || !orientation.addEventListener) {
+      return;
+    }
+
     const handler = () => setLandscapeType(getLandscapeType());
-    screen.orientation.addEventListener('change', handler);
-    return () => screen.orientation.removeEventListener('change', handler);
+    orientation.addEventListener('change', handler);
+
+    return () => {
+      orientation.removeEventListener('change', handler);
+    };
   }, []);
 
   return landscapeType;
