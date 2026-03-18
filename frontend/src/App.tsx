@@ -1,7 +1,13 @@
+import { RotationGuard } from './components/RotationGuard';
 import { ScanPage } from './pages/ScanPage';
 
 function App() {
-  return <ScanPage />;
+  return (
+    <>
+      <RotationGuard />
+      <ScanPage />
+    </>
+  );
 }
 
 export default App;
