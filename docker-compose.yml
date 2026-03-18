@@ -30,6 +30,7 @@ services:
       - DB_USER=${DB_USER:-kaleid}
       - DB_PASSWORD=${DB_PASSWORD:-kaleid}
       - DB_NAME=${DB_NAME:-kaleid_scan}
+      - USE_STUB=${USE_STUB:-false}
     depends_on:
       db:
         condition: service_healthy
