@@ -7,6 +7,9 @@ function supportsOrientationAPI(): boolean {
 }
 
 function getLandscapeType(): LandscapeType | null {
+  // タッチデバイス以外（PC等）は対象外
+  if (!window.matchMedia?.('(pointer: coarse)').matches) return null;
+
   // Screen Orientation API 対応環境
   if (supportsOrientationAPI()) {
     const type = screen.orientation.type;

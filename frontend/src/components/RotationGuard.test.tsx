@@ -33,6 +33,7 @@ describe('RotationGuard', () => {
   });
 
   it('landscape-primary のときオーバーレイが表示されること', () => {
+    mockMatchMedia((query) => query === '(pointer: coarse)');
     mockOrientation('landscape-primary');
     render(<RotationGuard />);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -40,13 +41,22 @@ describe('RotationGuard', () => {
   });
 
   it('landscape-secondary のときオーバーレイが表示されること', () => {
+    mockMatchMedia((query) => query === '(pointer: coarse)');
     mockOrientation('landscape-secondary');
     render(<RotationGuard />);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
   it('portrait-primary のときオーバーレイが非表示になること', () => {
+    mockMatchMedia((query) => query === '(pointer: coarse)');
     mockOrientation('portrait-primary');
+    render(<RotationGuard />);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('PC環境（pointer: fine）ではオーバーレイが表示されないこと', () => {
+    mockMatchMedia(() => false); // (pointer: coarse) が false
+    mockOrientation('landscape-primary');
     render(<RotationGuard />);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
