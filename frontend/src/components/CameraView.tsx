@@ -13,6 +13,8 @@ const TABS: Tab[] = [
   { label: '急上昇', mode: 'trending' },
 ];
 
+const TAB_COUNT = TABS.length;
+
 type Props = {
   onCapture: (file: File, mode: ScanMode) => void;
   isScanning?: boolean;
@@ -89,7 +91,7 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
               className="absolute top-1 bottom-1 rounded-full bg-white transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
               style={{
                 left: '4px',
-                width: 'calc((100% - 16px) / 3)',
+                width: `calc((100% - 16px) / ${TAB_COUNT})`,
                 transform: `translateX(calc(${activeModeIndex} * (100% + 4px)))`,
               }}
             />
