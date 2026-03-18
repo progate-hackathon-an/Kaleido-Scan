@@ -15,7 +15,7 @@ describe('AURA_LEVEL_CONFIG', () => {
     const minRadius = Math.min(...Object.values(AURA_LEVEL_CONFIG).map((c) => c.radius));
 
     expect(config).toBeDefined();
-    expect(config.color).toBe('#757575');
+    expect(config.color).toBe('#CFD8DC');
     expect(config.radius).toBe(minRadius);
   });
 });
