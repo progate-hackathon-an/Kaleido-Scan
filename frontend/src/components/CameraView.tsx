@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 import { useCamera } from '../hooks/useCamera';
+import { useSwipeHorizontal } from '../hooks/useSwipeHorizontal';
 import { ShutterButton } from './ShutterButton';
 import type { ScanMode } from '../types/scan';
 
@@ -11,6 +12,8 @@ const TABS: Tab[] = [
   { label: '売り上げ', mode: 'ranking' },
   { label: '急上昇', mode: 'trending' },
 ];
+
+const TAB_COUNT = TABS.length;
 
 type Props = {
   onCapture: (file: File, mode: ScanMode) => void;
@@ -27,13 +30,34 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const activeModeIndex = TABS.findIndex((t) => t.mode === activeMode);
+
+  const handleSwipeLeft = useCallback(() => {
+    const next = TABS[activeModeIndex + 1];
+    if (next) setActiveMode(next.mode);
+  }, [activeModeIndex]);
+
+  const handleSwipeRight = useCallback(() => {
+    const prev = TABS[activeModeIndex - 1];
+    if (prev) setActiveMode(prev.mode);
+  }, [activeModeIndex]);
+
+  const { onTouchStart, onTouchEnd } = useSwipeHorizontal({
+    onSwipeLeft: handleSwipeLeft,
+    onSwipeRight: handleSwipeRight,
+  });
+
   const handleShutter = () => {
     const file = capturePhoto();
     if (file) onCapture(file, activeMode);
   };
 
   return (
-    <div className="relative w-full h-dvh overflow-hidden bg-sw-black">
+    <div
+      className="relative w-full h-dvh overflow-hidden bg-sw-black"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
       {/* カメラ映像 */}
       <video
         ref={videoRef}
@@ -60,15 +84,25 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
       >
         {/* タブセレクター */}
         <div className="w-full flex justify-center">
-          <div className="flex items-center bg-sw-steel/80 backdrop-blur-sm rounded-full p-1 gap-1 w-[min(88vw,22rem)]">
+          <div className="relative flex items-center bg-sw-steel/80 backdrop-blur-sm rounded-full p-1 gap-1 w-[min(88vw,22rem)]">
+            {/* スライドするアクティブピル */}
+            <div
+              aria-hidden="true"
+              className="absolute top-1 bottom-1 rounded-full bg-white transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+              style={{
+                left: '4px',
+                width: `calc((100% - 16px) / ${TAB_COUNT})`,
+                transform: `translateX(calc(${activeModeIndex} * (100% + 4px)))`,
+              }}
+            />
             {TABS.map(({ label, mode }) => (
               <button
                 key={mode}
                 onClick={() => setActiveMode(mode)}
                 className={clsx(
-                  'flex-1 py-2 rounded-full font-body font-medium text-sm text-center transition-all duration-200 min-h-11',
+                  'relative z-10 flex-1 py-2 rounded-full font-body font-medium text-sm text-center min-h-11 transition-colors duration-200',
                   activeMode === mode
-                    ? 'bg-white text-sw-black'
+                    ? 'text-sw-black'
                     : 'text-slate-300 hover:text-white active:scale-95'
                 )}
               >
