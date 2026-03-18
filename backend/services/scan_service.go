@@ -29,20 +29,21 @@ func NewScanService(ai AIService, db *sql.DB) *ScanService {
 	return &ScanService{ai: ai, db: db}
 }
 
-// GetRanking は画像データからAI識別→ランキング取得→結果突合を行い、ScanResultのスライスを返す。
+// GetRanking は画像データからランキング取得→AI識別→結果突合を行い、ScanResultのスライスを返す。
+// DBクエリを1回に削減するため、ランキング取得を先に行い商品名をAIに渡す。
 func (s *ScanService) GetRanking(ctx context.Context, imageData []byte) ([]ScanResult, error) {
-	aiItems, err := recognizeProducts(ctx, s.ai, s.db, imageData)
+	rankings, err := fetchSalesRankings(ctx, s.db)
+	if err != nil {
+		return nil, fmt.Errorf("fetchSalesRankings: %w", err)
+	}
+
+	aiItems, err := recognizeProducts(ctx, s.ai, imageData, namesFromRankingRows(rankings))
 	if err != nil {
 		return nil, err
 	}
 
 	if len(aiItems) == 0 {
 		return []ScanResult{}, nil
-	}
-
-	rankings, err := fetchSalesRankings(ctx, s.db)
-	if err != nil {
-		return nil, fmt.Errorf("fetchSalesRankings: %w", err)
 	}
 
 	return s.mergeResults(aiItems, rankings), nil

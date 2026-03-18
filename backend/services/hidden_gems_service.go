@@ -30,21 +30,22 @@ func NewHiddenGemsService(ai AIService, db *sql.DB) *HiddenGemsService {
 	return &HiddenGemsService{ai: ai, db: db}
 }
 
-// GetHiddenGemsRanking は画像データからAI識別→累計売上ランキング取得→逆順オーラ付与を行い、HiddenGemResultのスライスを返す。
+// GetHiddenGemsRanking は画像データからランキング取得→AI識別→逆順オーラ付与を行い、HiddenGemResultのスライスを返す。
 // 売上下位商品ほど hidden_rank が低く（最下位=1）、aura_level が強くなる。
+// DBクエリを1回に削減するため、ランキング取得を先に行い商品名をAIに渡す。
 func (s *HiddenGemsService) GetHiddenGemsRanking(ctx context.Context, imageData []byte) ([]HiddenGemResult, error) {
-	aiItems, err := recognizeProducts(ctx, s.ai, s.db, imageData)
+	rankings, err := fetchSalesRankings(ctx, s.db)
+	if err != nil {
+		return nil, fmt.Errorf("fetchSalesRankings: %w", err)
+	}
+
+	aiItems, err := recognizeProducts(ctx, s.ai, imageData, namesFromRankingRows(rankings))
 	if err != nil {
 		return nil, err
 	}
 
 	if len(aiItems) == 0 {
 		return []HiddenGemResult{}, nil
-	}
-
-	rankings, err := fetchSalesRankings(ctx, s.db)
-	if err != nil {
-		return nil, fmt.Errorf("fetchSalesRankings: %w", err)
 	}
 
 	return s.mergeHiddenGemsResults(aiItems, rankings), nil
