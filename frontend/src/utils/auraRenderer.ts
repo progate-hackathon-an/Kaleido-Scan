@@ -107,8 +107,7 @@ export function renderFlameAura(
   const noiseAmp = baseRadius * 0.3;
   const upwardBias = baseRadius * 0.5;
 
-  // ── 瞬き: 60fps で更新（軽量）──────────────────────────────
-  const flicker = 0.72 + 0.28 * Math.sin(time * 3.14159 + item.aura_level * 1.618);
+  const flicker = 1.0;
 
   // ── 炎の輪郭点: ノイズ計算を ~12fps に間引いてCPU負荷を削減 ──
   // 形状更新は低頻度でも透明度アニメで十分なめらかに見える
@@ -123,13 +122,14 @@ export function renderFlameAura(
     return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
   });
 
-  // ── Pass 1: 外側のぼんやりした光（大きな円 × 放射グラデーション）──
-  // ctx.filter を使わずに「広がり感」を放射グラデーションで表現する
+  // ── Pass 1: ハロー光（中心透明 → 商品輪郭付近でピーク → 外側へフェード）──
+  // 商品中心を透明に保ち、輪郭の外側に向けて光が広がる後光表現
   ctx.save();
-  ctx.globalAlpha = 0.3 * flicker * config.opacity;
-  const outerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 2.0);
-  outerGrad.addColorStop(0.0, hexToRgba(config.color, 1.0));
-  outerGrad.addColorStop(0.4, hexToRgba(config.flameColor, 0.5));
+  ctx.globalAlpha = 0.4 * flicker * config.opacity;
+  const outerGrad = ctx.createRadialGradient(cx, cy, bboxR * 0.7, cx, cy, baseRadius * 2.0);
+  outerGrad.addColorStop(0.0, hexToRgba(config.color, 0));
+  outerGrad.addColorStop(0.2, hexToRgba(config.color, 0.6));
+  outerGrad.addColorStop(0.6, hexToRgba(config.flameColor, 0.3));
   outerGrad.addColorStop(1.0, hexToRgba(config.flameColor, 0));
   ctx.fillStyle = outerGrad;
   ctx.beginPath();
@@ -137,13 +137,13 @@ export function renderFlameAura(
   ctx.fill();
   ctx.restore();
 
-  // ── Pass 2: 炎の輪郭パス（ノイズ変形 + 放射グラデーション）──
+  // ── Pass 2: 炎の輪郭パス（中心透明 → 輪郭リングで発光）──
   ctx.save();
   ctx.globalAlpha = flicker * config.opacity;
   drawFlameOutline(ctx, pts, cx, cy, 1.0);
-  const flameGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 1.55);
-  flameGrad.addColorStop(0.0, 'rgba(255, 255, 255, 1.0)');
-  flameGrad.addColorStop(0.18, hexToRgba(config.color, 1.0));
+  const flameGrad = ctx.createRadialGradient(cx, cy, bboxR * 0.6, cx, cy, baseRadius * 1.55);
+  flameGrad.addColorStop(0.0, hexToRgba(config.color, 0));
+  flameGrad.addColorStop(0.15, hexToRgba(config.color, 1.0));
   flameGrad.addColorStop(0.55, hexToRgba(config.flameColor, 0.75));
   flameGrad.addColorStop(1.0, hexToRgba(config.flameColor, 0));
   ctx.fillStyle = flameGrad;
@@ -154,20 +154,20 @@ export function renderFlameAura(
 /** 売り上げランキングモード: 順位に応じた王道カラー */
 export const AURA_LEVEL_CONFIG: Record<number, AuraConfig> = {
   // color: オーラコア色 / flameColor: 炎外縁色
-  5: { color: '#FFD700', flameColor: '#FF4500', radius: 1.0, opacity: 1.0 }, // 黄金の炎・Lv5（1位）
-  4: { color: '#0288D1', flameColor: '#0050FF', radius: 0.8, opacity: 1.0 }, // 蒼い電撃炎・Lv4（2位）
-  3: { color: '#2E7D32', flameColor: '#1B5E20', radius: 0.6, opacity: 1.0 }, // 自然の炎・Lv3（3位）
-  2: { color: '#AB47BC', flameColor: '#6A1B9A', radius: 0.4, opacity: 1.0 }, // 神秘の炎・Lv2（4位）
-  1: { color: '#757575', flameColor: '#212121', radius: 0.2, opacity: 1.0 }, // 煙・余燼・Lv1（5位）
+  5: { color: '#FFD700', flameColor: '#FF6D00', radius: 1.0, opacity: 1.0 }, // 黄金の炎・Lv5（1位）
+  4: { color: '#00E5FF', flameColor: '#0091EA', radius: 0.8, opacity: 1.0 }, // 電撃シアン・Lv4（2位）
+  3: { color: '#76FF03', flameColor: '#00C853', radius: 0.6, opacity: 1.0 }, // ネオングリーン・Lv3（3位）
+  2: { color: '#FF4081', flameColor: '#AA00FF', radius: 0.4, opacity: 1.0 }, // マゼンタ・Lv2（4位）
+  1: { color: '#CFD8DC', flameColor: '#607D8B', radius: 0.2, opacity: 1.0 }, // シルバー・Lv1（5位）
 };
 
 /** 掘り出し物モード: 宝石・レアリティ感のカラースキーム */
 export const HIDDEN_GEMS_AURA_CONFIG: Record<number, AuraConfig> = {
-  5: { color: '#00C851', flameColor: '#004D40', radius: 1.0, opacity: 1.0 }, // エメラルド・Lv5
-  4: { color: '#AA00FF', flameColor: '#1A0077', radius: 0.8, opacity: 1.0 }, // アメジスト・Lv4
-  3: { color: '#2979FF', flameColor: '#0D1A6E', radius: 0.6, opacity: 1.0 }, // サファイア・Lv3
-  2: { color: '#FF1744', flameColor: '#7F0000', radius: 0.4, opacity: 1.0 }, // ルビー・Lv2
-  1: { color: '#FFAB00', flameColor: '#E65100', radius: 0.2, opacity: 1.0 }, // トパーズ・Lv1
+  5: { color: '#00E676', flameColor: '#00BFA5', radius: 1.0, opacity: 1.0 }, // エメラルド・Lv5
+  4: { color: '#D500F9', flameColor: '#6200EA', radius: 0.8, opacity: 1.0 }, // アメジスト・Lv4
+  3: { color: '#2979FF', flameColor: '#304FFE', radius: 0.6, opacity: 1.0 }, // サファイア・Lv3
+  2: { color: '#FF1744', flameColor: '#D50000', radius: 0.4, opacity: 1.0 }, // ルビー・Lv2
+  1: { color: '#FFD740', flameColor: '#FF6D00', radius: 0.2, opacity: 1.0 }, // トパーズ・Lv1
 };
 
 export function getAuraConfig(auraLevel: number, mode: ScanMode): AuraConfig | undefined {
