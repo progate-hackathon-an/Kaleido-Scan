@@ -149,12 +149,12 @@ infra/
 └── lib/
     ├── network-stack.ts      # VPC・サブネット・Security Group
     ├── database-stack.ts     # Aurora PostgreSQL
-    ├── lambda-stack.ts       # Lambda + API Gateway + IAM
-    └── frontend-stack.ts     # Amplify Hosting
+    └── lambda-stack.ts       # Lambda + API Gateway + IAM
 ```
 
 `network-stack` → `database-stack` → `lambda-stack` の順に依存する。
-`frontend-stack` は独立して並列デプロイ可能。
+
+> **Amplify は CDK で管理しない**: Amplify の GitHub 連携がそのまま CI/CD として機能するため、CDK で管理する必要はない。コンソールで一度 GitHub リポジトリを接続すれば、push のたびに自動ビルド・デプロイされる。
 
 ---
 
@@ -392,7 +392,7 @@ Go 側の起動処理で `DB_SECRET_ARN` を使って Secrets Manager から DB 
 |------|------|------|
 | IaC ツール | **AWS CDK（TypeScript）** | TS 統一・State 管理ゼロ・Amplify 対応 |
 | AWS 認証 | **OIDC** | シークレットキー不要・セキュア |
-| フロントデプロイ | **Amplify 自動** | CDK と独立・GitHub 連携で設定不要 |
+| フロントデプロイ | **Amplify 自動**（コンソール設定） | GitHub 連携が CI/CD を兼ねるため CDK 管理不要 |
 | バックエンドデプロイ | **CDK + GitHub Actions** | `cdk deploy` ワンコマンド |
 | テスト | **main push 時に必須実行** | デプロイ前にブロック |
 
@@ -523,7 +523,6 @@ infra/
 touch lib/network-stack.ts   # VPC・サブネット
 touch lib/database-stack.ts  # Aurora PostgreSQL
 touch lib/lambda-stack.ts    # Lambda + API Gateway
-touch lib/frontend-stack.ts  # Amplify Hosting
 ```
 
 #### 1-3. CDK Bootstrap（アカウントに1回だけ実行）
@@ -706,15 +705,13 @@ import * as cdk from 'aws-cdk-lib';
 import { NetworkStack }  from '../lib/network-stack';
 import { DatabaseStack } from '../lib/database-stack';
 import { LambdaStack }   from '../lib/lambda-stack';
-import { FrontendStack } from '../lib/frontend-stack';
 
 const app = new cdk.App();
 const env = { account: process.env.CDK_DEFAULT_ACCOUNT, region: 'ap-northeast-1' };
 
 const network  = new NetworkStack(app,  'KaleidNetwork',  { env });
 const database = new DatabaseStack(app, 'KaleidDatabase', { env, vpc: network.vpc, lambdaSG: network.lambdaSG });
-new LambdaStack(app,   'KaleidLambda',   { env, vpc: network.vpc, lambdaSG: network.lambdaSG, dbEndpoint: database.dbEndpoint, dbSecretArn: database.dbSecretArn });
-new FrontendStack(app, 'KaleidFrontend', { env });
+new LambdaStack(app, 'KaleidLambda', { env, vpc: network.vpc, lambdaSG: network.lambdaSG, dbEndpoint: database.dbEndpoint, dbSecretArn: database.dbSecretArn });
 ```
 
 ---
