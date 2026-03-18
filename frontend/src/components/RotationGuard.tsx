@@ -2,21 +2,35 @@ import { useEffect, useState } from 'react';
 
 type LandscapeType = 'landscape-primary' | 'landscape-secondary';
 
-function useLandscapeType(): LandscapeType | null {
-  const getLandscapeType = (): LandscapeType | null => {
-    const type = screen.orientation.type;
-    if (type === 'landscape-primary' || type === 'landscape-secondary') {
-      return type;
-    }
-    return null;
-  };
+function supportsOrientationAPI(): boolean {
+  return typeof screen !== 'undefined' && !!screen.orientation;
+}
 
+function getLandscapeType(): LandscapeType | null {
+  // Screen Orientation API 対応環境
+  if (supportsOrientationAPI()) {
+    const type = screen.orientation.type;
+    if (type === 'landscape-primary' || type === 'landscape-secondary') return type;
+    return null;
+  }
+  // フォールバック: matchMedia で横向きかのみ判定（方向不明のため primary 扱い）
+  return window.matchMedia('(orientation: landscape)').matches ? 'landscape-primary' : null;
+}
+
+function useLandscapeType(): LandscapeType | null {
   const [landscapeType, setLandscapeType] = useState<LandscapeType | null>(getLandscapeType);
 
   useEffect(() => {
     const handler = () => setLandscapeType(getLandscapeType());
-    screen.orientation.addEventListener('change', handler);
-    return () => screen.orientation.removeEventListener('change', handler);
+
+    if (supportsOrientationAPI()) {
+      screen.orientation.addEventListener('change', handler);
+      return () => screen.orientation.removeEventListener('change', handler);
+    }
+
+    // フォールバック: resize イベントで向きの変化を検知
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
   }, []);
 
   return landscapeType;
@@ -56,7 +70,7 @@ function RotateIcon({ type }: { type: LandscapeType }) {
         <path
           d="M358.938,0H153.078c-19.734,0-35.875,16.141-35.875,35.859v440.266c0,19.734,16.141,35.875,35.875,35.875
           h205.859c19.719,0,35.859-16.141,35.859-35.875V35.859C394.797,16.141,378.656,0,358.938,0z M229.844,22.156h52.297
-          c1.656,0,2.984,1.344,2.984,3s-1.328,2.969-2.984,2.969h-52.297c-1.656,0-3-1.313-3-2.969S228.188,22.156,229.844,22.156z
+          c1.656,0,2.984,1.344,2.984,3s-1.328,2.969-2.984,2.984h-52.297c-1.656,0-3-1.313-3-2.969S228.188,22.156,229.844,22.156z
           M256.016,490.328c-8.922,0-16.203-7.25-16.203-16.188s7.281-16.156,16.203-16.156s16.141,7.219,16.141,16.156
           S264.938,490.328,256.016,490.328z M358.938,429.75H153.078V56.547h205.859V429.75z"
         />
@@ -71,7 +85,12 @@ export function RotationGuard() {
   if (!landscapeType) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-8 bg-sw-black">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="画面を縦向きにしてください"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-8 bg-sw-black"
+    >
       <div className="animate-pulse">
         <RotateIcon type={landscapeType} />
       </div>
