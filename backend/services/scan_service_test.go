@@ -25,16 +25,7 @@ func TestScanService_GetRanking_AuraLevel(t *testing.T) {
 	}
 	defer func() { _ = db.Close() }()
 
-	// 商品名リスト取得クエリのモック
-	productRows := sqlmock.NewRows([]string{"name"}).
-		AddRow("炭火焼紅しゃけおにぎり").
-		AddRow("ツナマヨおにぎり").
-		AddRow("ブラックコーヒー 500ml").
-		AddRow("ポテトチップス うすしお味").
-		AddRow("緑茶 350ml")
-	mock.ExpectQuery("SELECT name FROM products").WillReturnRows(productRows)
-
-	// ランキングクエリのモック
+	// ランキングクエリのモック（名前もここから取得する）
 	rankingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "total_quantity", "rank"}).
 		AddRow("11111111-1111-1111-1111-111111111111", "炭火焼紅しゃけおにぎり", "説明1", "food", 12500, 1).
 		AddRow("22222222-2222-2222-2222-222222222222", "ツナマヨおにぎり", "説明2", "food", 10800, 2).

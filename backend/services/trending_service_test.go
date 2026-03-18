@@ -15,13 +15,7 @@ func TestTrendingService_GetRanking_GrowthRate(t *testing.T) {
 	}
 	defer func() { _ = db.Close() }()
 
-	// 商品名リスト取得クエリのモック
-	productRows := sqlmock.NewRows([]string{"name"}).
-		AddRow("オレンジ 500ml").
-		AddRow("ブラックコーヒー 500ml")
-	mock.ExpectQuery("SELECT name FROM products").WillReturnRows(productRows)
-
-	// 急上昇ランキングクエリのモック（オレンジが growth_rate=130.8 で上位）
+	// 急上昇ランキングクエリのモック（名前もここから取得する。オレンジが growth_rate=130.8 で上位）
 	trendingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "current_quantity", "prev_quantity", "growth_rate", "trending_rank"}).
 		AddRow("44444444-4444-4444-4444-444444444444", "オレンジ 500ml", "説明A", "drink", 1700, 1300, 130.8, 1).
 		AddRow("33333333-3333-3333-3333-333333333333", "ブラックコーヒー 500ml", "説明B", "drink", 9800, 9600, 102.1, 2)
@@ -89,11 +83,7 @@ func TestTrendingService_GetRanking_NoPrevWeek(t *testing.T) {
 	}
 	defer func() { _ = db.Close() }()
 
-	productRows := sqlmock.NewRows([]string{"name"}).
-		AddRow("新商品A")
-	mock.ExpectQuery("SELECT name FROM products").WillReturnRows(productRows)
-
-	// 前週データなし: prev_quantity=0, growth_rate=NULL
+	// 前週データなし: prev_quantity=0, growth_rate=NULL（名前もここから取得する）
 	trendingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "current_quantity", "prev_quantity", "growth_rate", "trending_rank"}).
 		AddRow("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", "新商品A", "新しい商品", "food", 500, 0, nil, 1)
 	mock.ExpectQuery("SELECT").WillReturnRows(trendingRows)

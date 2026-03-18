@@ -31,20 +31,26 @@ func NewTrendingService(ai AIService, db *sql.DB) *TrendingService {
 	return &TrendingService{ai: ai, db: db}
 }
 
-// GetTrendingRanking は画像データからAI識別→急上昇ランキング取得→結果突合を行い、TrendingResultのスライスを返す。
+// GetTrendingRanking は画像データから急上昇ランキング取得→AI識別→結果突合を行い、TrendingResultのスライスを返す。
+// DBクエリを1回に削減するため、ランキング取得を先に行い商品名をAIに渡す。
 func (s *TrendingService) GetTrendingRanking(ctx context.Context, imageData []byte) ([]TrendingResult, error) {
-	aiItems, err := recognizeProducts(ctx, s.ai, s.db, imageData)
+	rankings, err := s.fetchTrendingRankings(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("fetchTrendingRankings: %w", err)
+	}
+
+	names := make([]string, len(rankings))
+	for i, r := range rankings {
+		names[i] = r.name
+	}
+
+	aiItems, err := recognizeProducts(ctx, s.ai, imageData, names)
 	if err != nil {
 		return nil, err
 	}
 
 	if len(aiItems) == 0 {
 		return []TrendingResult{}, nil
-	}
-
-	rankings, err := s.fetchTrendingRankings(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("fetchTrendingRankings: %w", err)
 	}
 
 	return s.mergeTrendingResults(aiItems, rankings), nil

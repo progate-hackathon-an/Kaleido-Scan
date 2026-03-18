@@ -15,14 +15,7 @@ func TestHiddenGemsService_GetRanking_ReverseOrder(t *testing.T) {
 	}
 	defer func() { _ = db.Close() }()
 
-	productRows := sqlmock.NewRows([]string{"name"}).
-		AddRow("商品A").
-		AddRow("商品B").
-		AddRow("商品C").
-		AddRow("商品D").
-		AddRow("商品E")
-	mock.ExpectQuery("SELECT name FROM products").WillReturnRows(productRows)
-
+	// ランキングクエリのモック（名前もここから取得する）
 	rankingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "total_quantity", "rank"}).
 		AddRow("11111111-1111-1111-1111-111111111111", "商品A", "説明A", "food", 12500, 1).
 		AddRow("22222222-2222-2222-2222-222222222222", "商品B", "説明B", "food", 10800, 2).
