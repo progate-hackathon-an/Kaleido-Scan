@@ -21,16 +21,26 @@ function useLandscapeType(): LandscapeType | null {
   const [landscapeType, setLandscapeType] = useState<LandscapeType | null>(getLandscapeType);
 
   useEffect(() => {
-    const handler = () => setLandscapeType(getLandscapeType());
-
-    if (supportsOrientationAPI()) {
-      screen.orientation.addEventListener('change', handler);
-      return () => screen.orientation.removeEventListener('change', handler);
+    if (typeof window === 'undefined') {
+      return;
     }
 
-    // フォールバック: resize イベントで向きの変化を検知
-    window.addEventListener('resize', handler);
-    return () => window.removeEventListener('resize', handler);
+    // デスクトップなどではリスナーを登録しない
+    if (!window.matchMedia || !window.matchMedia('(pointer: coarse)').matches) {
+      return;
+    }
+
+    const orientation = window.screen?.orientation;
+    if (!orientation || !orientation.addEventListener) {
+      return;
+    }
+
+    const handler = () => setLandscapeType(getLandscapeType());
+    orientation.addEventListener('change', handler);
+
+    return () => {
+      orientation.removeEventListener('change', handler);
+    };
   }, []);
 
   return landscapeType;

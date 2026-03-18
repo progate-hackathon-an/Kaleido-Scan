@@ -14,14 +14,15 @@ function mockOrientation(type: string) {
   });
 }
 
-// matchMedia のモックヘルパー（Screen Orientation API 未対応時のフォールバック用）
-function mockMatchMedia(isLandscape: boolean) {
+// matchMedia のモックヘルパー（クエリごとに matches を制御可能）
+function mockMatchMedia(matches: boolean | ((query: string) => boolean)) {
+  const getMatches = typeof matches === 'function' ? matches : () => matches;
   Object.defineProperty(window, 'matchMedia', {
-    value: vi.fn().mockReturnValue({
-      matches: isLandscape,
+    value: vi.fn().mockImplementation((query: string) => ({
+      matches: getMatches(query),
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
-    }),
+    })),
     configurable: true,
   });
 }
@@ -71,6 +72,9 @@ describe('RotationGuard', () => {
   });
 
   it('orientation change イベントで表示状態が切り替わること', () => {
+    // (pointer: coarse) を true にしてリスナー登録を通過させる
+    mockMatchMedia((query) => query === '(pointer: coarse)');
+
     let changeHandler: (() => void) | undefined;
     Object.defineProperty(window.screen, 'orientation', {
       value: {
