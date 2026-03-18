@@ -60,13 +60,13 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
       >
         {/* タブセレクター */}
         <div className="w-full flex justify-center">
-          <div className="flex items-center bg-sw-steel/80 backdrop-blur-sm rounded-full p-1 gap-1">
+          <div className="flex items-center bg-sw-steel/80 backdrop-blur-sm rounded-full p-1 gap-1 w-[min(88vw,22rem)]">
             {TABS.map(({ label, mode }) => (
               <button
                 key={mode}
                 onClick={() => setActiveMode(mode)}
                 className={clsx(
-                  'w-28 py-2 rounded-full font-body font-medium text-sm text-center transition-all duration-200 min-h-11',
+                  'flex-1 py-2 rounded-full font-body font-medium text-sm text-center transition-all duration-200 min-h-11',
                   activeMode === mode
                     ? 'bg-white text-sw-black'
                     : 'text-slate-300 hover:text-white active:scale-95'
