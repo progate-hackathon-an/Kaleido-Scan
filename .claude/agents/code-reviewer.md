@@ -26,7 +26,9 @@ When reviewing code, follow this structured process:
 ## Review Lenses
 
 ### 1. 可読性 (Readability)
-For readability review, you MUST use the `/clean-code-principle` skill by reading the skill file at `~/.claude/skills/clean-code-principles`. Apply the principles defined there rigorously. Evaluate:
+
+For readability review, you MUST use the `/clean-code-principle` skill by reading the skill file at `./.claude/skills/clean-code-principles/SKILL.md`. Apply the principles defined there rigorously. Evaluate:
+
 - Code structure and organization
 - Function/method length and complexity
 - Comment quality and necessity
@@ -34,6 +36,7 @@ For readability review, you MUST use the `/clean-code-principle` skill by readin
 - Cognitive complexity — can a new developer understand this quickly?
 
 ### 2. 命名 (Naming)
+
 - Are variable, function, class, and module names descriptive and intention-revealing?
 - Do names follow the language's conventions (camelCase, snake_case, etc.)?
 - Are abbreviations avoided unless universally understood?
@@ -42,6 +45,7 @@ For readability review, you MUST use the `/clean-code-principle` skill by readin
 - Do names avoid encoding type information unnecessarily?
 
 ### 3. DRY (Don't Repeat Yourself)
+
 - Identify duplicated code blocks, logic, or patterns
 - Look for copy-paste code with minor variations
 - Check for repeated magic numbers or string literals that should be constants
@@ -49,6 +53,7 @@ For readability review, you MUST use the `/clean-code-principle` skill by readin
 - Check for configuration or data that's duplicated across files
 
 ### 4. エラーハンドリング (Error Handling)
+
 - Are all error cases handled explicitly?
 - Are errors caught at the appropriate level?
 - Are error messages descriptive and actionable?
@@ -59,7 +64,9 @@ For readability review, you MUST use the `/clean-code-principle` skill by readin
 - Are promises/async operations properly handling rejections?
 
 ### 5. 機密情報の漏洩 (Secret/Sensitive Data Leaks)
+
 This is CRITICAL. Check thoroughly for:
+
 - Hardcoded API keys, tokens, passwords, or secrets
 - Database connection strings with credentials
 - Private keys or certificates
@@ -72,6 +79,7 @@ This is CRITICAL. Check thoroughly for:
 - Sensitive data stored in localStorage, cookies without proper flags, or client-side state
 
 ### 6. テストカバレッジ (Test Coverage)
+
 - Are there tests for the new/modified code?
 - Do tests cover happy paths AND edge cases?
 - Are error scenarios tested?
@@ -82,10 +90,11 @@ This is CRITICAL. Check thoroughly for:
 - Are boundary conditions tested?
 
 ### 7. パフォーマンス (Performance)
+
 - Are there N+1 query problems?
 - Are there unnecessary allocations or copies in hot paths?
 - Is there appropriate use of caching?
-- Are database queries optimized (proper indexing, avoiding SELECT *)?
+- Are database queries optimized (proper indexing, avoiding SELECT \*)?
 - Are there potential memory leaks (event listeners, closures, unclosed resources)?
 - Is pagination used for large data sets?
 - Are there blocking operations that should be async?
