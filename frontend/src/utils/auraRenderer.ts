@@ -103,9 +103,9 @@ export function renderFlameAura(
   const cy = ((y_min + y_max) / 2) * canvasHeight;
   const bboxR = Math.max((x_max - x_min) * canvasWidth, (y_max - y_min) * canvasHeight) / 2;
 
-  const baseRadius = bboxR * (0.9 + config.radius * 0.36);
+  const baseRadius = bboxR * (0.7 + config.radius * 0.2);
   const noiseAmp = baseRadius * 0.3;
-  const upwardBias = baseRadius * 0.5;
+  const upwardBias = baseRadius * 0.2;
 
   const flicker = 1.0;
 
@@ -126,14 +126,14 @@ export function renderFlameAura(
   // 商品中心を透明に保ち、輪郭の外側に向けて光が広がる後光表現
   ctx.save();
   ctx.globalAlpha = 0.4 * flicker * config.opacity;
-  const outerGrad = ctx.createRadialGradient(cx, cy, bboxR * 0.7, cx, cy, baseRadius * 2.0);
+  const outerGrad = ctx.createRadialGradient(cx, cy, bboxR * 0.2, cx, cy, baseRadius * 1.4);
   outerGrad.addColorStop(0.0, hexToRgba(config.color, 0));
   outerGrad.addColorStop(0.2, hexToRgba(config.color, 0.6));
   outerGrad.addColorStop(0.6, hexToRgba(config.flameColor, 0.3));
   outerGrad.addColorStop(1.0, hexToRgba(config.flameColor, 0));
   ctx.fillStyle = outerGrad;
   ctx.beginPath();
-  ctx.arc(cx, cy, baseRadius * 2.0, 0, Math.PI * 2);
+  ctx.arc(cx, cy, baseRadius * 1.4, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
@@ -141,7 +141,7 @@ export function renderFlameAura(
   ctx.save();
   ctx.globalAlpha = flicker * config.opacity;
   drawFlameOutline(ctx, pts, cx, cy, 1.0);
-  const flameGrad = ctx.createRadialGradient(cx, cy, bboxR * 0.6, cx, cy, baseRadius * 1.55);
+  const flameGrad = ctx.createRadialGradient(cx, cy, bboxR * 0.2, cx, cy, baseRadius * 1.4);
   flameGrad.addColorStop(0.0, hexToRgba(config.color, 0));
   flameGrad.addColorStop(0.15, hexToRgba(config.color, 1.0));
   flameGrad.addColorStop(0.55, hexToRgba(config.flameColor, 0.75));
