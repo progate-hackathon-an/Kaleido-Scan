@@ -37,12 +37,12 @@ describe('TapHints', () => {
     expect(container.querySelector('[aria-hidden]')).not.toBeInTheDocument();
   });
 
-  it('TestTapHints_PositionedAtBottomRight: アイコンがbounding_boxの右下に配置されること', () => {
+  it('TestTapHints_PositionedAtBottomCenter: アイコンがbounding_boxの下部中央に配置されること', () => {
     const items = [makeItem('a', 'テスト', 0.2, 0.6, 0.8)];
     const { container } = render(<TapHints items={items} />);
 
     const el = container.querySelector('[style]') as HTMLElement;
-    expect(el.style.left).toBe('60%'); // x_max = 0.6
+    expect(el.style.left).toBe('40%'); // (x_min + x_max) / 2 = (0.2 + 0.6) / 2 = 0.4
     expect(el.style.top).toBe('80%'); // y_max = 0.8
   });
 });
