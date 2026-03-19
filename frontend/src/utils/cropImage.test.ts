@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { cropImage } from './cropImage';
 
 const MOCK_IMG_WIDTH = 1000;
@@ -28,6 +28,11 @@ describe('cropImage', () => {
       'data:image/jpeg;base64,test'
     );
     vi.stubGlobal('Image', MockImage);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it('TestCropImage_ReturnsDataUrl: データURLを返すこと', async () => {
