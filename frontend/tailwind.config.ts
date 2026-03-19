@@ -10,7 +10,7 @@ import type { Config } from 'tailwindcss';
  *
  * フォント:
  *   font-display — Zen Dots / Orbitron (ロゴ・見出し・SF演出)
- *   font-body    — Inter / Noto Sans JP (説明文・長文)
+ *   font-body    — Zen Kaku Gothic New (説明文・長文・日本語統一)
  */
 export default {
   theme: {
@@ -21,8 +21,8 @@ export default {
         'sw-orange': '#FF9100',
       },
       fontFamily: {
-        display: ['"Zen Dots"', 'Orbitron', 'sans-serif'],
-        body: ['Inter', '"Noto Sans JP"', 'sans-serif'],
+        display: ['"Zen Dots"', 'Orbitron', '"Zen Kaku Gothic New"', 'sans-serif'],
+        body: ['"Zen Kaku Gothic New"', 'sans-serif'],
       },
     },
   },

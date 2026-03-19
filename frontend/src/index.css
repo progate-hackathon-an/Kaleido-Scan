@@ -1,5 +1,5 @@
 /* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&family=Orbitron:wght@400;700;900&family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&family=Orbitron:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
 
 /* Tailwind v4 — CSS-first configuration */
 @import "tailwindcss";
@@ -11,8 +11,8 @@
   --color-sw-steel: #2a323a;
   --color-sw-orange: #ff9100;
 
-  --font-family-display: "Zen Dots", "Orbitron", sans-serif;
-  --font-family-body: "Inter", "Noto Sans JP", sans-serif;
+  --font-family-display: "Zen Dots", "Orbitron", "Zen Kaku Gothic New", sans-serif;
+  --font-family-body: "Zen Kaku Gothic New", sans-serif;
 }
 
 /* ─── Animations ────────────────────────────────────── */
@@ -54,6 +54,7 @@
 /* ─── Base ───────────────────────────────────────────── */
 :root {
   font-family: var(--font-family-body);
+  font-weight: 500;
   color-scheme: dark;
   background: #080808;
   -webkit-font-smoothing: antialiased;
