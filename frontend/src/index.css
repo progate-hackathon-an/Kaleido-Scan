@@ -26,29 +26,11 @@
 }
 
 @keyframes z-scan {
-  0% {
-    transform: translate(-50px, -50px);
-    opacity: 0;
-  }
-  5% {
-    opacity: 1;
-  }
-  33% {
-    transform: translate(50px, -50px);
-    opacity: 1;
-  }
-  66% {
-    transform: translate(-50px, 50px);
-    opacity: 1;
-  }
-  95% {
-    transform: translate(50px, 50px);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(50px, 50px);
-    opacity: 0;
-  }
+  0%   { transform: translate(-50px, -50px); }
+  25%  { transform: translate(50px, -50px); }
+  50%  { transform: translate(-50px, 50px); }
+  75%  { transform: translate(50px, 50px); }
+  100% { transform: translate(-50px, -50px); }
 }
 
 /* ─── Base ───────────────────────────────────────────── */
