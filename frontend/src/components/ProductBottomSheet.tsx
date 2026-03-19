@@ -133,7 +133,7 @@ export function ProductBottomSheet({
           {/* Product image */}
           {croppedImageUrl && (
             <div className="bg-sw-black rounded-2xl overflow-hidden">
-              <img src={croppedImageUrl} alt={item.name} className="w-full object-cover max-h-52" />
+              <img src={croppedImageUrl} alt={item.name} className="w-full object-contain" />
             </div>
           )}
 
