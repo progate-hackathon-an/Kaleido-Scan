@@ -1,4 +1,4 @@
-# Kaleid Scan 要件定義
+# Kaleido Scan 要件定義
 
 ## 機能要件
 
@@ -69,7 +69,7 @@
 | 対応SNS | X（Twitter）のみ |
 | 共有方法 | Web Share API（navigator.share）でXへ画像+テキストを渡す |
 | 画像生成 | Canvas APIでオーラ合成画像をフロントエンド側で生成（サーバー不要） |
-| 投稿文言 | `KaleidScanで〇〇を発見しました！ #KaleidScan` |
+| 投稿文言 | `KaleidoScanで〇〇を発見しました！ #KaleidoScan` |
 | 備考 | S3へのアップロード不要。モバイルブラウザ前提 |
 
 ### 6. PWA対応

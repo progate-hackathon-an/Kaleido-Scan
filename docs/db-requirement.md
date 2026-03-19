@@ -1,4 +1,4 @@
-# Kaleid Scan DB設計書
+# Kaleido Scan DB設計書
 
 ## 基本方針
 

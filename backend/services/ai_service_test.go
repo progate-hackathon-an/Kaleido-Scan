@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/Hiru-ge/Kaleid-Scan/backend/services"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/services"
 )
 
 func TestGeminiService_Recognize_Success(t *testing.T) {

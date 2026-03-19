@@ -1,4 +1,4 @@
-module github.com/Hiru-ge/Kaleid-Scan/backend
+module github.com/Hiru-ge/Kaleido-Scan/backend
 
 go 1.26.1
 

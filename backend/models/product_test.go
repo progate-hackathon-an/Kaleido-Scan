@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Hiru-ge/Kaleid-Scan/backend/models"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/models"
 	"github.com/google/uuid"
 )
 

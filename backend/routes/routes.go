@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	"github.com/Hiru-ge/Kaleid-Scan/backend/handlers"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/handlers"
 	"github.com/gin-gonic/gin"
 )
 

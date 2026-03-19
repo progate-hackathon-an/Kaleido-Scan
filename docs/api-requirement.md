@@ -1,4 +1,4 @@
-# Kaleid Scan API仕様書
+# Kaleido Scan API仕様書
 
 ## 基本方針
 

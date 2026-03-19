@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/Hiru-ge/Kaleid-Scan/backend/database"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/database"
 )
 
 func TestSeed_Insert_Idempotent(t *testing.T) {

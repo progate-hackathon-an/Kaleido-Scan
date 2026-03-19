@@ -36,6 +36,6 @@ describe('generateShareImage', () => {
 
     expect(file).toBeInstanceOf(File);
     expect(file.type).toBe('image/png');
-    expect(file.name).toMatch(/kaleid-scan.*\.png$/i);
+    expect(file.name).toMatch(/kaleido-scan.*\.png$/i);
   });
 });

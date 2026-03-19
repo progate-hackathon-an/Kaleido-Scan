@@ -1,4 +1,4 @@
-# Kaleid Scan
+# Kaleido Scan
 
 カメラで商品をスキャンするだけで、売上ランキングが「オーラ」として可視化される新しい買い物体験アプリ。
 
@@ -29,8 +29,8 @@
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/<org>/Kaleid-Scan.git
-cd Kaleid-Scan
+git clone https://github.com/<org>/Kaleido-Scan.git
+cd Kaleido-Scan
 
 # 環境変数を設定
 cp .env.example .env
@@ -95,7 +95,7 @@ docker compose down -v && docker compose up --build
 ## ディレクトリ構造
 
 ```
-Kaleid-Scan/
+Kaleido-Scan/
 ├── backend/
 │   ├── main.go              # エントリーポイント
 │   ├── config/              # 環境変数・設定読み込み
