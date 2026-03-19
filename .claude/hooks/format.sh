@@ -15,7 +15,7 @@ if [ -z "$FILE_PATH" ]; then
   exit 0
 fi
 
-PROJECT_ROOT="/Users/hiruge/Project/Kaleid-Scan"
+PROJECT_ROOT="/Users/hiruge/Project/Kaleido-Scan"
 
 case "$FILE_PATH" in
   *.ts|*.tsx|*.js|*.jsx|*.css|*.json)

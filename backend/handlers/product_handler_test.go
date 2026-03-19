@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/Hiru-ge/Kaleid-Scan/backend/handlers"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/handlers"
 	"github.com/gin-gonic/gin"
 )
 

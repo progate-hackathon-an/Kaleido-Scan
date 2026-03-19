@@ -1,6 +1,6 @@
 {
-  "name": "Kaleid Scan",
-  "short_name": "KaleidScan",
+  "name": "Kaleido Scan",
+  "short_name": "KaleidoScan",
   "description": "カメラで商品をスキャンして、売上ランキングをオーラで可視化",
   "start_url": "/",
   "display": "standalone",

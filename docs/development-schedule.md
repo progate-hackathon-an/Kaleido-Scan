@@ -1,4 +1,4 @@
-# Kaleid Scan 開発スケジュール
+# Kaleido Scan 開発スケジュール
 
 ## ハッカソン概要
 

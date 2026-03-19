@@ -4,12 +4,12 @@ import (
 	"flag"
 	"log"
 
-	"github.com/Hiru-ge/Kaleid-Scan/backend/config"
-	"github.com/Hiru-ge/Kaleid-Scan/backend/database"
-	"github.com/Hiru-ge/Kaleid-Scan/backend/handlers"
-	"github.com/Hiru-ge/Kaleid-Scan/backend/middleware"
-	"github.com/Hiru-ge/Kaleid-Scan/backend/routes"
-	"github.com/Hiru-ge/Kaleid-Scan/backend/services"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/config"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/database"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/handlers"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/middleware"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/routes"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/services"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )

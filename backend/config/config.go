@@ -23,7 +23,7 @@ func Load() *Config {
 		DBPort:        getEnv("DB_PORT", "5432"),
 		DBUser:        getEnv("DB_USER", "postgres"),
 		DBPassword:    getEnv("DB_PASSWORD", "postgres"),
-		DBName:        getEnv("DB_NAME", "kaleid_scan"),
+		DBName:        getEnv("DB_NAME", "kaleido_scan"),
 		GeminiAPIKey:  getEnv("GEMINI_API_KEY", ""),
 		AIProvider:    getEnv("AI_PROVIDER", "gemini"),
 		SeedOnStartup: getEnv("SEED_ON_STARTUP", "false") == "true",

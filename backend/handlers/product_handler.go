@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Hiru-ge/Kaleid-Scan/backend/services"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )

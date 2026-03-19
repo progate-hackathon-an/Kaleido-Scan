@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/Hiru-ge/Kaleid-Scan/backend/config"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/config"
 	_ "github.com/lib/pq"
 )
 

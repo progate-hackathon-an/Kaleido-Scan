@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Kaleid Scan デザインシステム設定
+ * Kaleido Scan デザインシステム設定
  *
  * 配色比率 70/25/5:
  *   sw-black  (#080808) — 背景・大きな余白

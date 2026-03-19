@@ -81,7 +81,7 @@ export function LoadingOverlay({ isLoading }: Props) {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          Kaleid Scan
+          Kaleido Scan
         </h1>
         <p className="font-body text-slate-400 text-sm leading-relaxed">
           商品の「オーラ」を可視化しています...

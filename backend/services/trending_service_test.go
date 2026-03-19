@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/Hiru-ge/Kaleid-Scan/backend/services"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/services"
 )
 
 func TestTrendingService_GetRanking_GrowthRate(t *testing.T) {

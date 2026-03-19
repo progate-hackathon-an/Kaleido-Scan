@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/hiruge/Project/Kaleid-Scan/.claude/hooks/format.sh"
+            "command": "/Users/hiruge/Project/Kaleido-Scan/.claude/hooks/format.sh"
           }
         ]
       }

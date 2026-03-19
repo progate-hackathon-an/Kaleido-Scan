@@ -28,7 +28,7 @@ export function generateShareImage(
         reject(new Error('Canvas の画像生成に失敗しました'));
         return;
       }
-      const file = new File([blob], `kaleid-scan-${Date.now()}.png`, {
+      const file = new File([blob], `kaleido-scan-${Date.now()}.png`, {
         type: 'image/png',
       });
       resolve(file);

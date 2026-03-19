@@ -22,7 +22,7 @@ logs-be:
 
 # DB接続
 db-shell:
-	docker compose exec db psql -U $${DB_USER:-kaleid} -d $${DB_NAME:-kaleid_scan}
+	docker compose exec db psql -U $${DB_USER:-kaleido} -d $${DB_NAME:-kaleido_scan}
 
 # テスト
 test: test-fe test-be

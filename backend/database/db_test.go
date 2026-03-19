@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Hiru-ge/Kaleid-Scan/backend/config"
-	"github.com/Hiru-ge/Kaleid-Scan/backend/database"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/config"
+	"github.com/Hiru-ge/Kaleido-Scan/backend/database"
 	_ "github.com/lib/pq"
 )
 
@@ -21,7 +21,7 @@ func TestNewDB_Connect(t *testing.T) {
 		DBPort:     "5432",
 		DBUser:     "postgres",
 		DBPassword: "postgres",
-		DBName:     "kaleid_scan",
+		DBName:     "kaleido_scan",
 	}
 
 	db, err := database.NewDB(cfg)
