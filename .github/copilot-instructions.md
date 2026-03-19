@@ -7,7 +7,7 @@
 - **フロントエンド**: React + TypeScript（Vite）+ PWA
 - **バックエンド**: Go + Gin
 - **データベース**: PostgreSQL（Docker ローカル / RDS 本番）
-- **AI**: Gemini 2.0 Flash Vision API（ローカル） → AWS Bedrock Claude Sonnet（本番）
+- **AI**: Gemini 2.5 Flash（ローカル） → AWS Bedrock Claude Sonnet（本番）
 - **開発環境**: Docker Compose
 - **本番環境**: AWS Lambda + API Gateway + Amplify Hosting + RDS
 
@@ -19,23 +19,32 @@ Kaleido-Scan/
 │   ├── main.go
 │   ├── config/       # 環境変数・設定読み込み
 │   ├── database/     # DB接続・マイグレーション
-│   ├── handlers/     # HTTPハンドラー（scan, products）
+│   ├── handlers/     # HTTPハンドラー（scan, hidden-gems, products）
 │   ├── middleware/   # CORS等
 │   ├── models/       # データモデル
 │   ├── routes/       # ルーティング定義
-│   └── services/     # ビジネスロジック・AI API呼び出し
+│   └── services/     # ビジネスロジック・AI API呼び出し（ranking/trending/hidden-gems）
 ├── frontend/
+│   ├── public/
 │   └── src/
+│       ├── api/
+│       ├── components/
+│       ├── hooks/
+│       ├── types/
+│       └── utils/
 ├── db/migrations/    # マイグレーションファイル
+├── docs/
 └── docker-compose.yml
 ```
 
 ## APIエンドポイント
 
-| メソッド | パス            | 説明                                    |
-| -------- | --------------- | --------------------------------------- |
-| `POST`   | `/scan/ranking` | 画像送信 → 商品識別・ランキング情報取得 |
-| `GET`    | `/products/:id` | 商品詳細情報取得                        |
+| メソッド | パス                | 説明                                    |
+| -------- | ------------------- | --------------------------------------- |
+| `POST`   | `/scan/ranking`     | 画像送信 → 商品識別・ランキング情報取得 |
+| `POST`   | `/scan/trending`    | 画像送信 → 急上昇ランキング情報取得     |
+| `POST`   | `/scan/hidden-gems` | 画像送信 → 掘り出し物ランキング情報取得 |
+| `GET`    | `/products/:id`     | 商品詳細情報取得                        |
 
 エラーレスポンス形式: `{ "error": { "code": "snake_case", "message": "日本語メッセージ" } }`
 

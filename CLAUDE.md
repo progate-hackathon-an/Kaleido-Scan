@@ -47,7 +47,7 @@
 ## フロントエンド 実装パターン
 
 - カメラ: `navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })`（バックカメラ固定）
-- スキャン: シャッター押下で静止画取得 → `POST /scan/ranking`（`multipart/form-data`）へ送信
+- スキャン: シャッター押下で静止画取得 → モードに応じて `POST /scan/ranking` / `POST /scan/trending` / `POST /scan/hidden-gems`（`multipart/form-data`）へ送信
 - オーラ描画: Canvas API を使用。`bounding_box` の相対座標（0.0〜1.0）を実ピクセルに変換してから描画する
 - AI解析中はローディング演出を表示すること
 
