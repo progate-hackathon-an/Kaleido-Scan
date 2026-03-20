@@ -1,7 +1,43 @@
-/** 外枠: ゲームHUD風の4コーナーブラケット */
+import { useState, useEffect, useRef } from 'react';
+
+const RETICLE_SIZE = 112; // w-28 = 7rem = 112px
+
+type Position = { x: number; y: number };
+
+/** 現在位置から対角線の半分以上離れた次の位置をランダムに返す */
+function getNextPosition(current: Position): Position {
+  const w = window.innerWidth || 375;
+  const h = window.innerHeight || 667;
+  const maxX = Math.max(0, w - RETICLE_SIZE);
+  const maxY = Math.max(0, h - RETICLE_SIZE);
+  const minDist = Math.min(w, h);
+
+  for (let i = 0; i < 30; i++) {
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    const dx = x - current.x;
+    const dy = y - current.y;
+    if (Math.sqrt(dx * dx + dy * dy) >= minDist) return { x, y };
+  }
+
+  // フォールバック: 4隅のうち最も遠い頂点
+  const corners: Position[] = [
+    { x: 0, y: 0 },
+    { x: maxX, y: 0 },
+    { x: 0, y: maxY },
+    { x: maxX, y: maxY },
+  ];
+  return corners.reduce((best, c) => {
+    const d = (c.x - current.x) ** 2 + (c.y - current.y) ** 2;
+    const bd = (best.x - current.x) ** 2 + (best.y - current.y) ** 2;
+    return d > bd ? c : best;
+  });
+}
+
+/** 外枠: ゲームHUD風の4コーナーブラケット（画面全体をカバー） */
 function OuterFrame() {
   return (
-    <div className="absolute inset-0" aria-hidden="true">
+    <div className="absolute inset-0 z-10" aria-hidden="true">
       <span className="absolute top-0 left-0 w-12 h-12 border-t-[3px] border-l-[3px] border-sw-orange" />
       <span className="absolute top-0 right-0 w-12 h-12 border-t-[3px] border-r-[3px] border-sw-orange" />
       <span className="absolute bottom-0 left-0 w-12 h-12 border-b-[3px] border-l-[3px] border-sw-orange" />
@@ -10,10 +46,59 @@ function OuterFrame() {
   );
 }
 
-/** Z軌道で動きながら回転する丸いレティクル照準 */
+/** ランダムな2点間をイージングで移動する丸いレティクル照準 */
 function MovingReticle() {
+  const [pos, setPos] = useState<Position>({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const coordRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setPos((cur) => getNextPosition(cur)));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  // CSS transition中の実際の描画位置をrAFで直接DOM更新（Reactレンダリングを回避）
+  useEffect(() => {
+    let rafId: number;
+    const track = () => {
+      if (containerRef.current && coordRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const x = String(Math.round(rect.left)).padStart(4, '0');
+        const y = String(Math.round(rect.top)).padStart(4, '0');
+        coordRef.current.textContent = `(${x}, ${y})`;
+      }
+      rafId = requestAnimationFrame(track);
+    };
+    rafId = requestAnimationFrame(track);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
+
+  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.propertyName !== 'left') return;
+    setPos((cur) => getNextPosition(cur));
+  };
+
   return (
-    <div className="absolute" style={{ animation: 'z-scan 3.5s ease-in-out infinite' }}>
+    <div
+      ref={containerRef}
+      className="absolute z-10"
+      style={{
+        left: pos.x,
+        top: pos.y,
+        transition:
+          'left 1.8s cubic-bezier(0.45, 0, 0.55, 1), top 1.8s cubic-bezier(0.45, 0, 0.55, 1)',
+      }}
+      onTransitionEnd={handleTransitionEnd}
+    >
+      {/* HUD座標表示（演出用・目立たせない） */}
+      <div
+        className="absolute bottom-0 left-full ml-2 font-display text-[7px] text-sw-orange tracking-widest leading-snug whitespace-nowrap"
+        aria-hidden="true"
+        ref={coordRef}
+      >
+        (0000, 0000)
+      </div>
+
       <div className="relative w-28 h-28 animate-spin" style={{ animationDuration: '2s' }}>
         {/* 円リング */}
         <svg className="absolute inset-0" viewBox="0 0 112 112" fill="none" aria-hidden="true">
@@ -63,7 +148,7 @@ export function LoadingOverlay({ isLoading, capturedUrl }: Props) {
 
   return (
     <div
-      className="fixed inset-0 flex flex-col items-center justify-center gap-10 z-50"
+      className="fixed inset-0 z-50"
       style={
         capturedUrl
           ? undefined
@@ -90,12 +175,11 @@ export function LoadingOverlay({ isLoading, capturedUrl }: Props) {
           />
         </>
       )}
-      <div className="relative z-10 flex items-center justify-center w-72 h-72">
-        <OuterFrame />
-        <MovingReticle />
-      </div>
 
-      <div className="relative z-10 flex flex-col items-center gap-3">
+      <OuterFrame />
+      <MovingReticle />
+
+      <div className="absolute bottom-16 left-0 right-0 z-10 flex flex-col items-center gap-3">
         <h1
           className="font-display text-2xl font-bold tracking-widest"
           style={{
