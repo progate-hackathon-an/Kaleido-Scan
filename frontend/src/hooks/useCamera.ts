@@ -19,8 +19,13 @@ export function useCamera() {
 
   const startCamera = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment' },
+      video: {
+        facingMode: { ideal: 'environment' },
+        width: { ideal: 4096 },
+        height: { ideal: 2160 },
+      },
     });
+
     streamRef.current = stream;
     if (videoRef.current) {
       videoRef.current.srcObject = stream;

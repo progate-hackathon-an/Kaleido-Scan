@@ -7,7 +7,8 @@ const mockStream = {
 } as unknown as MediaStream;
 
 beforeEach(() => {
-  Object.defineProperty(global.navigator, 'mediaDevices', {
+  vi.clearAllMocks();
+  Object.defineProperty(globalThis.navigator, 'mediaDevices', {
     value: { getUserMedia: vi.fn().mockResolvedValue(mockStream) },
     writable: true,
   });
@@ -28,7 +29,11 @@ describe('useCamera', () => {
     });
 
     expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
-      video: { facingMode: 'environment' },
+      video: {
+        facingMode: { ideal: 'environment' },
+        width: { ideal: 4096 },
+        height: { ideal: 2160 },
+      },
     });
   });
 
