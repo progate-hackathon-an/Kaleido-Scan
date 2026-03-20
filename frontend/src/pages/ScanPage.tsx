@@ -164,10 +164,26 @@ export function ScanPage() {
 
       {isRetakeConfirmOpen && (
         <Overlay>
-          <div className="mx-6 w-full max-w-sm rounded-2xl bg-sw-steel p-6 flex flex-col gap-6">
+          <div
+            className="mx-6 w-full max-w-sm rounded-2xl bg-sw-steel p-6 flex flex-col gap-6"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="retake-confirm-title"
+            aria-describedby="retake-confirm-description"
+          >
             <div className="flex flex-col gap-2 text-center">
-              <p className="font-body text-white text-base font-medium">撮り直しますか？</p>
-              <p className="font-body text-slate-200 text-sm">現在の結果は失われます</p>
+              <p
+                id="retake-confirm-title"
+                className="font-body text-white text-base font-medium"
+              >
+                撮り直しますか？
+              </p>
+              <p
+                id="retake-confirm-description"
+                className="font-body text-slate-200 text-sm"
+              >
+                現在の結果は失われます
+              </p>
             </div>
             <div className="flex gap-3">
               <button
