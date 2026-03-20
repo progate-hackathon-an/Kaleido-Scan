@@ -1,4 +1,83 @@
-import { AURA_LEVEL_CONFIG, HIDDEN_GEMS_AURA_CONFIG } from './auraRenderer';
+import { vi } from 'vitest';
+import {
+  AURA_LEVEL_CONFIG,
+  HIDDEN_GEMS_AURA_CONFIG,
+  renderFlameAura,
+  renderAura,
+} from './auraRenderer';
+import type { DetectedItem } from '../types/scan';
+
+// 細長いバウンディングボックス (幅80px, 高さ20px) を持つ検出アイテム
+function makeWideItem(): DetectedItem {
+  return {
+    product_id: 'p1',
+    name: 'test',
+    description: '',
+    category: '',
+    rank: 1,
+    total_quantity: 1,
+    aura_level: 5,
+    bounding_box: { x_min: 0, x_max: 0.8, y_min: 0.4, y_max: 0.6 },
+  };
+}
+
+function makeCtxMock() {
+  const gradMock = { addColorStop: vi.fn() };
+  return {
+    save: vi.fn(),
+    restore: vi.fn(),
+    beginPath: vi.fn(),
+    arc: vi.fn(),
+    fill: vi.fn(),
+    moveTo: vi.fn(),
+    bezierCurveTo: vi.fn(),
+    closePath: vi.fn(),
+    createRadialGradient: vi.fn().mockReturnValue(gradMock),
+    globalAlpha: 0,
+    globalCompositeOperation: '',
+    filter: '',
+    fillStyle: '',
+  } as unknown as CanvasRenderingContext2D;
+}
+
+// canvasWidth=100, canvasHeight=100 で幅80px×高さ20pxの細長いアイテム
+// avg-based bboxR = (80 + 20) / 4 = 25
+// max-based bboxR = Math.max(80, 20) / 2 = 40
+const WIDE_CANVAS_SIZE = 100;
+const WIDE_ITEM_BBOX_R_AVG = 25; // 期待値: 平均ベース
+const WIDE_ITEM_BBOX_R_MAX = 40; // 旧実装(修正前): maxベース
+
+describe('renderFlameAura', () => {
+  it('TestRenderFlameAura_WideItem_UsesAverageBboxRadius: 細長いアイテムのオーラ半径が縦横の平均に基づくこと', () => {
+    const ctx = makeCtxMock();
+    const item = makeWideItem();
+
+    renderFlameAura(ctx, item, WIDE_CANVAS_SIZE, WIDE_CANVAS_SIZE, 'ranking', 0);
+
+    const calls = (ctx.createRadialGradient as ReturnType<typeof vi.fn>).mock.calls;
+    expect(calls.length).toBeGreaterThan(0);
+    // 1回目の createRadialGradient の第3引数: bboxR * 0.2
+    const innerR = calls[0][2] as number;
+    expect(innerR).toBeCloseTo(WIDE_ITEM_BBOX_R_AVG * 0.2); // 5.0
+    expect(innerR).not.toBeCloseTo(WIDE_ITEM_BBOX_R_MAX * 0.2); // 8.0 (旧実装)
+  });
+});
+
+describe('renderAura', () => {
+  it('TestRenderAura_WideItem_UsesAverageBboxRadius: 細長いアイテムのグロー半径が縦横の平均に基づくこと', () => {
+    const ctx = makeCtxMock();
+    const item = makeWideItem();
+
+    renderAura(ctx, item, WIDE_CANVAS_SIZE, WIDE_CANVAS_SIZE, 'ranking', 0);
+
+    const calls = (ctx.createRadialGradient as ReturnType<typeof vi.fn>).mock.calls;
+    expect(calls.length).toBeGreaterThan(0);
+    // Layer 1 の createRadialGradient 第3引数: innerRadius = boxHalfSize * 0.3
+    const innerR = calls[0][2] as number;
+    expect(innerR).toBeCloseTo(WIDE_ITEM_BBOX_R_AVG * 0.3); // 7.5
+    expect(innerR).not.toBeCloseTo(WIDE_ITEM_BBOX_R_MAX * 0.3); // 12.0 (旧実装)
+  });
+});
 
 describe('AURA_LEVEL_CONFIG', () => {
   it('TestGetAuraConfig_Level5: aura_level=5で金色・最大サイズ・最速回転の設定が返ること', () => {

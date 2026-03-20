@@ -103,7 +103,7 @@ export function renderFlameAura(
   const { x_min, y_min, x_max, y_max } = item.bounding_box;
   const cx = ((x_min + x_max) / 2) * canvasWidth;
   const cy = ((y_min + y_max) / 2) * canvasHeight;
-  const bboxR = Math.max((x_max - x_min) * canvasWidth, (y_max - y_min) * canvasHeight) / 2;
+  const bboxR = ((x_max - x_min) * canvasWidth + (y_max - y_min) * canvasHeight) / 4;
 
   const baseRadius = bboxR * (0.7 + config.radius * 0.2);
   const noiseAmp = baseRadius * 0.3;
@@ -210,7 +210,7 @@ export function renderAura(
 
   const centerX = (x1 + x2) / 2;
   const centerY = (y1 + y2) / 2;
-  const boxHalfSize = Math.max(x2 - x1, y2 - y1) / 2;
+  const boxHalfSize = (x2 - x1 + y2 - y1) / 4;
   const innerRadius = boxHalfSize * 0.3;
   const outerRadius = boxHalfSize * (1 + config.radius);
 

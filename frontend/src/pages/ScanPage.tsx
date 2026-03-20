@@ -18,6 +18,8 @@ import type { DetectedItem, ScanMode } from '../types/scan';
 
 // ?demo=1 が付いていれば全5レベルのモックデータで起動する（デザイン確認用）
 const IS_DEMO = new URLSearchParams(window.location.search).get('demo') === '1';
+// ?debug=1 が付いていればAIが検出したバウンディングボックスをオーラに重ねて描画する（デバッグ用）
+const IS_DEBUG = new URLSearchParams(window.location.search).get('debug') === '1';
 // ?fixture=1 → /fixture.jpeg, ?fixture=2 → /fixture2.jpeg を実際のAPIに送信する（開発・動作確認用）
 const _FIXTURE_MAP: Record<string, string> = {
   '1': 'fixture.jpeg',
@@ -135,6 +137,7 @@ export function ScanPage() {
               onItemSelect={handleItemSelect}
               width={imageDimensions.width}
               height={imageDimensions.height}
+              showBoundingBoxes={IS_DEBUG}
             />
           </div>
 
