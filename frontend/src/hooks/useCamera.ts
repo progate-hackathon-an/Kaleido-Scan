@@ -19,8 +19,20 @@ export function useCamera() {
 
   const startCamera = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment' },
+      video: { facingMode: { ideal: 'environment' } },
     });
+
+    const track = stream.getVideoTracks()[0];
+    if (track) {
+      const capabilities = track.getCapabilities?.();
+      if (capabilities?.width?.max && capabilities?.height?.max) {
+        await track.applyConstraints({
+          width: capabilities.width.max,
+          height: capabilities.height.max,
+        });
+      }
+    }
+
     streamRef.current = stream;
     if (videoRef.current) {
       videoRef.current.srcObject = stream;

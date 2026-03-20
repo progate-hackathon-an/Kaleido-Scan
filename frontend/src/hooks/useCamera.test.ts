@@ -2,12 +2,24 @@ import { renderHook, act } from '@testing-library/react';
 import { vi, beforeEach } from 'vitest';
 import { useCamera } from './useCamera';
 
+const mockApplyConstraints = vi.fn().mockResolvedValue(undefined);
+const mockGetCapabilities = vi.fn().mockReturnValue({
+  width: { max: 1920 },
+  height: { max: 1080 },
+});
+const mockTrack = {
+  stop: vi.fn(),
+  getCapabilities: mockGetCapabilities,
+  applyConstraints: mockApplyConstraints,
+};
 const mockStream = {
-  getTracks: () => [{ stop: vi.fn() }],
+  getTracks: () => [mockTrack],
+  getVideoTracks: () => [mockTrack],
 } as unknown as MediaStream;
 
 beforeEach(() => {
-  Object.defineProperty(global.navigator, 'mediaDevices', {
+  vi.clearAllMocks();
+  Object.defineProperty(globalThis.navigator, 'mediaDevices', {
     value: { getUserMedia: vi.fn().mockResolvedValue(mockStream) },
     writable: true,
   });
@@ -28,7 +40,20 @@ describe('useCamera', () => {
     });
 
     expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
-      video: { facingMode: 'environment' },
+      video: { facingMode: { ideal: 'environment' } },
+    });
+  });
+
+  it('TestUseCamera_StartCamera_ApplyMaxResolution: startCamera呼び出しでデバイス最大解像度が適用されること', async () => {
+    const { result } = renderHook(() => useCamera());
+
+    await act(async () => {
+      await result.current.startCamera();
+    });
+
+    expect(mockApplyConstraints).toHaveBeenCalledWith({
+      width: 1920,
+      height: 1080,
     });
   });
 
