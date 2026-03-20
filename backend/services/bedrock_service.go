@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
+	bedrockdoc "github.com/aws/aws-sdk-go-v2/service/bedrockruntime/document"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
 )
 
@@ -50,7 +51,7 @@ func NewBedrockServiceWithClient(client BedrockRuntimeClient, modelID string) *B
 }
 
 // Recognize は画像データをBedrock（Claude Sonnet）に送信し、検出商品リストを返す。
-// additionalModelRequestFields に JSON Schema を渡すことで出力形式をモデルレベルで強制する。
+// ToolConfig に JSON Schema を渡してツール使用を強制することで出力形式をモデルレベルで保証する。
 // product_name の enum に商品名リストを設定し、存在しない商品名の返却を根本から防ぐ。
 func (s *BedrockService) Recognize(ctx context.Context, imageData []byte, productNames []string) ([]AIItem, error) {
 	mimeType := detectMIMEType(imageData)
@@ -78,6 +79,22 @@ func (s *BedrockService) Recognize(ctx context.Context, imageData []byte, produc
 				},
 			},
 		},
+		ToolConfig: &types.ToolConfiguration{
+			Tools: []types.Tool{
+				&types.ToolMemberToolSpec{
+					Value: types.ToolSpecification{
+						Name:        aws.String("recognize_products"),
+						Description: aws.String("画像から検出されたコンビニ商品と各商品のバウンディングボックスを返す"),
+						InputSchema: &types.ToolInputSchemaMemberJson{
+							Value: bedrockdoc.NewLazyDocument(buildProductSchema(productNames)),
+						},
+					},
+				},
+			},
+			ToolChoice: &types.ToolChoiceMemberTool{
+				Value: types.SpecificToolChoice{Name: aws.String("recognize_products")},
+			},
+		},
 	})
 	if err != nil {
 		log.Printf("[bedrock] Converse error: %v", err)
@@ -94,17 +111,28 @@ func parseBedrockResponse(output *bedrockruntime.ConverseOutput) ([]AIItem, erro
 		return []AIItem{}, nil
 	}
 
-	textBlock, ok := msg.Value.Content[0].(*types.ContentBlockMemberText)
-	if !ok {
-		return []AIItem{}, nil
+	for _, block := range msg.Value.Content {
+		toolUse, ok := block.(*types.ContentBlockMemberToolUse)
+		if !ok {
+			continue
+		}
+		return parseToolUseInput(toolUse.Value.Input)
 	}
 
-	log.Printf("[bedrock] raw response: %s", textBlock.Value)
+	return []AIItem{}, nil
+}
 
-	jsonStr := stripMarkdownCodeBlock(textBlock.Value)
+func parseToolUseInput(input bedrockdoc.Interface) ([]AIItem, error) {
+	inputBytes, err := input.MarshalSmithyDocument()
+	if err != nil {
+		return nil, fmt.Errorf("MarshalSmithyDocument toolUse input: %w", err)
+	}
+
+	log.Printf("[bedrock] tool use input: %s", inputBytes)
+
 	var result aiItemsResult
-	if err := json.Unmarshal([]byte(jsonStr), &result); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal bedrock items: %w", err)
+	if err := json.Unmarshal(inputBytes, &result); err != nil {
+		return nil, fmt.Errorf("json.Unmarshal toolUse input: %w", err)
 	}
 
 	items := make([]AIItem, 0, len(result.Items))
@@ -123,7 +151,7 @@ func parseBedrockResponse(output *bedrockruntime.ConverseOutput) ([]AIItem, erro
 }
 
 // buildBedrockPrompt はBedrock用プロンプトを生成する。
-// 出力形式をプロンプト内で明示することでJSONレスポンスを強制する。
+// 出力形式はToolConfigのJSONスキーマで強制するため、プロンプトには含めない。
 func buildBedrockPrompt(productNames []string) string {
 	var sb strings.Builder
 	sb.WriteString("以下の画像を解析し、写っているコンビニ商品を識別してください。\n")
@@ -136,10 +164,7 @@ func buildBedrockPrompt(productNames []string) string {
 	}
 	sb.WriteString("\nバウンディングボックスは画像全体を1×1とした相対座標で表現してください。\n")
 	sb.WriteString("商品が画像からはみ出している場合も、商品全体から推定した座標を返してください（-1.5〜2.5の範囲で指定）。\n")
-	sb.WriteString("商品が検出できない場合は items を空配列で返してください。\n\n")
-	sb.WriteString("必ず以下のJSON形式のみで返答してください。前置きや説明は不要です:\n")
-	sb.WriteString(`{"items":[{"product_name":"<対象商品リスト内の商品名>","bounding_box":{"x_min":0.0,"y_min":0.0,"x_max":1.0,"y_max":1.0}}]}`)
-	sb.WriteString("\n")
+	sb.WriteString("商品が検出できない場合は items を空配列で返してください。\n")
 	return sb.String()
 }
 
@@ -188,17 +213,6 @@ func buildProductSchema(productNames []string) map[string]interface{} {
 		},
 		"required": []string{"items"},
 	}
-}
-
-// stripMarkdownCodeBlock はモデルが返すmarkdownコードブロック（```json...```）を除去する。
-func stripMarkdownCodeBlock(s string) string {
-	s = strings.TrimSpace(s)
-	if strings.HasPrefix(s, "```") {
-		s = s[strings.Index(s, "\n")+1:]
-		s = strings.TrimSuffix(strings.TrimSpace(s), "```")
-		s = strings.TrimSpace(s)
-	}
-	return s
 }
 
 // toBedrockImageFormat はMIMEタイプをBedrockのImageFormat型に変換する。

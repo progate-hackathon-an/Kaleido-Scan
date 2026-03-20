@@ -3,16 +3,15 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"os"
-	"path/filepath"
+	"io/fs"
 	"sort"
 	"strings"
 )
 
-// RunMigrations はmigrationsDir内の*_up.sqlファイルをアルファベット順に実行する。
+// RunMigrations は fsys 内の *_up.sql ファイルをアルファベット順に実行する。
 // _down.sql ファイルは除外する。
-func RunMigrations(db *sql.DB, migrationsDir string) error {
-	entries, err := os.ReadDir(migrationsDir)
+func RunMigrations(db *sql.DB, fsys fs.FS) error {
+	entries, err := fs.ReadDir(fsys, ".")
 	if err != nil {
 		return fmt.Errorf("read migrations dir: %w", err)
 	}
@@ -35,8 +34,7 @@ func RunMigrations(db *sql.DB, migrationsDir string) error {
 	sort.Strings(files)
 
 	for _, name := range files {
-		path := filepath.Join(migrationsDir, name)
-		content, err := os.ReadFile(path)
+		content, err := fs.ReadFile(fsys, name)
 		if err != nil {
 			return fmt.Errorf("read migration file %s: %w", name, err)
 		}

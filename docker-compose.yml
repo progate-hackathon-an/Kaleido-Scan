@@ -19,7 +19,6 @@ services:
       - '${BACKEND_PORT:-8080}:8080'
     volumes:
       - ./backend:/app
-      - ./db/migrations:/db/migrations
     environment:
       - BACKEND_PORT=8080
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:5173}

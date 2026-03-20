@@ -77,7 +77,7 @@
 ### 2-5. Go バックエンドの Lambda 対応
 
 - [x] `main.go` に Lambda adapter を追加（`AWS_LAMBDA_FUNCTION_NAME` 環境変数で分岐）
-- [x] `main.go` のマイグレーションパスを `/db/migrations` → `db/migrations`（相対パス）に変更
+- [x] `main.go` のマイグレーションを `embed.FS` に移行（`backend/db/migrations/` に配置、パス差異を根本解消）
 - [x] `config/config.go` に `DBSecretARN` フィールドを追加
 - [x] `database/secrets.go` を作成（Secrets Manager から DB パスワードを取得）
 - [x] `database/db.go` を更新（`DBSecretARN` がある場合は Secrets Manager を使用）
@@ -90,7 +90,7 @@
 ### 3-1. バックエンドのビルド
 
 - [x] `GOOS=linux GOARCH=arm64 go build -tags lambda.norpc -o bootstrap .` を実行
-- [x] `zip -j handler.zip bootstrap && zip -r handler.zip db/migrations/` を実行（リポジトリルートで）
+- [x] `zip -j handler.zip bootstrap` を実行（`embed.FS` によりSQLはバイナリに埋め込み済みのため migrations の別途同梱は不要）
 - [x] `backend/handler.zip` が生成されていることを確認
 
 ### 3-2. CDK Bootstrap（アカウントに 1 回だけ実行）
