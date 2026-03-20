@@ -1,6 +1,173 @@
 import { useState, useEffect, useRef } from 'react';
 import { getNextPosition, type Position } from './loadingOverlayUtils';
 
+/** 外周ダッシュリング（ゆっくり逆回転）＋8方向ティック */
+function OuterDashRing() {
+  const ticks = [0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
+    const rad = (deg * Math.PI) / 180;
+    return {
+      deg,
+      x1: 56 + 47 * Math.cos(rad),
+      y1: 56 + 47 * Math.sin(rad),
+      x2: 56 + 52 * Math.cos(rad),
+      y2: 56 + 52 * Math.sin(rad),
+    };
+  });
+
+  return (
+    <svg
+      className="absolute inset-0 animate-spin"
+      viewBox="0 0 112 112"
+      fill="none"
+      aria-hidden="true"
+      style={{ animationDuration: '12s', animationDirection: 'reverse' }}
+    >
+      <circle
+        cx="56"
+        cy="56"
+        r="52"
+        stroke="#ff9100"
+        strokeOpacity="0.18"
+        strokeWidth="1"
+        strokeDasharray="3 9"
+      />
+      {ticks.map(({ deg, x1, y1, x2, y2 }) => (
+        <line
+          key={deg}
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+          stroke="#ff9100"
+          strokeOpacity="0.45"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      ))}
+    </svg>
+  );
+}
+
+/** メインアーク（時計回り、速い） */
+function MainArc() {
+  return (
+    <svg
+      className="absolute inset-0 animate-spin"
+      viewBox="0 0 112 112"
+      fill="none"
+      aria-hidden="true"
+      style={{ animationDuration: '2s' }}
+    >
+      <defs>
+        <linearGradient id="reticle-main-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ff9100" />
+          <stop offset="100%" stopColor="#ff9100" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <circle cx="56" cy="56" r="44" stroke="#1a0800" strokeWidth="2" />
+      <circle
+        cx="56"
+        cy="56"
+        r="44"
+        stroke="url(#reticle-main-grad)"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeDasharray="100 176"
+      />
+    </svg>
+  );
+}
+
+/** 短アーク（逆回転、中速） */
+function SecondaryArc() {
+  return (
+    <svg
+      className="absolute inset-0 animate-spin"
+      viewBox="0 0 112 112"
+      fill="none"
+      aria-hidden="true"
+      style={{ animationDuration: '1.4s', animationDirection: 'reverse' }}
+    >
+      <circle
+        cx="56"
+        cy="56"
+        r="44"
+        stroke="#ff9100"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeOpacity="0.65"
+        strokeDasharray="22 256"
+      />
+    </svg>
+  );
+}
+
+/** 静的装飾: 内部Lブラケット・クロスヘア（中央gap付き）・中央ダイヤ */
+function StaticDecor() {
+  return (
+    <svg className="absolute inset-0" viewBox="0 0 112 112" fill="none" aria-hidden="true">
+      {/* 4隅のLブラケット（ターゲットロック風） */}
+      <polyline
+        points="36,46 36,36 46,36"
+        stroke="#ff9100"
+        strokeOpacity="0.55"
+        strokeWidth="1.5"
+      />
+      <polyline
+        points="66,36 76,36 76,46"
+        stroke="#ff9100"
+        strokeOpacity="0.55"
+        strokeWidth="1.5"
+      />
+      <polyline
+        points="36,66 36,76 46,76"
+        stroke="#ff9100"
+        strokeOpacity="0.55"
+        strokeWidth="1.5"
+      />
+      <polyline
+        points="66,76 76,76 76,66"
+        stroke="#ff9100"
+        strokeOpacity="0.55"
+        strokeWidth="1.5"
+      />
+      {/* クロスヘア（中央12px gap） */}
+      <line x1="4" y1="56" x2="44" y2="56" stroke="#ff9100" strokeOpacity="0.55" strokeWidth="1" />
+      <line
+        x1="68"
+        y1="56"
+        x2="108"
+        y2="56"
+        stroke="#ff9100"
+        strokeOpacity="0.55"
+        strokeWidth="1"
+      />
+      <line x1="56" y1="4" x2="56" y2="44" stroke="#ff9100" strokeOpacity="0.55" strokeWidth="1" />
+      <line
+        x1="56"
+        y1="68"
+        x2="56"
+        y2="108"
+        stroke="#ff9100"
+        strokeOpacity="0.55"
+        strokeWidth="1"
+      />
+      {/* 中央ダイヤモンド */}
+      <rect
+        x="52"
+        y="52"
+        width="8"
+        height="8"
+        transform="rotate(45 56 56)"
+        stroke="#ff9100"
+        strokeWidth="1.5"
+        fill="#ff9100"
+        fillOpacity="0.15"
+      />
+    </svg>
+  );
+}
+
 /** 外枠: ゲームHUD風の4コーナーブラケット（画面全体をカバー） */
 function OuterFrame() {
   return (
@@ -65,38 +232,19 @@ function MovingReticle() {
         (0000, 0000)
       </div>
 
-      <div className="relative w-28 h-28 animate-spin" style={{ animationDuration: '2s' }}>
-        {/* 円リング */}
-        <svg className="absolute inset-0" viewBox="0 0 112 112" fill="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="moving-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ff9100" />
-              <stop offset="100%" stopColor="#ff9100" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <circle cx="56" cy="56" r="50" stroke="#2a1500" strokeWidth="3" />
-          <circle
-            cx="56"
-            cy="56"
-            r="50"
-            stroke="url(#moving-grad)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            strokeDasharray="110 205"
-          />
-        </svg>
-
-        {/* クロスヘア（太め） */}
-        <span className="absolute left-1 top-1/2 -translate-y-1/2 w-9 h-1 bg-sw-orange/80" />
-        <span className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-1 bg-sw-orange/80" />
-        <span className="absolute top-1 left-1/2 -translate-x-1/2 h-9 w-1 bg-sw-orange/80" />
-        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 h-9 w-1 bg-sw-orange/80" />
-
-        {/* 中央サークル */}
+      <div
+        className="relative w-28 h-28"
+        style={{ filter: 'drop-shadow(0 0 8px rgba(255,145,0,0.55))' }}
+      >
+        <OuterDashRing />
+        <MainArc />
+        <SecondaryArc />
+        <StaticDecor />
+        {/* 中央ピング */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="relative w-3 h-3">
-            <span className="absolute inset-0 rounded-full bg-sw-orange/40 animate-ping" />
-            <span className="absolute inset-0 rounded-full border-2 border-sw-orange" />
+          <div className="relative w-2.5 h-2.5">
+            <span className="absolute inset-0 rounded-full bg-sw-orange/50 animate-ping" />
+            <span className="absolute inset-0 rounded-full bg-sw-orange" />
           </div>
         </div>
       </div>
