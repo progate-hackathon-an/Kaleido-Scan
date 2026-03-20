@@ -356,9 +356,7 @@ Content-Type: multipart/form-data
       "name": "セブンプレミアム アーモンドボール",
       "description": "アーモンドをホワイトチョコレートでコーティングしたひとくちサイズのスナック。香ばしいアーモンドとチョコレートの絶妙な組み合わせ。",
       "category": "snack",
-      "sales_rank": 5,
       "rank": 1,
-      "total_quantity": 4850,
       "aura_level": 5,
       "bounding_box": {
         "x_min": 0.2,
@@ -378,26 +376,15 @@ Content-Type: multipart/form-data
 | `name` | string | 商品名 |
 | `description` | string | 商品説明 |
 | `category` | string | カテゴリ（`food` / `drink` / `snack`） |
-| `sales_rank` | integer | 通常の売上ランキング（1〜5。売上が多いほど上位） |
 | `rank` | integer | 掘り出し物ランキング（1〜5。売上が少ないほど上位） |
-| `total_quantity` | integer | 累計売上個数 |
 | `aura_level` | integer | オーラ強度（1〜5。`rank 1` → `aura_level 5`） |
 | `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
 
-**rank・aura_level の計算式**
+**aura_level の計算式**
 
 ```
-rank       = 6 - sales_rank   （売上最下位 = sales_rank 5 → rank 1）
 aura_level = 6 - rank
 ```
-
-| sales_rank | rank | aura_level |
-|-----------|------|------------|
-| 5（最下位） | 1 | 5 |
-| 4 | 2 | 4 |
-| 3 | 3 | 3 |
-| 2 | 4 | 2 |
-| 1（最上位） | 5 | 1 |
 
 **エラーレスポンス**
 

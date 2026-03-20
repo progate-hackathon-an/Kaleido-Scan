@@ -9,7 +9,6 @@ const ITEM: DetectedItem = {
   description: '',
   category: 'test',
   rank: 1,
-  total_quantity: 100,
   aura_level: 3,
   bounding_box: { x_min: 0.1, y_min: 0.1, x_max: 0.5, y_max: 0.5 },
 };
