@@ -124,7 +124,9 @@ export function ProductBottomSheet({
 
           {/* Header: product name + rank badge */}
           <div className="flex items-center justify-between gap-4">
-            <h2 className="font-display text-xl text-white font-bold leading-tight">{item.name}</h2>
+            <h2 className="font-display font-normal text-xl text-white leading-tight">
+              {item.name}
+            </h2>
             <span className="shrink-0 font-body text-xs text-slate-300 bg-sw-black/70 px-3 py-1.5 rounded-full border border-slate-600">
               Rank {item.rank}
             </span>

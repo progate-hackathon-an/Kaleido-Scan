@@ -21,7 +21,13 @@ export default {
         'sw-orange': '#FF9100',
       },
       fontFamily: {
-        display: ['"Zen Dots"', 'Orbitron', '"Zen Kaku Gothic New"', 'sans-serif'],
+        display: [
+          'Orbitron',
+          '"Zen Dots"',
+          '"Kaisotai-Next-UP-B"',
+          '"Zen Kaku Gothic New"',
+          'sans-serif',
+        ],
         body: ['"Zen Kaku Gothic New"', 'sans-serif'],
       },
     },
