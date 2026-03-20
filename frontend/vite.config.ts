@@ -16,6 +16,7 @@ export default defineConfig({
     }),
   ],
   server: {
+    host: true,
     proxy: {
       '/scan': 'http://backend:8080',
       '/products': 'http://backend:8080',
