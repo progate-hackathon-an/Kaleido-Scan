@@ -37,7 +37,7 @@ export function AuraEffect({ items, mode = 'ranking' }: Props) {
       const t = timestamp * 0.001;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // rank 昇順（1位が最後）で描画し、高順位オーラが手前レイヤーになるようにする
+      // rank 降順（例: 5→1）で描画し、高順位オーラが手前レイヤーになるようにする
       [...items]
         .sort((a, b) => b.rank - a.rank)
         .forEach((item) => renderFlameAura(ctx, item, canvas.width, canvas.height, mode, t));
