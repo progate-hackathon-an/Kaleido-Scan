@@ -23,10 +23,11 @@ describe('ProductBottomSheet', () => {
     expect(
       screen.getByText('味付海苔　炭火焼紅しゃけ', { normalizer: (s) => s })
     ).toBeInTheDocument();
-    // aria-label はスクリーンリーダー向けの自然な読み上げ（ゼロ埋めなし）
+    // aria-label はスクリーンリーダー向けの自然な読み上げ
     expect(screen.getByLabelText('Rank 1')).toBeInTheDocument();
-    // ゼロ埋め表示がレンダーされていること（aria-hidden のため getByText で取得）
-    expect(screen.getByText('01')).toBeInTheDocument();
+    // 序数表示がレンダーされていること（aria-hidden のため getByText で取得）
+    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByText('st')).toBeInTheDocument();
   });
 
   it('TestProductBottomSheet_HideOnClose: isOpen=falseで非表示になること', () => {
