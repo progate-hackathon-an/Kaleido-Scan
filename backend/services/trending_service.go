@@ -12,7 +12,7 @@ type TrendingResult struct {
 	Name            string      `json:"name"`
 	Description     string      `json:"description"`
 	Category        string      `json:"category"`
-	TrendingRank    int         `json:"trending_rank"`
+	Rank            int         `json:"rank"`
 	CurrentQuantity int         `json:"current_quantity"`
 	PrevQuantity    int         `json:"prev_quantity"`
 	GrowthRate      *float64    `json:"growth_rate"`
@@ -157,7 +157,7 @@ func (s *TrendingService) mergeTrendingResults(aiItems []AIItem, rankings []tren
 			Name:            r.name,
 			Description:     r.description,
 			Category:        r.category,
-			TrendingRank:    r.trendingRank,
+			Rank:            r.trendingRank,
 			CurrentQuantity: r.currentQuantity,
 			PrevQuantity:    r.prevQuantity,
 			GrowthRate:      growthRate,

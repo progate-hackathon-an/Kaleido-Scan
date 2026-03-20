@@ -37,7 +37,7 @@ func TestTrendingService_GetRanking_GrowthRate(t *testing.T) {
 		t.Fatalf("expected 2 results, got %d", len(results))
 	}
 
-	// growth_rate が高い商品が上位（trending_rank=1 → aura_level=5）
+	// growth_rate が高い商品が上位（rank=1 → aura_level=5）
 	var orangeResult, coffeeResult *services.TrendingResult
 	for i := range results {
 		if results[i].Name == "オレンジ 500ml" {
@@ -51,11 +51,11 @@ func TestTrendingService_GetRanking_GrowthRate(t *testing.T) {
 	if orangeResult == nil {
 		t.Fatal("orange result not found")
 	}
-	if orangeResult.TrendingRank != 1 {
-		t.Errorf("orange should have trending_rank=1, got %d", orangeResult.TrendingRank)
+	if orangeResult.Rank != 1 {
+		t.Errorf("orange should have rank=1, got %d", orangeResult.Rank)
 	}
 	if orangeResult.AuraLevel != 5 {
-		t.Errorf("orange (trending_rank=1) should have aura_level=5, got %d", orangeResult.AuraLevel)
+		t.Errorf("orange (rank=1) should have aura_level=5, got %d", orangeResult.AuraLevel)
 	}
 	if orangeResult.GrowthRate == nil || *orangeResult.GrowthRate != 130.8 {
 		t.Errorf("orange should have growth_rate=130.8, got %v", orangeResult.GrowthRate)
@@ -64,11 +64,11 @@ func TestTrendingService_GetRanking_GrowthRate(t *testing.T) {
 	if coffeeResult == nil {
 		t.Fatal("coffee result not found")
 	}
-	if coffeeResult.TrendingRank != 2 {
-		t.Errorf("coffee should have trending_rank=2, got %d", coffeeResult.TrendingRank)
+	if coffeeResult.Rank != 2 {
+		t.Errorf("coffee should have rank=2, got %d", coffeeResult.Rank)
 	}
 	if coffeeResult.AuraLevel != 4 {
-		t.Errorf("coffee (trending_rank=2) should have aura_level=4, got %d", coffeeResult.AuraLevel)
+		t.Errorf("coffee (rank=2) should have aura_level=4, got %d", coffeeResult.AuraLevel)
 	}
 
 	if err := mock.ExpectationsWereMet(); err != nil {
