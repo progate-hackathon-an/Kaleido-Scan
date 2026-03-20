@@ -1,0 +1,176 @@
+{
+  "/KaleidoNetworkStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/KaleidoNetworkStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpc8D76B8DB"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/IGW": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcIGW42CECBEE"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/VPCGW": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcVPCGW37A28F38"
+    }
+  ],
+  "/KaleidoNetworkStack/LambdaSG/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaSG9DBFCFB7"
+    }
+  ],
+  "/KaleidoNetworkStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/KaleidoNetworkStack/Exports/Output{\"Ref\":\"KaleidoVpc8D76B8DB\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefKaleidoVpc8D76B8DBD34AC5EA"
+    }
+  ],
+  "/KaleidoNetworkStack/Exports/Output{\"Fn::GetAtt\":[\"LambdaSG9DBFCFB7\",\"GroupId\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttLambdaSG9DBFCFB7GroupId1E50A8F5"
+    }
+  ],
+  "/KaleidoNetworkStack/Exports/Output{\"Ref\":\"KaleidoVpcprivateSubnet1SubnetBDD5F1C0\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefKaleidoVpcprivateSubnet1SubnetBDD5F1C0F64C41EF"
+    }
+  ],
+  "/KaleidoNetworkStack/Exports/Output{\"Ref\":\"KaleidoVpcprivateSubnet2Subnet3D56289C\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefKaleidoVpcprivateSubnet2Subnet3D56289CFD17B195"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/publicSubnet1/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcpublicSubnet1Subnet16FE972A"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/publicSubnet1/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcpublicSubnet1RouteTable70F6D3E7"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/publicSubnet1/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcpublicSubnet1RouteTableAssociationD73E1473"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/publicSubnet1/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcpublicSubnet1DefaultRoute82DE553D"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/publicSubnet1/EIP": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcpublicSubnet1EIP9665DD52"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/publicSubnet1/NATGateway": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcpublicSubnet1NATGateway00F29DE5"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/publicSubnet2/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcpublicSubnet2Subnet4D747D36"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/publicSubnet2/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcpublicSubnet2RouteTable59C68CE4"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/publicSubnet2/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcpublicSubnet2RouteTableAssociation1C4E88CF"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/publicSubnet2/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcpublicSubnet2DefaultRoute267195B9"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/privateSubnet1/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcprivateSubnet1SubnetBDD5F1C0"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/privateSubnet1/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcprivateSubnet1RouteTable4EA6C235"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/privateSubnet1/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcprivateSubnet1RouteTableAssociation4C550BE2"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/privateSubnet1/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcprivateSubnet1DefaultRouteD62AB29E"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/privateSubnet2/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcprivateSubnet2Subnet3D56289C"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/privateSubnet2/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcprivateSubnet2RouteTableAC491EF7"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/privateSubnet2/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcprivateSubnet2RouteTableAssociationD0247778"
+    }
+  ],
+  "/KaleidoNetworkStack/KaleidoVpc/privateSubnet2/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoVpcprivateSubnet2DefaultRoute33DE7C48"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "1d5a8d2d91e56fa96b1e561da2097168fc312d2bc0937d031a7e84964634aa0b": {
+      "displayName": "KaleidoFunction/Code",
+      "source": {
+        "path": "asset.1d5a8d2d91e56fa96b1e561da2097168fc312d2bc0937d031a7e84964634aa0b.zip",
+        "packaging": "file"
+      },
+      "destinations": {
+        "097395515323-us-east-1-6d476132": {
+          "bucketName": "cdk-hnb659fds-assets-097395515323-us-east-1",
+          "objectKey": "1d5a8d2d91e56fa96b1e561da2097168fc312d2bc0937d031a7e84964634aa0b.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::097395515323:role/cdk-hnb659fds-file-publishing-role-097395515323-us-east-1"
+        }
+      }
+    },
+    "96e0c5358c0873afa1c2a86d8cbda236ecd66151ecad6a6f0eb32f862942ab2a": {
+      "displayName": "KaleidoLambdaStack Template",
+      "source": {
+        "path": "KaleidoLambdaStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "097395515323-us-east-1-f5978209": {
+          "bucketName": "cdk-hnb659fds-assets-097395515323-us-east-1",
+          "objectKey": "96e0c5358c0873afa1c2a86d8cbda236ecd66151ecad6a6f0eb32f862942ab2a.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::097395515323:role/cdk-hnb659fds-file-publishing-role-097395515323-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

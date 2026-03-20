@@ -11,6 +11,7 @@ type Config struct {
 	DBPassword     string
 	DBName         string
 	DBSSLMode      string // "disable" | "require" | "verify-full"
+	DBSecretARN    string
 	GeminiAPIKey   string
 	AIProvider     string
 	AWSRegion      string
@@ -29,6 +30,7 @@ func Load() *Config {
 		DBPassword:     getEnv("DB_PASSWORD", "postgres"),
 		DBName:         getEnv("DB_NAME", "kaleido_scan"),
 		DBSSLMode:      getEnv("DB_SSL_MODE", "disable"),
+		DBSecretARN:    getEnv("DB_SECRET_ARN", ""),
 		GeminiAPIKey:   getEnv("GEMINI_API_KEY", ""),
 		AIProvider:     getEnv("AI_PROVIDER", "gemini"),
 		AWSRegion:      getEnv("AWS_DEFAULT_REGION", "us-east-1"),

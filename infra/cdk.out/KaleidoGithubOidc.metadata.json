@@ -1,0 +1,50 @@
+{
+  "/KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider": [
+    {
+      "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+      "data": true
+    }
+  ],
+  "/KaleidoGithubOidc/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/KaleidoGithubOidc/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Role": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomAWSCDKOpenIdConnectProviderCustomResourceProviderRole517FED65"
+    }
+  ],
+  "/KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Handler": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomAWSCDKOpenIdConnectProviderCustomResourceProviderHandlerF2C543E0"
+    }
+  ],
+  "/KaleidoGithubOidc/GithubActionsRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "GithubActionsRoleF5CC769F"
+    }
+  ],
+  "/KaleidoGithubOidc/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/KaleidoGithubOidc/GithubOidc/Resource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "GithubOidc86785739"
+    }
+  ]
+}

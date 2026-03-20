@@ -1,0 +1,493 @@
+{
+ "Resources": {
+  "KaleidoVpc8D76B8DB": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/Resource"
+   }
+  },
+  "KaleidoVpcpublicSubnet1Subnet16FE972A": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.0.0.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "KaleidoVpc8D76B8DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/Subnet"
+   }
+  },
+  "KaleidoVpcpublicSubnet1RouteTable70F6D3E7": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "KaleidoVpc8D76B8DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/RouteTable"
+   }
+  },
+  "KaleidoVpcpublicSubnet1RouteTableAssociationD73E1473": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "KaleidoVpcpublicSubnet1RouteTable70F6D3E7"
+    },
+    "SubnetId": {
+     "Ref": "KaleidoVpcpublicSubnet1Subnet16FE972A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/RouteTableAssociation"
+   }
+  },
+  "KaleidoVpcpublicSubnet1DefaultRoute82DE553D": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "KaleidoVpcIGW42CECBEE"
+    },
+    "RouteTableId": {
+     "Ref": "KaleidoVpcpublicSubnet1RouteTable70F6D3E7"
+    }
+   },
+   "DependsOn": [
+    "KaleidoVpcVPCGW37A28F38"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/DefaultRoute"
+   }
+  },
+  "KaleidoVpcpublicSubnet1EIP9665DD52": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/EIP"
+   }
+  },
+  "KaleidoVpcpublicSubnet1NATGateway00F29DE5": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "KaleidoVpcpublicSubnet1EIP9665DD52",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "KaleidoVpcpublicSubnet1Subnet16FE972A"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1"
+     }
+    ]
+   },
+   "DependsOn": [
+    "KaleidoVpcpublicSubnet1DefaultRoute82DE553D",
+    "KaleidoVpcpublicSubnet1RouteTableAssociationD73E1473"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/NATGateway"
+   }
+  },
+  "KaleidoVpcpublicSubnet2Subnet4D747D36": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.0.1.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "KaleidoVpc8D76B8DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2/Subnet"
+   }
+  },
+  "KaleidoVpcpublicSubnet2RouteTable59C68CE4": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "KaleidoVpc8D76B8DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2/RouteTable"
+   }
+  },
+  "KaleidoVpcpublicSubnet2RouteTableAssociation1C4E88CF": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "KaleidoVpcpublicSubnet2RouteTable59C68CE4"
+    },
+    "SubnetId": {
+     "Ref": "KaleidoVpcpublicSubnet2Subnet4D747D36"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2/RouteTableAssociation"
+   }
+  },
+  "KaleidoVpcpublicSubnet2DefaultRoute267195B9": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "KaleidoVpcIGW42CECBEE"
+    },
+    "RouteTableId": {
+     "Ref": "KaleidoVpcpublicSubnet2RouteTable59C68CE4"
+    }
+   },
+   "DependsOn": [
+    "KaleidoVpcVPCGW37A28F38"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2/DefaultRoute"
+   }
+  },
+  "KaleidoVpcprivateSubnet1SubnetBDD5F1C0": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.0.2.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "KaleidoVpc8D76B8DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1/Subnet"
+   }
+  },
+  "KaleidoVpcprivateSubnet1RouteTable4EA6C235": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "KaleidoVpc8D76B8DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1/RouteTable"
+   }
+  },
+  "KaleidoVpcprivateSubnet1RouteTableAssociation4C550BE2": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "KaleidoVpcprivateSubnet1RouteTable4EA6C235"
+    },
+    "SubnetId": {
+     "Ref": "KaleidoVpcprivateSubnet1SubnetBDD5F1C0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1/RouteTableAssociation"
+   }
+  },
+  "KaleidoVpcprivateSubnet1DefaultRouteD62AB29E": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "KaleidoVpcpublicSubnet1NATGateway00F29DE5"
+    },
+    "RouteTableId": {
+     "Ref": "KaleidoVpcprivateSubnet1RouteTable4EA6C235"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1/DefaultRoute"
+   }
+  },
+  "KaleidoVpcprivateSubnet2Subnet3D56289C": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.0.3.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "KaleidoVpc8D76B8DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2/Subnet"
+   }
+  },
+  "KaleidoVpcprivateSubnet2RouteTableAC491EF7": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "KaleidoVpc8D76B8DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2/RouteTable"
+   }
+  },
+  "KaleidoVpcprivateSubnet2RouteTableAssociationD0247778": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "KaleidoVpcprivateSubnet2RouteTableAC491EF7"
+    },
+    "SubnetId": {
+     "Ref": "KaleidoVpcprivateSubnet2Subnet3D56289C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2/RouteTableAssociation"
+   }
+  },
+  "KaleidoVpcprivateSubnet2DefaultRoute33DE7C48": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "KaleidoVpcpublicSubnet1NATGateway00F29DE5"
+    },
+    "RouteTableId": {
+     "Ref": "KaleidoVpcprivateSubnet2RouteTableAC491EF7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2/DefaultRoute"
+   }
+  },
+  "KaleidoVpcIGW42CECBEE": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "KaleidoNetworkStack/KaleidoVpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/IGW"
+   }
+  },
+  "KaleidoVpcVPCGW37A28F38": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "KaleidoVpcIGW42CECBEE"
+    },
+    "VpcId": {
+     "Ref": "KaleidoVpc8D76B8DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/KaleidoVpc/VPCGW"
+   }
+  },
+  "LambdaSG9DBFCFB7": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Security group for Lambda function",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "KaleidoVpc8D76B8DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/LambdaSG/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02OywrCMBBFv8V9GrUouC0i0o2UVrqVJI44fSQlmShS+u+2vuLqnjlchhvzeLXii5m4u0id66hByfuChKrZqE6gYt6XnWLbiy6zLcu8bFAVXmqgyQXKjSc4CtlA8MElzhmFgtDoX3mCXZpNcRC0FwR38WCZxduI4XGqCezI38J7yedKaJx6bUETK0B5i/TYW+O714Z/MbAcnPFWwcC0OQOv3PwWr/mGL2eVQ4ys14Qt8PydT/Y2fL4YAQAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoNetworkStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ExportsOutputRefKaleidoVpc8D76B8DBD34AC5EA": {
+   "Value": {
+    "Ref": "KaleidoVpc8D76B8DB"
+   },
+   "Export": {
+    "Name": "KaleidoNetworkStack:ExportsOutputRefKaleidoVpc8D76B8DBD34AC5EA"
+   }
+  },
+  "ExportsOutputFnGetAttLambdaSG9DBFCFB7GroupId1E50A8F5": {
+   "Value": {
+    "Fn::GetAtt": [
+     "LambdaSG9DBFCFB7",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "KaleidoNetworkStack:ExportsOutputFnGetAttLambdaSG9DBFCFB7GroupId1E50A8F5"
+   }
+  },
+  "ExportsOutputRefKaleidoVpcprivateSubnet1SubnetBDD5F1C0F64C41EF": {
+   "Value": {
+    "Ref": "KaleidoVpcprivateSubnet1SubnetBDD5F1C0"
+   },
+   "Export": {
+    "Name": "KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet1SubnetBDD5F1C0F64C41EF"
+   }
+  },
+  "ExportsOutputRefKaleidoVpcprivateSubnet2Subnet3D56289CFD17B195": {
+   "Value": {
+    "Ref": "KaleidoVpcprivateSubnet2Subnet3D56289C"
+   },
+   "Export": {
+    "Name": "KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet2Subnet3D56289CFD17B195"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,36 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "d75c48c9f82cde63e9bf414df335e84e8ac24f11eb34889be255b702aec71e50": {
+      "displayName": "KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider Code",
+      "source": {
+        "path": "asset.d75c48c9f82cde63e9bf414df335e84e8ac24f11eb34889be255b702aec71e50",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "097395515323-us-east-1-6b38fa61": {
+          "bucketName": "cdk-hnb659fds-assets-097395515323-us-east-1",
+          "objectKey": "d75c48c9f82cde63e9bf414df335e84e8ac24f11eb34889be255b702aec71e50.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::097395515323:role/cdk-hnb659fds-file-publishing-role-097395515323-us-east-1"
+        }
+      }
+    },
+    "f840bbe09a15a92363b5b00532df6e30a959eb73670f4649aaafe55fa911e3c0": {
+      "displayName": "KaleidoGithubOidc Template",
+      "source": {
+        "path": "KaleidoGithubOidc.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "097395515323-us-east-1-46f9302b": {
+          "bucketName": "cdk-hnb659fds-assets-097395515323-us-east-1",
+          "objectKey": "f840bbe09a15a92363b5b00532df6e30a959eb73670f4649aaafe55fa911e3c0.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::097395515323:role/cdk-hnb659fds-file-publishing-role-097395515323-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

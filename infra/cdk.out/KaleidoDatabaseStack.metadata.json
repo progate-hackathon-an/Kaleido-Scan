@@ -1,0 +1,86 @@
+{
+  "/KaleidoDatabaseStack/DbEndpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DbEndpoint"
+    }
+  ],
+  "/KaleidoDatabaseStack/DbSecretArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DbSecretArn"
+    }
+  ],
+  "/KaleidoDatabaseStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/KaleidoDatabaseStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/KaleidoDatabaseStack/DatabaseSG/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DatabaseSG2A23C222"
+    }
+  ],
+  "/KaleidoDatabaseStack/DatabaseSG/from KaleidoNetworkStackLambdaSG824D5007:5432": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DatabaseSGfromKaleidoNetworkStackLambdaSG824D5007543271B4FB00"
+    }
+  ],
+  "/KaleidoDatabaseStack/KaleidoCluster/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoCluster6A5B15C4"
+    }
+  ],
+  "/KaleidoDatabaseStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/KaleidoDatabaseStack/Exports/Output{\"Ref\":\"KaleidoClusterSecretAttachmentFFB020B2\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefKaleidoClusterSecretAttachmentFFB020B226E63EA8"
+    }
+  ],
+  "/KaleidoDatabaseStack/Exports/Output{\"Fn::GetAtt\":[\"KaleidoCluster6A5B15C4\",\"Endpoint.Address\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttKaleidoCluster6A5B15C4EndpointAddress4410A3D8"
+    }
+  ],
+  "/KaleidoDatabaseStack/KaleidoCluster/Subnets/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoClusterSubnetsD90A5C95"
+    }
+  ],
+  "/KaleidoDatabaseStack/KaleidoCluster/Secret/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoDatabaseStackKaleidoClusterSecretF5E00A123fdaad7efa858a3daf9490cf0a702aeb"
+    }
+  ],
+  "/KaleidoDatabaseStack/KaleidoCluster/writer/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoClusterwriter168FEFD7"
+    }
+  ],
+  "/KaleidoDatabaseStack/KaleidoCluster/Secret/Attachment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoClusterSecretAttachmentFFB020B2"
+    }
+  ]
+}

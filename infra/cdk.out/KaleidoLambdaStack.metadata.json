@@ -1,0 +1,86 @@
+{
+  "/KaleidoLambdaStack/ApiUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiUrl"
+    }
+  ],
+  "/KaleidoLambdaStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/KaleidoLambdaStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/KaleidoLambdaStack/KaleidoFunction/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoFunction0AD121D6"
+    }
+  ],
+  "/KaleidoLambdaStack/KaleidoApi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoApi14AC32C9"
+    }
+  ],
+  "/KaleidoLambdaStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/KaleidoLambdaStack/KaleidoFunction/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoFunctionServiceRoleBEC632C1"
+    }
+  ],
+  "/KaleidoLambdaStack/KaleidoApi/DefaultStage/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoApiDefaultStage2C4D5B3E"
+    }
+  ],
+  "/KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/LambdaIntegration-Permission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoApiANYproxyLambdaIntegrationPermission4BBAA982"
+    }
+  ],
+  "/KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoApiANYproxy9DAAC474"
+    }
+  ],
+  "/KaleidoLambdaStack/KaleidoApi/ANY--/LambdaIntegration-Permission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoApiANYLambdaIntegrationPermission7BE2E48B"
+    }
+  ],
+  "/KaleidoLambdaStack/KaleidoApi/ANY--/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoApiANYF74704DB"
+    }
+  ],
+  "/KaleidoLambdaStack/KaleidoFunction/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoFunctionServiceRoleDefaultPolicy65DEC5AC"
+    }
+  ],
+  "/KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/LambdaIntegration/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KaleidoApiANYproxyLambdaIntegrationA75F0DD6"
+    }
+  ]
+}

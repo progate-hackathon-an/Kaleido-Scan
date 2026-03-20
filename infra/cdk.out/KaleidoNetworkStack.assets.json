@@ -1,0 +1,21 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "62499e1d819b75fbf1c74ab60148d6689943d63e58e09e1bb88f4d0294049032": {
+      "displayName": "KaleidoNetworkStack Template",
+      "source": {
+        "path": "KaleidoNetworkStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "097395515323-us-east-1-7f0f1ad8": {
+          "bucketName": "cdk-hnb659fds-assets-097395515323-us-east-1",
+          "objectKey": "62499e1d819b75fbf1c74ab60148d6689943d63e58e09e1bb88f4d0294049032.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::097395515323:role/cdk-hnb659fds-file-publishing-role-097395515323-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
