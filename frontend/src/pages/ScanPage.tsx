@@ -140,7 +140,8 @@ export function ScanPage() {
           {/* 撮り直しボタン */}
           <button
             onClick={() => setIsRetakeConfirmOpen(true)}
-            aria-label="もう一度撮る"
+            aria-label="撮り直し確認を開く"
+            aria-haspopup="dialog"
             className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center w-12 h-12 rounded-full bg-sw-black/70 backdrop-blur-sm border border-sw-orange text-white shadow-[0_0_20px_rgba(255,145,0,0.35)] active:scale-95 transition-transform duration-100"
           >
             <svg
