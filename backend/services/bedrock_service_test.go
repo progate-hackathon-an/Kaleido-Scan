@@ -12,11 +12,13 @@ import (
 
 // mockBedrockClient はBedrockRuntimeClientのテスト用モック実装。
 type mockBedrockClient struct {
-	output *bedrockruntime.ConverseOutput
-	err    error
+	output        *bedrockruntime.ConverseOutput
+	err           error
+	capturedInput *bedrockruntime.ConverseInput // アサーション用にリクエストを保持
 }
 
 func (m *mockBedrockClient) Converse(ctx context.Context, params *bedrockruntime.ConverseInput, optFns ...func(*bedrockruntime.Options)) (*bedrockruntime.ConverseOutput, error) {
+	m.capturedInput = params
 	return m.output, m.err
 }
 
@@ -95,6 +97,22 @@ func TestBedrockService_Recognize_EmptyItems(t *testing.T) {
 	}
 	if len(items) != 0 {
 		t.Errorf("expected 0 items, got %d", len(items))
+	}
+}
+
+func TestBedrockService_Recognize_SetsAdditionalModelFields(t *testing.T) {
+	// additionalModelRequestFields（JSON Schema）がリクエストに設定されていることを確認する
+	mock := &mockBedrockClient{
+		output: makeBedrockOutput(`{"items":[]}`),
+	}
+
+	svc := services.NewBedrockServiceWithClient(mock, "test-model")
+	_, err := svc.Recognize(context.Background(), []byte{0xFF, 0xD8, 0xFF, 0xE0}, []string{"商品A"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if mock.capturedInput.AdditionalModelRequestFields == nil {
+		t.Error("expected AdditionalModelRequestFields to be set, got nil")
 	}
 }
 
