@@ -36,7 +36,7 @@ export class LambdaStack extends cdk.Stack {
         DB_SECRET_ARN: props.dbSecretArn,
         AI_PROVIDER: 'bedrock',
         BEDROCK_MODEL_ID: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
-        FRONTEND_URL: '*',
+        FRONTEND_URL: 'https://main.d1n9t8h3zlm71f.amplifyapp.com',
         SEED_ON_STARTUP: 'true',
       },
     });
@@ -58,7 +58,7 @@ export class LambdaStack extends cdk.Stack {
 
     const api = new apigwv2.HttpApi(this, 'KaleidoApi', {
       corsPreflight: {
-        allowOrigins: ['*'],
+        allowOrigins: ['https://main.d1n9t8h3zlm71f.amplifyapp.com'],
         allowMethods: [apigwv2.CorsHttpMethod.ANY],
         allowHeaders: ['*'],
       },
