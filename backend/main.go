@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"embed"
 	"flag"
+	"io/fs"
 	"log"
 	"os"
 
@@ -18,6 +20,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
+
+//go:embed db/migrations/*.sql
+var migrationsFS embed.FS
 
 func main() {
 	seed := flag.Bool("seed", false, "Run seed data")
@@ -37,7 +42,11 @@ func main() {
 		}
 	}()
 
-	if err := database.RunMigrations(db, "db/migrations"); err != nil {
+	migrationsSub, err := fs.Sub(migrationsFS, "db/migrations")
+	if err != nil {
+		log.Fatalf("Failed to sub migrations FS: %v", err)
+	}
+	if err := database.RunMigrations(db, migrationsSub); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	log.Println("Migrations applied")
