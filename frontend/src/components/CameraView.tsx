@@ -100,7 +100,7 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
                 key={mode}
                 onClick={() => setActiveMode(mode)}
                 className={clsx(
-                  'relative z-10 flex-1 py-2 rounded-full font-body font-medium text-sm text-center min-h-11 transition-colors duration-200',
+                  'relative z-10 flex-1 py-2 rounded-full font-display font-medium text-sm text-center min-h-11 transition-colors duration-200',
                   activeMode === mode
                     ? 'text-sw-black'
                     : 'text-slate-300 hover:text-white active:scale-95'
