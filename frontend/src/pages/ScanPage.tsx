@@ -212,6 +212,7 @@ export function ScanPage() {
         canvas={auraCanvas}
         items={result?.detected_items ?? []}
         backgroundImage={backgroundImage}
+        mode={scanMode}
       />
     </div>
   );
