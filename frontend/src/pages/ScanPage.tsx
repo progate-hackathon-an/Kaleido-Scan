@@ -147,11 +147,16 @@ export function ScanPage() {
             <svg
               width="20"
               height="20"
-              viewBox="0 -960 960 960"
-              fill="currentColor"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               aria-hidden="true"
             >
-              <path d="M120-600v-240h80v134q50-62 122.5-98T480-840q118 0 210.5 67T820-600h-87q-34-72-101-116t-152-44q-57 0-107.5 21T284-680h76v80H120Zm120 360h480L570-440 450-280l-90-120-120 160ZM200-80q-33 0-56.5-23.5T120-160v-320h80v320h560v-320h80v320q0 33-23.5 56.5T760-80H200Z" />
+              <path d="M1 4v6h6" />
+              <path d="M3.51 15a9 9 0 1 0 .49-4.95" />
             </svg>
           </button>
         </div>
@@ -173,16 +178,10 @@ export function ScanPage() {
             aria-describedby="retake-confirm-description"
           >
             <div className="flex flex-col gap-2 text-center">
-              <p
-                id="retake-confirm-title"
-                className="font-body text-white text-base font-medium"
-              >
+              <p id="retake-confirm-title" className="font-body text-white text-base font-medium">
                 撮り直しますか？
               </p>
-              <p
-                id="retake-confirm-description"
-                className="font-body text-slate-200 text-sm"
-              >
+              <p id="retake-confirm-description" className="font-body text-slate-200 text-sm">
                 現在の結果は失われます
               </p>
             </div>
