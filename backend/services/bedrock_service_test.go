@@ -3,11 +3,12 @@ package services_test
 import (
 	"context"
 	"errors"
-	"strings"
 	"testing"
 
 	"github.com/Hiru-ge/Kaleido-Scan/backend/services"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
+	bedrockdoc "github.com/aws/aws-sdk-go-v2/service/bedrockruntime/document"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
 )
 
@@ -23,14 +24,20 @@ func (m *mockBedrockClient) Converse(ctx context.Context, params *bedrockruntime
 	return m.output, m.err
 }
 
-// makeBedrockOutput はテキストレスポンスを持つConverseOutputを生成するヘルパー。
-func makeBedrockOutput(text string) *bedrockruntime.ConverseOutput {
+// makeBedrockToolUseOutput はツール使用レスポンスを持つConverseOutputを生成するヘルパー。
+func makeBedrockToolUseOutput(input map[string]interface{}) *bedrockruntime.ConverseOutput {
 	return &bedrockruntime.ConverseOutput{
 		Output: &types.ConverseOutputMemberMessage{
 			Value: types.Message{
 				Role: types.ConversationRoleAssistant,
 				Content: []types.ContentBlock{
-					&types.ContentBlockMemberText{Value: text},
+					&types.ContentBlockMemberToolUse{
+						Value: types.ToolUseBlock{
+							ToolUseId: aws.String("tool-1"),
+							Name:      aws.String("recognize_products"),
+							Input:     bedrockdoc.NewLazyDocument(input),
+						},
+					},
 				},
 			},
 		},
@@ -39,7 +46,16 @@ func makeBedrockOutput(text string) *bedrockruntime.ConverseOutput {
 
 func TestBedrockService_Recognize_Success(t *testing.T) {
 	mock := &mockBedrockClient{
-		output: makeBedrockOutput(`{"items":[{"product_name":"炭火焼紅しゃけおにぎり","bounding_box":{"x_min":0.1,"y_min":0.2,"x_max":0.4,"y_max":0.7}}]}`),
+		output: makeBedrockToolUseOutput(map[string]interface{}{
+			"items": []interface{}{
+				map[string]interface{}{
+					"product_name": "炭火焼紅しゃけおにぎり",
+					"bounding_box": map[string]interface{}{
+						"x_min": 0.1, "y_min": 0.2, "x_max": 0.4, "y_max": 0.7,
+					},
+				},
+			},
+		}),
 	}
 
 	svc := services.NewBedrockServiceWithClient(mock, "test-model")
@@ -64,7 +80,16 @@ func TestBedrockService_Recognize_Success(t *testing.T) {
 func TestBedrockService_Recognize_OutOfRangeBoundingBox(t *testing.T) {
 	// 商品が画像からはみ出している場合、0.0〜1.0の範囲外の座標も許容する
 	mock := &mockBedrockClient{
-		output: makeBedrockOutput(`{"items":[{"product_name":"炭火焼紅しゃけおにぎり","bounding_box":{"x_min":-0.05,"y_min":0.2,"x_max":0.35,"y_max":0.7}}]}`),
+		output: makeBedrockToolUseOutput(map[string]interface{}{
+			"items": []interface{}{
+				map[string]interface{}{
+					"product_name": "炭火焼紅しゃけおにぎり",
+					"bounding_box": map[string]interface{}{
+						"x_min": -0.05, "y_min": 0.2, "x_max": 0.35, "y_max": 0.7,
+					},
+				},
+			},
+		}),
 	}
 
 	svc := services.NewBedrockServiceWithClient(mock, "test-model")
@@ -85,7 +110,9 @@ func TestBedrockService_Recognize_OutOfRangeBoundingBox(t *testing.T) {
 
 func TestBedrockService_Recognize_EmptyItems(t *testing.T) {
 	mock := &mockBedrockClient{
-		output: makeBedrockOutput(`{"items":[]}`),
+		output: makeBedrockToolUseOutput(map[string]interface{}{
+			"items": []interface{}{},
+		}),
 	}
 
 	svc := services.NewBedrockServiceWithClient(mock, "test-model")
@@ -101,12 +128,12 @@ func TestBedrockService_Recognize_EmptyItems(t *testing.T) {
 	}
 }
 
-func TestBedrockService_Recognize_PromptContainsJSONInstruction(t *testing.T) {
-	// AdditionalModelRequestFields によるスキーマ強制は廃止され、
-	// プロンプト内にJSON出力指示を含めるアプローチに変更された。
-	// リクエストのメッセージテキストにJSON形式の例が含まれることを確認する。
+func TestBedrockService_Recognize_UsesToolConfig(t *testing.T) {
+	// ToolConfigにrecognize_productsツールが設定され、SpecificToolChoiceで強制されることを確認する
 	mock := &mockBedrockClient{
-		output: makeBedrockOutput(`{"items":[]}`),
+		output: makeBedrockToolUseOutput(map[string]interface{}{
+			"items": []interface{}{},
+		}),
 	}
 
 	svc := services.NewBedrockServiceWithClient(mock, "test-model")
@@ -115,21 +142,25 @@ func TestBedrockService_Recognize_PromptContainsJSONInstruction(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// メッセージ内のテキストブロックからプロンプトを取得する
-	var promptText string
-	for _, block := range mock.capturedInput.Messages[0].Content {
-		if tb, ok := block.(*types.ContentBlockMemberText); ok {
-			promptText = tb.Value
-			break
-		}
+	if mock.capturedInput.ToolConfig == nil {
+		t.Fatal("expected ToolConfig to be set")
 	}
-	if promptText == "" {
-		t.Fatal("expected text block in request message, got none")
+	if len(mock.capturedInput.ToolConfig.Tools) != 1 {
+		t.Fatalf("expected 1 tool, got %d", len(mock.capturedInput.ToolConfig.Tools))
 	}
-	for _, keyword := range []string{`"items"`, `"product_name"`, `"bounding_box"`} {
-		if !strings.Contains(promptText, keyword) {
-			t.Errorf("expected prompt to contain %q, got: %s", keyword, promptText)
-		}
+	toolSpec, ok := mock.capturedInput.ToolConfig.Tools[0].(*types.ToolMemberToolSpec)
+	if !ok {
+		t.Fatal("expected ToolMemberToolSpec")
+	}
+	if aws.ToString(toolSpec.Value.Name) != "recognize_products" {
+		t.Errorf("expected tool name 'recognize_products', got '%s'", aws.ToString(toolSpec.Value.Name))
+	}
+	toolChoice, ok := mock.capturedInput.ToolConfig.ToolChoice.(*types.ToolChoiceMemberTool)
+	if !ok {
+		t.Fatal("expected ToolChoiceMemberTool")
+	}
+	if aws.ToString(toolChoice.Value.Name) != "recognize_products" {
+		t.Errorf("expected tool choice 'recognize_products', got '%s'", aws.ToString(toolChoice.Value.Name))
 	}
 }
 
