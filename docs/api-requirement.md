@@ -281,7 +281,7 @@ Content-Type: multipart/form-data
       "name": "オレンジ 500ml",
       "description": "大人も子供もゴクゴク飲めるすっきりした味わい。果実の味を楽しめるオレンジの低果汁飲料。",
       "category": "drink",
-      "trending_rank": 1,
+      "rank": 1,
       "current_quantity": 1700,
       "prev_quantity": 1300,
       "growth_rate": 130.8,
@@ -304,17 +304,17 @@ Content-Type: multipart/form-data
 | `name` | string | 商品名 |
 | `description` | string | 商品説明 |
 | `category` | string | カテゴリ（`food` / `drink` / `snack`） |
-| `trending_rank` | integer | 急上昇ランキング（1〜5。増加率が高いほど上位） |
+| `rank` | integer | 急上昇ランキング（1〜5。増加率が高いほど上位） |
 | `current_quantity` | integer | 直近週の売上個数 |
 | `prev_quantity` | integer | 前週の売上個数（データなし時は `0`） |
 | `growth_rate` | number \| null | 前週比（%）。前週データなし（`prev_quantity = 0`）の場合は `null` |
-| `aura_level` | integer | オーラ強度（1〜5。`trending_rank 1` → `aura_level 5`） |
+| `aura_level` | integer | オーラ強度（1〜5。`rank 1` → `aura_level 5`） |
 | `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
 
 **aura_level の計算式**
 
 ```
-aura_level = 6 - trending_rank
+aura_level = 6 - rank
 ```
 
 **前週比の計算式**
@@ -323,7 +323,7 @@ aura_level = 6 - trending_rank
 growth_rate(%) = current_quantity ÷ prev_quantity × 100
 ```
 
-前週データが存在しない（`prev_quantity = 0`）場合は `growth_rate = null` とし、`trending_rank` は最下位（`NULLS LAST`）扱い。
+前週データが存在しない（`prev_quantity = 0`）場合は `growth_rate = null` とし、`rank` は最下位（`NULLS LAST`）扱い。
 
 **エラーレスポンス**
 
@@ -365,7 +365,7 @@ Content-Type: multipart/form-data
       "description": "アーモンドをホワイトチョコレートでコーティングしたひとくちサイズのスナック。香ばしいアーモンドとチョコレートの絶妙な組み合わせ。",
       "category": "snack",
       "sales_rank": 5,
-      "hidden_rank": 1,
+      "rank": 1,
       "total_quantity": 4850,
       "aura_level": 5,
       "bounding_box": {
@@ -387,20 +387,20 @@ Content-Type: multipart/form-data
 | `description` | string | 商品説明 |
 | `category` | string | カテゴリ（`food` / `drink` / `snack`） |
 | `sales_rank` | integer | 通常の売上ランキング（1〜5。売上が多いほど上位） |
-| `hidden_rank` | integer | 掘り出し物ランキング（1〜5。売上が少ないほど上位） |
+| `rank` | integer | 掘り出し物ランキング（1〜5。売上が少ないほど上位） |
 | `total_quantity` | integer | 累計売上個数 |
-| `aura_level` | integer | オーラ強度（1〜5。`hidden_rank 1` → `aura_level 5`） |
+| `aura_level` | integer | オーラ強度（1〜5。`rank 1` → `aura_level 5`） |
 | `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
 
-**hidden_rank・aura_level の計算式**
+**rank・aura_level の計算式**
 
 ```
-hidden_rank = 6 - sales_rank   （売上最下位 = sales_rank 5 → hidden_rank 1）
-aura_level  = 6 - hidden_rank
+rank       = 6 - sales_rank   （売上最下位 = sales_rank 5 → rank 1）
+aura_level = 6 - rank
 ```
 
-| sales_rank | hidden_rank | aura_level |
-|-----------|------------|------------|
+| sales_rank | rank | aura_level |
+|-----------|------|------------|
 | 5（最下位） | 1 | 5 |
 | 4 | 2 | 4 |
 | 3 | 3 | 3 |

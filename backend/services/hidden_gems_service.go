@@ -13,7 +13,7 @@ type HiddenGemResult struct {
 	Description   string      `json:"description"`
 	Category      string      `json:"category"`
 	SalesRank     int         `json:"sales_rank"`
-	HiddenRank    int         `json:"hidden_rank"`
+	Rank          int         `json:"rank"`
 	TotalQuantity int         `json:"total_quantity"`
 	AuraLevel     int         `json:"aura_level"`
 	BoundingBox   BoundingBox `json:"bounding_box"`
@@ -74,7 +74,7 @@ func (s *HiddenGemsService) mergeHiddenGemsResults(aiItems []AIItem, rankings []
 			Description:   r.description,
 			Category:      r.category,
 			SalesRank:     r.rank,
-			HiddenRank:    hiddenRank,
+			Rank:          hiddenRank,
 			TotalQuantity: r.totalQuantity,
 			AuraLevel:     CalcAuraLevel(hiddenRank),
 			BoundingBox:   item.BoundingBox,

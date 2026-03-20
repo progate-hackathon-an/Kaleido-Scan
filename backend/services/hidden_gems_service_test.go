@@ -61,8 +61,8 @@ func TestHiddenGemsService_GetRanking_ReverseOrder(t *testing.T) {
 	if bottomSalesResult == nil {
 		t.Fatal("sales_rank=5 result not found")
 	}
-	if bottomSalesResult.HiddenRank != 1 {
-		t.Errorf("sales_rank=5 should have hidden_rank=1, got %d", bottomSalesResult.HiddenRank)
+	if bottomSalesResult.Rank != 1 {
+		t.Errorf("sales_rank=5 should have rank=1, got %d", bottomSalesResult.Rank)
 	}
 	if bottomSalesResult.AuraLevel != 5 {
 		t.Errorf("sales_rank=5 should have aura_level=5 (max), got %d", bottomSalesResult.AuraLevel)
@@ -72,8 +72,8 @@ func TestHiddenGemsService_GetRanking_ReverseOrder(t *testing.T) {
 	if topSalesResult == nil {
 		t.Fatal("sales_rank=1 result not found")
 	}
-	if topSalesResult.HiddenRank != 5 {
-		t.Errorf("sales_rank=1 should have hidden_rank=5, got %d", topSalesResult.HiddenRank)
+	if topSalesResult.Rank != 5 {
+		t.Errorf("sales_rank=1 should have rank=5, got %d", topSalesResult.Rank)
 	}
 	if topSalesResult.AuraLevel != 1 {
 		t.Errorf("sales_rank=1 should have aura_level=1, got %d", topSalesResult.AuraLevel)
