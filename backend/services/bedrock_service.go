@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
+	brdocument "github.com/aws/aws-sdk-go-v2/service/bedrockruntime/document"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
 )
 
@@ -48,9 +50,11 @@ func NewBedrockServiceWithClient(client BedrockRuntimeClient, modelID string) *B
 }
 
 // Recognize は画像データをBedrock（Claude Sonnet）に送信し、検出商品リストを返す。
+// additionalModelRequestFields に JSON Schema を渡すことで出力形式をモデルレベルで強制する。
+// product_name の enum に商品名リストを設定し、存在しない商品名の返却を根本から防ぐ。
 func (s *BedrockService) Recognize(ctx context.Context, imageData []byte, productNames []string) ([]AIItem, error) {
 	mimeType := detectMIMEType(imageData)
-	prompt := buildPrompt(productNames)
+	prompt := buildBedrockPrompt(productNames)
 
 	output, err := s.client.Converse(ctx, &bedrockruntime.ConverseInput{
 		ModelId: aws.String(s.modelID),
@@ -72,6 +76,12 @@ func (s *BedrockService) Recognize(ctx context.Context, imageData []byte, produc
 				},
 			},
 		},
+		// JSON Schema を渡してモデルの出力形式を強制する。
+		// product_name の enum に商品名リストを設定するため、
+		// プロンプト内にスキーマ指示を書く必要はない。
+		AdditionalModelRequestFields: brdocument.NewLazyDocument(
+			buildProductSchema(productNames),
+		),
 	})
 	if err != nil {
 		return nil, &AIError{Cause: fmt.Errorf("bedrock Converse: %w", err)}
@@ -109,6 +119,71 @@ func parseBedrockResponse(output *bedrockruntime.ConverseOutput) ([]AIItem, erro
 		})
 	}
 	return items, nil
+}
+
+// buildBedrockPrompt はBedrock用プロンプトを生成する。
+// JSON Schema は additionalModelRequestFields で渡すため、プロンプト内にスキーマ指示は含めない。
+func buildBedrockPrompt(productNames []string) string {
+	var sb strings.Builder
+	sb.WriteString("以下の画像を解析し、写っているコンビニ商品を識別してください。\n")
+	sb.WriteString("識別可能な商品のみ返してください。\n\n")
+	sb.WriteString("対象商品リスト（この中から識別してください）:\n")
+	for _, name := range productNames {
+		sb.WriteString("- ")
+		sb.WriteString(name)
+		sb.WriteString("\n")
+	}
+	sb.WriteString("\nバウンディングボックスは画像全体を1×1とした相対座標で表現してください。\n")
+	sb.WriteString("商品が画像からはみ出している場合も、商品全体から推定した座標を返してください（-1.5〜2.5の範囲で指定）。\n")
+	sb.WriteString("商品が検出できない場合は items を空配列で返してください。\n")
+	return sb.String()
+}
+
+// buildProductSchema は商品認識結果のJSON Schemaを生成する。
+// product_name の enum に商品名リストを設定することで、存在しない商品名の返却をモデルレベルで防ぐ。
+func buildProductSchema(productNames []string) map[string]interface{} {
+	enum := make([]interface{}, len(productNames))
+	for i, name := range productNames {
+		enum[i] = name
+	}
+
+	numberAxis := func() map[string]interface{} {
+		return map[string]interface{}{
+			"type":    "number",
+			"minimum": float64(-1.5),
+			"maximum": float64(2.5),
+		}
+	}
+
+	return map[string]interface{}{
+		"type": "object",
+		"properties": map[string]interface{}{
+			"items": map[string]interface{}{
+				"type": "array",
+				"items": map[string]interface{}{
+					"type": "object",
+					"properties": map[string]interface{}{
+						"product_name": map[string]interface{}{
+							"type": "string",
+							"enum": enum,
+						},
+						"bounding_box": map[string]interface{}{
+							"type": "object",
+							"properties": map[string]interface{}{
+								"x_min": numberAxis(),
+								"y_min": numberAxis(),
+								"x_max": numberAxis(),
+								"y_max": numberAxis(),
+							},
+							"required": []string{"x_min", "y_min", "x_max", "y_max"},
+						},
+					},
+					"required": []string{"product_name", "bounding_box"},
+				},
+			},
+		},
+		"required": []string{"items"},
+	}
 }
 
 // toBedrockImageFormat はMIMEタイプをBedrockのImageFormat型に変換する。
