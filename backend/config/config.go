@@ -10,11 +10,13 @@ type Config struct {
 	DBUser         string
 	DBPassword     string
 	DBName         string
+	DBSSLMode      string // "disable" | "require" | "verify-full"
 	GeminiAPIKey   string
 	AIProvider     string
 	AWSRegion      string
 	BedrockModelID string
 	SeedOnStartup  bool
+	UseStub        bool
 }
 
 func Load() *Config {
@@ -26,11 +28,13 @@ func Load() *Config {
 		DBUser:         getEnv("DB_USER", "postgres"),
 		DBPassword:     getEnv("DB_PASSWORD", "postgres"),
 		DBName:         getEnv("DB_NAME", "kaleido_scan"),
+		DBSSLMode:      getEnv("DB_SSL_MODE", "disable"),
 		GeminiAPIKey:   getEnv("GEMINI_API_KEY", ""),
 		AIProvider:     getEnv("AI_PROVIDER", "gemini"),
 		AWSRegion:      getEnv("AWS_REGION", "ap-northeast-1"),
 		BedrockModelID: getEnv("BEDROCK_MODEL_ID", ""),
 		SeedOnStartup:  getEnv("SEED_ON_STARTUP", "false") == "true",
+		UseStub:        getEnv("USE_STUB", "false") == "true",
 	}
 }
 

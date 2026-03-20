@@ -257,5 +257,7 @@ INSERT INTO weekly_sales (product_id, week_start, quantity) VALUES
   - 既存の DB 接続設定を再利用でき、アプリと同じビルドに含められるため
   - SQL ファイルとは異なりコンパイル時に型チェックが効く
 - `main.go` で `--seed` フラグを受け取り、起動時に `database.Seed(db)` を呼ぶ形で実行する
-- 冪等性を保つため、`INSERT ... ON CONFLICT DO NOTHING` を使用する
+- 冪等性を保つため `ON CONFLICT` を使用する
+  - `products`: `ON CONFLICT (id) DO UPDATE SET` — マスタデータ変更時にコードの変更だけで反映できるよう上書き更新する
+  - `weekly_sales`: `ON CONFLICT (product_id, week_start) DO NOTHING` — 売上履歴は一度投入したら変更しない
 - 投入データの内容は上記「シードデータ（seed.sql）」セクションの値をそのまま使用する

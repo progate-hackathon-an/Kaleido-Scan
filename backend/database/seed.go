@@ -6,7 +6,8 @@ import (
 )
 
 // Seed はproductsおよびweekly_salesテーブルに初期データを冪等投入する。
-// ON CONFLICT DO NOTHING により2回以上呼んでもエラーにならない。
+// products は ON CONFLICT DO UPDATE SET（マスタデータ変更を再起動で反映）、
+// weekly_sales は ON CONFLICT DO NOTHING（売上履歴は上書きしない）。
 func Seed(db *sql.DB) error {
 	if err := seedProducts(db); err != nil {
 		return fmt.Errorf("seed products: %w", err)

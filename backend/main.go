@@ -48,11 +48,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize AI service: %v", err)
 	}
-	svc := services.NewScanService(ai, db)
-	trendingSvc := services.NewTrendingService(ai, db)
+	svc := services.NewScanService(ai, db, cfg.UseStub)
+	trendingSvc := services.NewTrendingService(ai, db, cfg.UseStub)
 	scanHandler := handlers.NewScanHandler(svc, trendingSvc)
 
-	hiddenGemsSvc := services.NewHiddenGemsService(ai, db)
+	hiddenGemsSvc := services.NewHiddenGemsService(ai, db, cfg.UseStub)
 	hiddenGemsHandler := handlers.NewHiddenGemsHandler(hiddenGemsSvc)
 
 	productHandler := handlers.NewProductHandler(db)
