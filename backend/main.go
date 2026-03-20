@@ -44,7 +44,10 @@ func main() {
 		log.Println("Seed data inserted successfully")
 	}
 
-	ai := services.NewAIService(cfg.AIProvider, cfg.GeminiAPIKey)
+	ai, err := services.NewAIService(cfg.AIProvider, cfg.GeminiAPIKey, cfg.AWSRegion, cfg.BedrockModelID)
+	if err != nil {
+		log.Fatalf("Failed to initialize AI service: %v", err)
+	}
 	svc := services.NewScanService(ai, db)
 	trendingSvc := services.NewTrendingService(ai, db)
 	scanHandler := handlers.NewScanHandler(svc, trendingSvc)

@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"log"
 )
 
 // AIItem はAI認識結果の1商品エントリを表す。
@@ -43,13 +42,11 @@ type AIService interface {
 
 // NewAIService はAI_PROVIDER環境変数に従ってAIServiceを生成するファクトリ。
 // provider: "gemini" または "bedrock"
-func NewAIService(provider, geminiAPIKey string) AIService {
+func NewAIService(provider, geminiAPIKey, awsRegion, bedrockModelID string) (AIService, error) {
 	switch provider {
 	case "bedrock":
-		// TODO: Bedrock実装（本番Phase）
-		log.Println("warn: bedrock is not yet implemented, falling back to gemini")
-		return NewGeminiService(geminiAPIKey)
+		return NewBedrockService(awsRegion, bedrockModelID)
 	default:
-		return NewGeminiService(geminiAPIKey)
+		return NewGeminiService(geminiAPIKey), nil
 	}
 }

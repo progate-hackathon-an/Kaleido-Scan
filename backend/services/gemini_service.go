@@ -116,8 +116,8 @@ type geminiAPIResponse struct {
 	Candidates []geminiCandidate `json:"candidates"`
 }
 
-// geminiItemsResult はAIが返すJSONの構造を表す。
-type geminiItemsResult struct {
+// aiItemsResult はAIが返すJSONの構造を表す。GeminiとBedrockで共通のスキーマ。
+type aiItemsResult struct {
 	Items []struct {
 		ProductName string `json:"product_name"`
 		BoundingBox struct {
@@ -141,7 +141,7 @@ func parseGeminiResponse(respBytes []byte) ([]AIItem, error) {
 
 	text := apiResp.Candidates[0].Content.Parts[0].Text
 
-	var result geminiItemsResult
+	var result aiItemsResult
 	if err := json.Unmarshal([]byte(text), &result); err != nil {
 		return nil, fmt.Errorf("json.Unmarshal items: %w", err)
 	}
