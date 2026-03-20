@@ -4,6 +4,9 @@ import { getAuraConfig } from '../utils/auraRenderer';
 import { useSwipeDown } from '../hooks/useSwipeDown';
 import { ShareButton } from './ShareButton';
 
+// オーラカラーが取得できない場合のフォールバック（sw-orange）
+const FALLBACK_AURA_COLOR = '#FF9100';
+
 function WireframePlaceholder() {
   return <div className="w-full aspect-square animate-pulse bg-sw-steel rounded-2xl" />;
 }
@@ -11,6 +14,8 @@ function WireframePlaceholder() {
 function RankBadge({ rank, color }: { rank: number; color: string }) {
   return (
     <div
+      // aria-label でスクリーンリーダー向けの自然な読み上げ（"Rank 1"）を提供する。
+      // 内部スパンの視覚表現（ゼロ埋め "01"）は aria-hidden で読み上げ対象から除外する。
       aria-label={`Rank ${rank}`}
       className="shrink-0 flex flex-col items-center px-3 py-1.5 rounded-lg bg-sw-black/80"
       style={{
@@ -19,12 +24,17 @@ function RankBadge({ rank, color }: { rank: number; color: string }) {
       }}
     >
       <span
+        aria-hidden="true"
         className="font-display text-[8px] tracking-[0.25em] uppercase"
         style={{ color: `${color}99` }}
       >
         Rank
       </span>
-      <span className="font-display text-base leading-none tracking-widest" style={{ color }}>
+      <span
+        aria-hidden="true"
+        className="font-display text-base leading-none tracking-widest"
+        style={{ color }}
+      >
         {String(rank).padStart(2, '0')}
       </span>
     </div>
@@ -159,7 +169,7 @@ export function ProductBottomSheet({
             </h2>
             <RankBadge
               rank={item.rank}
-              color={getAuraConfig(item.aura_level, mode)?.color ?? '#FF9100'}
+              color={getAuraConfig(item.aura_level, mode)?.color ?? FALLBACK_AURA_COLOR}
             />
           </div>
 

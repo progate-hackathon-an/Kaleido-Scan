@@ -24,7 +24,10 @@ describe('ProductBottomSheet', () => {
     expect(
       screen.getByText('味付海苔　炭火焼紅しゃけ', { normalizer: (s) => s })
     ).toBeInTheDocument();
+    // aria-label はスクリーンリーダー向けの自然な読み上げ（ゼロ埋めなし）
     expect(screen.getByLabelText('Rank 1')).toBeInTheDocument();
+    // ゼロ埋め表示がレンダーされていること（aria-hidden のため getByText で取得）
+    expect(screen.getByText('01')).toBeInTheDocument();
   });
 
   it('TestProductBottomSheet_HideOnClose: isOpen=falseで非表示になること', () => {
@@ -33,5 +36,21 @@ describe('ProductBottomSheet', () => {
     );
 
     expect(screen.queryByText('味付海苔　炭火焼紅しゃけ')).not.toBeInTheDocument();
+  });
+
+  it('TestProductBottomSheet_RankBadgeColor_HiddenGems: hidden-gemsモードではエメラルドカラーが適用されること', () => {
+    render(
+      <ProductBottomSheet
+        isOpen={true}
+        item={mockItem}
+        croppedImageUrl={null}
+        onClose={vi.fn()}
+        mode="hidden-gems"
+      />
+    );
+
+    const badge = screen.getByLabelText('Rank 1');
+    // hidden-gems Lv5 のカラーは #00E676（エメラルド）
+    expect(badge).toHaveStyle({ boxShadow: '0 0 12px #00E67633' });
   });
 });
