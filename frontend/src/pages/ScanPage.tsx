@@ -68,12 +68,12 @@ export function ScanPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleItemSelect = async (item: DetectedItem) => {
+  const handleItemSelect = (item: DetectedItem) => {
     setSelectedItem(item);
+    setCroppedImageUrl(null);
     setIsSheetOpen(true);
     if (capturedFile) {
-      const url = await cropImage(capturedFile, item.bounding_box);
-      setCroppedImageUrl(url);
+      void cropImage(capturedFile, item.bounding_box).then(setCroppedImageUrl);
     }
   };
 
@@ -126,9 +126,7 @@ export function ScanPage() {
             <AuraCanvas
               ref={setAuraCanvas}
               items={result.detected_items}
-              onItemSelect={(item) => {
-                void handleItemSelect(item);
-              }}
+              onItemSelect={handleItemSelect}
               width={imageDimensions.width}
               height={imageDimensions.height}
             />
