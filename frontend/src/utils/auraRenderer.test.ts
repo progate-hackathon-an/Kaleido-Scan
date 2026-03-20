@@ -15,7 +15,6 @@ function makeWideItem(): DetectedItem {
     description: '',
     category: '',
     rank: 1,
-    total_quantity: 1,
     aura_level: 5,
     bounding_box: { x_min: 0, x_max: 0.8, y_min: 0.4, y_max: 0.6 },
   };
