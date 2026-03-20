@@ -23,6 +23,7 @@ Kaleido-Scan/
 │   ├── middleware/   # CORS等
 │   ├── models/       # データモデル
 │   ├── routes/       # ルーティング定義
+│   ├── db/migrations/ # マイグレーションSQL（embed.FSでバイナリに埋め込み）
 │   └── services/     # ビジネスロジック・AI API呼び出し（ranking/trending/hidden-gems）
 ├── frontend/
 │   ├── public/
@@ -32,7 +33,6 @@ Kaleido-Scan/
 │       ├── hooks/
 │       ├── types/
 │       └── utils/
-├── db/migrations/    # マイグレーションファイル
 ├── docs/
 └── docker-compose.yml
 ```

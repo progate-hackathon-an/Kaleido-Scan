@@ -57,10 +57,10 @@
 
 **🟢 GREEN**
 
-- [x] `db/migrations/0001_create_products.sql` 作成（`products` テーブルDDL。`id UUID PK`, `name VARCHAR(100) NOT NULL UNIQUE`, `description TEXT`, `category VARCHAR(50) NOT NULL`, `created_at TIMESTAMPTZ`）
-- [x] `db/migrations/0001_create_products_down.sql` 作成（`DROP TABLE IF EXISTS products`）
-- [x] `db/migrations/0002_create_weekly_sales.sql` 作成（`weekly_sales` テーブルDDL。`UNIQUE(product_id, week_start)` 制約・インデックス含む）
-- [x] `db/migrations/0002_create_weekly_sales_down.sql` 作成（`DROP TABLE IF EXISTS weekly_sales`）
+- [x] `backend/db/migrations/0001_create_products.sql` 作成（`products` テーブルDDL。`id UUID PK`, `name VARCHAR(100) NOT NULL UNIQUE`, `description TEXT`, `category VARCHAR(50) NOT NULL`, `created_at TIMESTAMPTZ`）
+- [x] `backend/db/migrations/0001_create_products_down.sql` 作成（`DROP TABLE IF EXISTS products`）
+- [x] `backend/db/migrations/0002_create_weekly_sales.sql` 作成（`weekly_sales` テーブルDDL。`UNIQUE(product_id, week_start)` 制約・インデックス含む）
+- [x] `backend/db/migrations/0002_create_weekly_sales_down.sql` 作成（`DROP TABLE IF EXISTS weekly_sales`）
 - [x] `backend/models/product.go` に `Product` struct 定義（フィールド: `ID uuid.UUID`, `Name string`, `Description string`, `Category string`, `CreatedAt time.Time`）
 - [x] `backend/models/weekly_sales.go` に `WeeklySales` struct 定義（フィールド: `ID uuid.UUID`, `ProductID uuid.UUID`, `WeekStart time.Time`, `Quantity int`, `CreatedAt time.Time`）
 
@@ -85,7 +85,7 @@
 **🟢 GREEN**
 
 - [x] `backend/database/db.go` に `NewDB(cfg *config.Config) (*sql.DB, error)` 実装（DSN: `host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`）
-- [x] `backend/database/migrate.go` に `RunMigrations(db *sql.DB, migrationsDir string) error` 実装（`db/migrations/*.sql` をファイル名順に実行）
+- [x] `backend/database/migrate.go` に `RunMigrations(db *sql.DB, fsys fs.FS) error` 実装（`backend/db/migrations/*.sql` を `embed.FS` で埋め込み、ファイル名順に実行）
 - [x] `backend/database/seed.go` に `Seed(db *sql.DB) error` 実装（`INSERT INTO products ... ON CONFLICT (name) DO NOTHING`・`INSERT INTO weekly_sales ... ON CONFLICT (product_id, week_start) DO NOTHING`。シードデータは `docs/db-requirement.md` の値を使用）
 - [x] `backend/config/config.go` に `DBHost`, `DBPort`, `DBUser`, `DBPassword`, `DBName` フィールド追加
 - [x] `backend/main.go` に `--seed` フラグ追加（`flag.Bool("seed", false, "Run seed data")` で受け取り `database.Seed(db)` を呼ぶ）

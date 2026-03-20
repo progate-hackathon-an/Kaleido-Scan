@@ -83,7 +83,7 @@ make build
 
 `docker compose up` だけで完結する。追加の手動操作は不要。
 
-- **マイグレーション**: `db/migrations/` 以下の SQL が DB コンテナの初回起動時に自動実行される
+- **マイグレーション**: `backend/db/migrations/` 以下の SQL が `embed.FS` でバイナリに埋め込まれ、バックエンド起動時に自動実行される
 - **シードデータ**: バックエンド起動時に自動投入される（`SEED_ON_STARTUP=true` がデフォルト）
 
 DB を完全にリセットしたい場合は volume を削除して再起動する。

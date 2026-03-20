@@ -245,7 +245,8 @@ INSERT INTO weekly_sales (product_id, week_start, quantity) VALUES
 
 ## マイグレーション方針
 
-- マイグレーションファイルは `db/migrations/` に連番で管理
+- マイグレーションファイルは `backend/db/migrations/` に連番で管理
+- SQLファイルは `//go:embed` でバイナリに埋め込むため、環境によるパス差異がない
 - 形式: `0001_create_products.sql`, `0002_create_weekly_sales.sql`
 - ロールバック用の `down` ファイルも用意する
 
