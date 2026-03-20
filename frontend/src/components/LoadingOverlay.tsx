@@ -10,14 +10,16 @@ function getNextPosition(current: Position): Position {
   const h = window.innerHeight || 667;
   const maxX = Math.max(0, w - RETICLE_SIZE);
   const maxY = Math.max(0, h - RETICLE_SIZE);
-  const minDist = Math.min(w, h);
+  const desiredMinDist = Math.min(w, h);
+  const maxPossibleDist = Math.hypot(maxX, maxY);
+  const minDist = Math.min(desiredMinDist, maxPossibleDist);
 
   for (let i = 0; i < 30; i++) {
     const x = Math.random() * maxX;
     const y = Math.random() * maxY;
     const dx = x - current.x;
     const dy = y - current.y;
-    if (Math.sqrt(dx * dx + dy * dy) >= minDist) return { x, y };
+    if (Math.hypot(dx, dy) >= minDist) return { x, y };
   }
 
   // フォールバック: 4隅のうち最も遠い頂点
