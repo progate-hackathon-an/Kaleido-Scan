@@ -43,10 +43,21 @@ export function ScanPage() {
   useEffect(() => {
     if (!IS_FIXTURE) return;
     void (async () => {
-      const res = await fetch('/fixture.jpeg');
-      const blob = await res.blob();
-      const file = new File([blob], 'fixture.jpeg', { type: 'image/jpeg' });
-      handleCapture(file, 'ranking');
+      try {
+        const res = await fetch('/fixture.jpeg');
+        if (!res.ok) {
+          // fixture 画像が取得できない場合はスキャンを実行しない
+          // eslint-disable-next-line no-console
+          console.error('Failed to load /fixture.jpeg for fixture mode:', res.status, res.statusText);
+          return;
+        }
+        const blob = await res.blob();
+        const file = new File([blob], 'fixture.jpeg', { type: 'image/jpeg' });
+        handleCapture(file, 'ranking');
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Error while loading /fixture.jpeg for fixture mode:', e);
+      }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
