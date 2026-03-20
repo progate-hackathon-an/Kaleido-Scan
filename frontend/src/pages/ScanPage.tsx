@@ -4,6 +4,7 @@ import { useState, lazy, Suspense, useEffect } from 'react';
 const AuraEffect = lazy(() =>
   import('../components/AuraEffect').then((m) => ({ default: m.AuraEffect }))
 );
+import { Overlay } from '../components/Overlay';
 import { CameraView } from '../components/CameraView';
 import { AuraCanvas } from '../components/AuraCanvas';
 import { TapHints } from '../components/TapHints';
@@ -32,6 +33,7 @@ export function ScanPage() {
   const [scanMode, setScanMode] = useState<ScanMode>('ranking');
   const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null);
   const [auraCanvas, setAuraCanvas] = useState<HTMLCanvasElement | null>(null);
+  const [isRetakeConfirmOpen, setIsRetakeConfirmOpen] = useState(false);
 
   const handleCapture = (file: File, mode: ScanMode) => {
     setScanMode(mode);
@@ -48,7 +50,11 @@ export function ScanPage() {
         if (!res.ok) {
           // fixture 画像が取得できない場合はスキャンを実行しない
           // eslint-disable-next-line no-console
-          console.error('Failed to load /fixture.jpeg for fixture mode:', res.status, res.statusText);
+          console.error(
+            'Failed to load /fixture.jpeg for fixture mode:',
+            res.status,
+            res.statusText
+          );
           return;
         }
         const blob = await res.blob();
@@ -131,27 +137,21 @@ export function ScanPage() {
           {/* タップ誘導アイコン */}
           <TapHints items={result.detected_items} />
 
-          {/* 戻るボタン */}
+          {/* 撮り直しボタン */}
           <button
-            onClick={handleBack}
+            onClick={() => setIsRetakeConfirmOpen(true)}
             aria-label="もう一度撮る"
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 px-6 min-h-13 rounded-full bg-sw-black/70 backdrop-blur-sm border border-sw-orange text-white font-body font-medium text-sm shadow-[0_0_20px_rgba(255,145,0,0.35)] active:scale-95 transition-transform duration-100 whitespace-nowrap"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center justify-center w-12 h-12 rounded-full bg-sw-black/70 backdrop-blur-sm border border-sw-orange text-white shadow-[0_0_20px_rgba(255,145,0,0.35)] active:scale-95 transition-transform duration-100"
           >
             <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              width="20"
+              height="20"
+              viewBox="0 -960 960 960"
+              fill="currentColor"
               aria-hidden="true"
             >
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-              <circle cx="12" cy="13" r="4" />
+              <path d="M120-600v-240h80v134q50-62 122.5-98T480-840q118 0 210.5 67T820-600h-87q-34-72-101-116t-152-44q-57 0-107.5 21T284-680h76v80H120Zm120 360h480L570-440 450-280l-90-120-120 160ZM200-80q-33 0-56.5-23.5T120-160v-320h80v320h560v-320h80v320q0 33-23.5 56.5T760-80H200Z" />
             </svg>
-            もう一度撮る
           </button>
         </div>
       )}
@@ -160,6 +160,34 @@ export function ScanPage() {
 
       {errorMessage && (
         <ErrorModal isOpen={true} message={errorMessage} onClose={handleErrorClose} />
+      )}
+
+      {isRetakeConfirmOpen && (
+        <Overlay>
+          <div className="mx-6 w-full max-w-sm rounded-2xl bg-sw-steel p-6 flex flex-col gap-6">
+            <div className="flex flex-col gap-2 text-center">
+              <p className="font-body text-white text-base font-medium">撮り直しますか？</p>
+              <p className="font-body text-slate-200 text-sm">現在の結果は失われます</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsRetakeConfirmOpen(false)}
+                className="flex-1 h-11 rounded-full border border-sw-steel text-slate-300 font-body text-sm active:scale-95 transition-transform duration-100"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={() => {
+                  setIsRetakeConfirmOpen(false);
+                  handleBack();
+                }}
+                className="flex-1 h-11 rounded-full bg-sw-orange text-sw-black font-body font-semibold text-sm shadow-[0_0_16px_rgba(255,145,0,0.4)] active:scale-95 transition-transform duration-100"
+              >
+                撮り直す
+              </button>
+            </div>
+          </div>
+        </Overlay>
       )}
 
       <ProductBottomSheet
