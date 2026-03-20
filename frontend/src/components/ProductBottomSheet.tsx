@@ -1,10 +1,44 @@
 import { useEffect, useRef, useState } from 'react';
-import type { DetectedItem } from '../types/scan';
+import type { DetectedItem, ScanMode } from '../types/scan';
+import { getAuraConfig } from '../utils/auraRenderer';
 import { useSwipeDown } from '../hooks/useSwipeDown';
 import { ShareButton } from './ShareButton';
 
+// オーラカラーが取得できない場合のフォールバック（sw-orange）
+const FALLBACK_AURA_COLOR = '#FF9100';
+
 function WireframePlaceholder() {
   return <div className="w-full aspect-square animate-pulse bg-sw-steel rounded-2xl" />;
+}
+
+function RankBadge({ rank, color }: { rank: number; color: string }) {
+  return (
+    <div
+      // aria-label でスクリーンリーダー向けの自然な読み上げ（"Rank 1"）を提供する。
+      // 内部スパンの視覚表現（ゼロ埋め "01"）は aria-hidden で読み上げ対象から除外する。
+      aria-label={`Rank ${rank}`}
+      className="shrink-0 flex flex-col items-center px-3 py-1.5 rounded-lg bg-sw-black/80"
+      style={{
+        border: `1px solid ${color}66`,
+        boxShadow: `0 0 12px ${color}33`,
+      }}
+    >
+      <span
+        aria-hidden="true"
+        className="font-display text-[8px] tracking-[0.25em] uppercase"
+        style={{ color: `${color}99` }}
+      >
+        Rank
+      </span>
+      <span
+        aria-hidden="true"
+        className="font-display text-base leading-none tracking-widest"
+        style={{ color }}
+      >
+        {String(rank).padStart(2, '0')}
+      </span>
+    </div>
+  );
 }
 
 type Props = {
@@ -15,6 +49,7 @@ type Props = {
   canvas?: HTMLCanvasElement | null;
   items?: DetectedItem[];
   backgroundImage?: HTMLImageElement | null;
+  mode?: ScanMode;
 };
 
 export function ProductBottomSheet({
@@ -25,6 +60,7 @@ export function ProductBottomSheet({
   canvas,
   items = [],
   backgroundImage = null,
+  mode = 'ranking',
 }: Props) {
   const sheetRef = useRef<HTMLDivElement>(null);
 
@@ -131,9 +167,10 @@ export function ProductBottomSheet({
             <h2 className="font-display font-normal text-xl text-white leading-tight">
               {item.name}
             </h2>
-            <span className="shrink-0 font-body text-xs text-slate-300 bg-sw-black/70 px-3 py-1.5 rounded-full border border-slate-600">
-              Rank {item.rank}
-            </span>
+            <RankBadge
+              rank={item.rank}
+              color={getAuraConfig(item.aura_level, mode)?.color ?? FALLBACK_AURA_COLOR}
+            />
           </div>
 
           {/* Product image — ロード完了まではワイヤーフレームを表示 */}
