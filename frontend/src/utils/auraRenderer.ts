@@ -6,6 +6,8 @@ export type AuraConfig = {
   flameColor: string;
   radius: number;
   opacity: number;
+  /** 炎形状の回転速度 [rad/s]: 高順位ほど大きい値を設定する */
+  rotationSpeed: number;
 };
 
 // ── fBm noise: ハッシュベースのValue Noise を4オクターブ重ねた有機的なノイズ ──
@@ -114,9 +116,13 @@ export function renderFlameAura(
   const quantizedTime = Math.round(time * 12) / 12;
   const seed = item.aura_level * 7.391;
   const SEGMENTS = 32; // 64 → 32: ベジェ計算コストを半減
+  // 回転オフセット: rank が高いほど rotationSpeed が大きく炎が速く回転する
+  const rotationOffset = time * config.rotationSpeed;
   const pts: [number, number][] = Array.from({ length: SEGMENTS }, (_, i) => {
-    const angle = (i / SEGMENTS) * Math.PI * 2;
-    const noise = fbm(((angle * 1.5) / (Math.PI * 2)) * 8 + quantizedTime * 0.7 + seed);
+    const baseAngle = (i / SEGMENTS) * Math.PI * 2;
+    // ノイズは baseAngle でサンプリング（固定形状）し、点の配置は回転後の angle で行う
+    const angle = baseAngle + rotationOffset;
+    const noise = fbm(((baseAngle * 1.5) / (Math.PI * 2)) * 8 + quantizedTime * 0.7 + seed);
     const upward = Math.max(0, -Math.sin(angle)) * upwardBias;
     const r = baseRadius + noise * noiseAmp + upward;
     return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
@@ -153,21 +159,21 @@ export function renderFlameAura(
 
 /** 売り上げランキングモード: 順位に応じた王道カラー */
 export const AURA_LEVEL_CONFIG: Record<number, AuraConfig> = {
-  // color: オーラコア色 / flameColor: 炎外縁色
-  5: { color: '#FFD700', flameColor: '#FF6D00', radius: 1.0, opacity: 1.0 }, // 黄金の炎・Lv5（1位）
-  4: { color: '#00E5FF', flameColor: '#0091EA', radius: 0.8, opacity: 1.0 }, // 電撃シアン・Lv4（2位）
-  3: { color: '#76FF03', flameColor: '#00C853', radius: 0.6, opacity: 1.0 }, // ネオングリーン・Lv3（3位）
-  2: { color: '#FF4081', flameColor: '#AA00FF', radius: 0.4, opacity: 1.0 }, // マゼンタ・Lv2（4位）
-  1: { color: '#CFD8DC', flameColor: '#607D8B', radius: 0.2, opacity: 1.0 }, // シルバー・Lv1（5位）
+  // color: オーラコア色 / flameColor: 炎外縁色 / rotationSpeed: 回転速度 [rad/s]（1位が最速）
+  5: { color: '#FFD700', flameColor: '#FF6D00', radius: 1.0, opacity: 1.0, rotationSpeed: 1.5 }, // Lv5（1位）
+  4: { color: '#00E5FF', flameColor: '#0091EA', radius: 0.8, opacity: 1.0, rotationSpeed: 1.0 }, // Lv4（2位）
+  3: { color: '#76FF03', flameColor: '#00C853', radius: 0.6, opacity: 1.0, rotationSpeed: 0.6 }, // Lv3（3位）
+  2: { color: '#FF4081', flameColor: '#AA00FF', radius: 0.4, opacity: 1.0, rotationSpeed: 0.3 }, // Lv2（4位）
+  1: { color: '#CFD8DC', flameColor: '#607D8B', radius: 0.2, opacity: 1.0, rotationSpeed: 0.1 }, // Lv1（5位）
 };
 
 /** 掘り出し物モード: 宝石・レアリティ感のカラースキーム */
 export const HIDDEN_GEMS_AURA_CONFIG: Record<number, AuraConfig> = {
-  5: { color: '#00E676', flameColor: '#00BFA5', radius: 1.0, opacity: 1.0 }, // エメラルド・Lv5
-  4: { color: '#D500F9', flameColor: '#6200EA', radius: 0.8, opacity: 1.0 }, // アメジスト・Lv4
-  3: { color: '#2979FF', flameColor: '#304FFE', radius: 0.6, opacity: 1.0 }, // サファイア・Lv3
-  2: { color: '#FF1744', flameColor: '#D50000', radius: 0.4, opacity: 1.0 }, // ルビー・Lv2
-  1: { color: '#FFD740', flameColor: '#FF6D00', radius: 0.2, opacity: 1.0 }, // トパーズ・Lv1
+  5: { color: '#00E676', flameColor: '#00BFA5', radius: 1.0, opacity: 1.0, rotationSpeed: 1.5 }, // エメラルド・Lv5
+  4: { color: '#D500F9', flameColor: '#6200EA', radius: 0.8, opacity: 1.0, rotationSpeed: 1.0 }, // アメジスト・Lv4
+  3: { color: '#2979FF', flameColor: '#304FFE', radius: 0.6, opacity: 1.0, rotationSpeed: 0.6 }, // サファイア・Lv3
+  2: { color: '#FF1744', flameColor: '#D50000', radius: 0.4, opacity: 1.0, rotationSpeed: 0.3 }, // ルビー・Lv2
+  1: { color: '#FFD740', flameColor: '#FF6D00', radius: 0.2, opacity: 1.0, rotationSpeed: 0.1 }, // トパーズ・Lv1
 };
 
 export function getAuraConfig(auraLevel: number, mode: ScanMode): AuraConfig | undefined {
