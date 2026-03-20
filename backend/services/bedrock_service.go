@@ -4,16 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime"
-	brdocument "github.com/aws/aws-sdk-go-v2/service/bedrockruntime/document"
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
 )
 
-const bedrockDefaultModelID = "anthropic.claude-sonnet-4-5"
+const bedrockDefaultModelID = "us.anthropic.claude-sonnet-4-5-20250929-v1:0"
 
 // BedrockRuntimeClient はBedrockRuntime APIのインターフェース。
 // テスト時にモックを注入できるよう抽象化する。
@@ -56,6 +56,8 @@ func (s *BedrockService) Recognize(ctx context.Context, imageData []byte, produc
 	mimeType := detectMIMEType(imageData)
 	prompt := buildBedrockPrompt(productNames)
 
+	log.Printf("[bedrock] Converse start: modelID=%s imageSize=%dB mimeType=%s products=%d", s.modelID, len(imageData), mimeType, len(productNames))
+
 	output, err := s.client.Converse(ctx, &bedrockruntime.ConverseInput{
 		ModelId: aws.String(s.modelID),
 		Messages: []types.Message{
@@ -76,17 +78,13 @@ func (s *BedrockService) Recognize(ctx context.Context, imageData []byte, produc
 				},
 			},
 		},
-		// JSON Schema を渡してモデルの出力形式を強制する。
-		// product_name の enum に商品名リストを設定するため、
-		// プロンプト内にスキーマ指示を書く必要はない。
-		AdditionalModelRequestFields: brdocument.NewLazyDocument(
-			buildProductSchema(productNames),
-		),
 	})
 	if err != nil {
+		log.Printf("[bedrock] Converse error: %v", err)
 		return nil, &AIError{Cause: fmt.Errorf("bedrock Converse: %w", err)}
 	}
 
+	log.Printf("[bedrock] Converse success")
 	return parseBedrockResponse(output)
 }
 
@@ -101,8 +99,11 @@ func parseBedrockResponse(output *bedrockruntime.ConverseOutput) ([]AIItem, erro
 		return []AIItem{}, nil
 	}
 
+	log.Printf("[bedrock] raw response: %s", textBlock.Value)
+
+	jsonStr := stripMarkdownCodeBlock(textBlock.Value)
 	var result aiItemsResult
-	if err := json.Unmarshal([]byte(textBlock.Value), &result); err != nil {
+	if err := json.Unmarshal([]byte(jsonStr), &result); err != nil {
 		return nil, fmt.Errorf("json.Unmarshal bedrock items: %w", err)
 	}
 
@@ -122,7 +123,7 @@ func parseBedrockResponse(output *bedrockruntime.ConverseOutput) ([]AIItem, erro
 }
 
 // buildBedrockPrompt はBedrock用プロンプトを生成する。
-// JSON Schema は additionalModelRequestFields で渡すため、プロンプト内にスキーマ指示は含めない。
+// 出力形式をプロンプト内で明示することでJSONレスポンスを強制する。
 func buildBedrockPrompt(productNames []string) string {
 	var sb strings.Builder
 	sb.WriteString("以下の画像を解析し、写っているコンビニ商品を識別してください。\n")
@@ -135,7 +136,10 @@ func buildBedrockPrompt(productNames []string) string {
 	}
 	sb.WriteString("\nバウンディングボックスは画像全体を1×1とした相対座標で表現してください。\n")
 	sb.WriteString("商品が画像からはみ出している場合も、商品全体から推定した座標を返してください（-1.5〜2.5の範囲で指定）。\n")
-	sb.WriteString("商品が検出できない場合は items を空配列で返してください。\n")
+	sb.WriteString("商品が検出できない場合は items を空配列で返してください。\n\n")
+	sb.WriteString("必ず以下のJSON形式のみで返答してください。前置きや説明は不要です:\n")
+	sb.WriteString(`{"items":[{"product_name":"<対象商品リスト内の商品名>","bounding_box":{"x_min":0.0,"y_min":0.0,"x_max":1.0,"y_max":1.0}}]}`)
+	sb.WriteString("\n")
 	return sb.String()
 }
 
@@ -184,6 +188,17 @@ func buildProductSchema(productNames []string) map[string]interface{} {
 		},
 		"required": []string{"items"},
 	}
+}
+
+// stripMarkdownCodeBlock はモデルが返すmarkdownコードブロック（```json...```）を除去する。
+func stripMarkdownCodeBlock(s string) string {
+	s = strings.TrimSpace(s)
+	if strings.HasPrefix(s, "```") {
+		s = s[strings.Index(s, "\n")+1:]
+		s = strings.TrimSuffix(strings.TrimSpace(s), "```")
+		s = strings.TrimSpace(s)
+	}
+	return s
 }
 
 // toBedrockImageFormat はMIMEタイプをBedrockのImageFormat型に変換する。
