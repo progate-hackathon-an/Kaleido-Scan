@@ -172,7 +172,7 @@ export function ScanPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setIsRetakeConfirmOpen(false)}
-                className="flex-1 h-11 rounded-full border border-sw-steel text-slate-300 font-body text-sm active:scale-95 transition-transform duration-100"
+                className="flex-1 h-11 rounded-full border border-white/40 text-slate-300 font-body text-sm active:scale-95 transition-transform duration-100"
               >
                 キャンセル
               </button>
