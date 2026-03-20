@@ -115,19 +115,20 @@
 
 ### 4-1. OIDC ロールの作成
 
-- [ ] `lib/github-oidc-stack.ts` を作成
-- [ ] `bin/infra.ts` に `GithubOidcStack` を追加
-- [ ] `cdk deploy KaleidoGithubOidc` でスタックをデプロイ
-- [ ] AWSコンソール → IAM → ロール → `github-actions-role` が存在することを確認
+- [x] `lib/github-oidc-stack.ts` を作成
+- [x] `bin/infra.ts` に `GithubOidcStack` を追加
+- [x] `cdk deploy KaleidoGithubOidc` でスタックをデプロイ
+- [x] AWSコンソール → IAM → ロール → `github-actions-role` が存在することを確認
 
 ### 4-2. GitHub Secrets の登録
 
-- [ ] `AWS_ACCOUNT_ID`（097395515323）を GitHub Secrets に登録
+- [x] `AWS_ACCOUNT_ID`（097395515323）を GitHub Secrets に登録
 
 ### 4-3. ワークフローファイルの配置
 
-- [ ] `.github/workflows/deploy.yml` を配置
-- [ ] `git push origin main` で Actions が自動実行されることを確認
+- [x] `.github/workflows/deploy.yml` を配置
+- [x] `git push origin main` で Actions が自動実行されることを確認
+- [x] deploy-infra まで全ジョブ通過を確認
 
 ---
 

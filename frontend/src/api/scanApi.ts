@@ -1,7 +1,7 @@
 import type { ScanResponse, ProductDetail, ScanMode } from '../types/scan';
 
-// プロキシ経由で通信するため相対パスを使用（CORS・Mixed Content・localhost問題を回避）
-const BASE_URL = '';
+// ローカル: Vite プロキシ経由（空文字）、本番: VITE_API_URL 環境変数を使用
+const BASE_URL = import.meta.env.VITE_API_URL ?? '';
 
 const SCAN_ENDPOINTS: Record<ScanMode, string> = {
   ranking: '/scan/ranking',
