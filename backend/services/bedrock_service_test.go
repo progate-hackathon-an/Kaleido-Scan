@@ -78,7 +78,7 @@ func TestBedrockService_Recognize_Success(t *testing.T) {
 }
 
 func TestBedrockService_Recognize_OutOfRangeBoundingBox(t *testing.T) {
-	// 商品が画像からはみ出している場合、0.0〜1.0の範囲外の座標も許容する
+	// ラベルが画像端にかかっている場合、0.0〜1.0の範囲外の座標も許容する
 	mock := &mockBedrockClient{
 		output: makeBedrockToolUseOutput(map[string]interface{}{
 			"items": []interface{}{

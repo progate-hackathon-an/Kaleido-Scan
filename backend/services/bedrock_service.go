@@ -84,7 +84,7 @@ func (s *BedrockService) Recognize(ctx context.Context, imageData []byte, produc
 				&types.ToolMemberToolSpec{
 					Value: types.ToolSpecification{
 						Name:        aws.String("recognize_products"),
-						Description: aws.String("画像から検出されたコンビニ商品と各商品のバウンディングボックスを返す"),
+						Description: aws.String("画像から検出されたコンビニ商品と、各商品の正面ラベル領域のバウンディングボックスを返す"),
 						InputSchema: &types.ToolInputSchemaMemberJson{
 							Value: bedrockdoc.NewLazyDocument(buildProductSchema(productNames)),
 						},
@@ -162,8 +162,8 @@ func buildBedrockPrompt(productNames []string) string {
 		sb.WriteString(name)
 		sb.WriteString("\n")
 	}
-	sb.WriteString("\nバウンディングボックスは画像全体を1×1とした相対座標で表現してください。\n")
-	sb.WriteString("商品が画像からはみ出している場合も、商品全体から推定した座標を返してください（-1.5〜2.5の範囲で指定）。\n")
+	sb.WriteString("\nバウンディングボックスは商品全体ではなく、商品の正面ラベル（商品名・デザインが印刷されている面）の範囲を、画像全体を1×1とした相対座標で表現してください。\n")
+	sb.WriteString("ラベルが画像からはみ出している場合も、ラベル全体から推定した座標を返してください（-1.5〜2.5の範囲で指定）。\n")
 	sb.WriteString("商品が検出できない場合は items を空配列で返してください。\n")
 	return sb.String()
 }
