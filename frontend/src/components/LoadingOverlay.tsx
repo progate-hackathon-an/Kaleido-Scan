@@ -55,24 +55,47 @@ function MovingReticle() {
 
 type Props = {
   isLoading: boolean;
+  capturedUrl?: string | null;
 };
 
-export function LoadingOverlay({ isLoading }: Props) {
+export function LoadingOverlay({ isLoading, capturedUrl }: Props) {
   if (!isLoading) return null;
 
   return (
     <div
       className="fixed inset-0 flex flex-col items-center justify-center gap-10 z-50"
-      style={{ background: 'radial-gradient(circle at center, #0f0800 0%, #080808 70%)' }}
+      style={
+        capturedUrl
+          ? undefined
+          : { background: 'radial-gradient(circle at center, #0f0800 0%, #080808 70%)' }
+      }
       role="status"
       aria-label="解析中"
     >
-      <div className="relative flex items-center justify-center w-72 h-72">
+      {capturedUrl && (
+        <>
+          <img
+            src={capturedUrl}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(circle at center, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.92) 70%)',
+            }}
+            aria-hidden="true"
+          />
+        </>
+      )}
+      <div className="relative z-10 flex items-center justify-center w-72 h-72">
         <OuterFrame />
         <MovingReticle />
       </div>
 
-      <div className="flex flex-col items-center gap-3">
+      <div className="relative z-10 flex flex-col items-center gap-3">
         <h1
           className="font-display text-2xl font-bold tracking-widest"
           style={{
@@ -83,7 +106,7 @@ export function LoadingOverlay({ isLoading }: Props) {
         >
           Kaleido Scan
         </h1>
-        <p className="font-body text-slate-400 text-sm leading-relaxed">
+        <p className="font-body text-slate-200 text-sm leading-relaxed">
           商品の「オーラ」を可視化しています...
         </p>
       </div>
