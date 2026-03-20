@@ -20,13 +20,14 @@ type ScanResult struct {
 
 // ScanService はカメラ画像から商品を識別し、ランキング情報を付与するサービス。
 type ScanService struct {
-	ai AIService
-	db *sql.DB
+	ai      AIService
+	db      *sql.DB
+	useStub bool
 }
 
 // NewScanService はScanServiceを生成する。
-func NewScanService(ai AIService, db *sql.DB) *ScanService {
-	return &ScanService{ai: ai, db: db}
+func NewScanService(ai AIService, db *sql.DB, useStub bool) *ScanService {
+	return &ScanService{ai: ai, db: db, useStub: useStub}
 }
 
 // GetRanking は画像データからランキング取得→AI識別→結果突合を行い、ScanResultのスライスを返す。
@@ -37,7 +38,7 @@ func (s *ScanService) GetRanking(ctx context.Context, imageData []byte) ([]ScanR
 		return nil, fmt.Errorf("fetchSalesRankings: %w", err)
 	}
 
-	aiItems, err := recognizeProducts(ctx, s.ai, imageData, namesFromRankingRows(rankings))
+	aiItems, err := recognizeProducts(ctx, s.ai, imageData, namesFromRankingRows(rankings), s.useStub)
 	if err != nil {
 		return nil, err
 	}

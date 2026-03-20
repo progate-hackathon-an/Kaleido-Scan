@@ -27,7 +27,7 @@ func TestTrendingService_GetRanking_GrowthRate(t *testing.T) {
 	}
 	mockAI := &mockAIService{items: aiItems}
 
-	svc := services.NewTrendingService(mockAI, db)
+	svc := services.NewTrendingService(mockAI, db, false)
 	results, err := svc.GetTrendingRanking(context.Background(), []byte("fake-image"))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -93,7 +93,7 @@ func TestTrendingService_GetRanking_NoPrevWeek(t *testing.T) {
 	}
 	mockAI := &mockAIService{items: aiItems}
 
-	svc := services.NewTrendingService(mockAI, db)
+	svc := services.NewTrendingService(mockAI, db, false)
 	results, err := svc.GetTrendingRanking(context.Background(), []byte("fake-image"))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)

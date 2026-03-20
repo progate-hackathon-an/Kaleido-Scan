@@ -22,13 +22,14 @@ type TrendingResult struct {
 
 // TrendingService はカメラ画像から急上昇ランキングを返すサービス。
 type TrendingService struct {
-	ai AIService
-	db *sql.DB
+	ai      AIService
+	db      *sql.DB
+	useStub bool
 }
 
 // NewTrendingService はTrendingServiceを生成する。
-func NewTrendingService(ai AIService, db *sql.DB) *TrendingService {
-	return &TrendingService{ai: ai, db: db}
+func NewTrendingService(ai AIService, db *sql.DB, useStub bool) *TrendingService {
+	return &TrendingService{ai: ai, db: db, useStub: useStub}
 }
 
 // GetTrendingRanking は画像データから急上昇ランキング取得→AI識別→結果突合を行い、TrendingResultのスライスを返す。
@@ -44,7 +45,7 @@ func (s *TrendingService) GetTrendingRanking(ctx context.Context, imageData []by
 		names[i] = r.name
 	}
 
-	aiItems, err := recognizeProducts(ctx, s.ai, imageData, names)
+	aiItems, err := recognizeProducts(ctx, s.ai, imageData, names, s.useStub)
 	if err != nil {
 		return nil, err
 	}

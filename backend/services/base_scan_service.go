@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 )
 
 // rankingRow はランキングクエリの1行を表す内部型。
@@ -58,17 +57,16 @@ func fetchSalesRankings(ctx context.Context, db *sql.DB) ([]rankingRow, error) {
 }
 
 // recognizeProducts は商品名リストを受け取ってAI識別を実行し、AIItemのスライスを返す。
-// USE_STUB=true の場合はAI呼び出しをスキップしてスタブを返す。
-// AI呼び出しが失敗した場合も同様にスタブで代替する（フォールバック）。
-func recognizeProducts(ctx context.Context, ai AIService, imageData []byte, productNames []string) ([]AIItem, error) {
-	if os.Getenv("USE_STUB") == "true" {
+// useStub=true の場合はAI呼び出しをスキップしてスタブを返す。
+// AI呼び出しが失敗した場合は *AIError でラップして返す。
+func recognizeProducts(ctx context.Context, ai AIService, imageData []byte, productNames []string, useStub bool) ([]AIItem, error) {
+	if useStub {
 		log.Printf("USE_STUB=true: skipping AI call, returning stub items")
 		return fallbackAIItems(productNames), nil
 	}
 	aiItems, err := ai.Recognize(ctx, imageData, productNames)
 	if err != nil {
-		log.Printf("AI recognition failed, using fallback stub: %v", err)
-		return fallbackAIItems(productNames), nil
+		return nil, &AIError{Cause: fmt.Errorf("ai recognition failed: %w", err)}
 	}
 	return aiItems, nil
 }

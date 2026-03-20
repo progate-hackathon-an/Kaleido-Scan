@@ -21,13 +21,14 @@ type HiddenGemResult struct {
 
 // HiddenGemsService はカメラ画像から商品を識別し、掘り出し物ランキング情報を付与するサービス。
 type HiddenGemsService struct {
-	ai AIService
-	db *sql.DB
+	ai      AIService
+	db      *sql.DB
+	useStub bool
 }
 
 // NewHiddenGemsService はHiddenGemsServiceを生成する。
-func NewHiddenGemsService(ai AIService, db *sql.DB) *HiddenGemsService {
-	return &HiddenGemsService{ai: ai, db: db}
+func NewHiddenGemsService(ai AIService, db *sql.DB, useStub bool) *HiddenGemsService {
+	return &HiddenGemsService{ai: ai, db: db, useStub: useStub}
 }
 
 // GetHiddenGemsRanking は画像データからランキング取得→AI識別→逆順オーラ付与を行い、HiddenGemResultのスライスを返す。
@@ -39,7 +40,7 @@ func (s *HiddenGemsService) GetHiddenGemsRanking(ctx context.Context, imageData 
 		return nil, fmt.Errorf("fetchSalesRankings: %w", err)
 	}
 
-	aiItems, err := recognizeProducts(ctx, s.ai, imageData, namesFromRankingRows(rankings))
+	aiItems, err := recognizeProducts(ctx, s.ai, imageData, namesFromRankingRows(rankings), s.useStub)
 	if err != nil {
 		return nil, err
 	}

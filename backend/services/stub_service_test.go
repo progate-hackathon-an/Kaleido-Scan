@@ -25,8 +25,8 @@ func rankingRowsMock(mock sqlmock.Sqlmock) {
 	)
 }
 
-// TestFallback_ReturnsAllProducts はAI失敗時に全商品がフォールバックで返ることを確認する。
-func TestFallback_ReturnsAllProducts(t *testing.T) {
+// TestStub_ReturnsAllProducts はUSE_STUB=trueのとき全商品がスタブで返ることを確認する。
+func TestStub_ReturnsAllProducts(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("failed to create sqlmock: %v", err)
@@ -35,10 +35,10 @@ func TestFallback_ReturnsAllProducts(t *testing.T) {
 
 	rankingRowsMock(mock)
 
-	svc := services.NewScanService(&mockFailingAI{}, db)
+	svc := services.NewScanService(&mockFailingAI{}, db, true)
 	results, err := svc.GetRanking(context.Background(), []byte("fake-image"))
 	if err != nil {
-		t.Fatalf("fallback should not return error, got: %v", err)
+		t.Fatalf("stub should not return error, got: %v", err)
 	}
 	if len(results) != 3 {
 		t.Errorf("expected 3 items (all products), got %d", len(results))
@@ -49,9 +49,9 @@ func TestFallback_ReturnsAllProducts(t *testing.T) {
 	}
 }
 
-// TestFallback_BoundingBoxesAreValid はフォールバック時のバウンディングボックスが
+// TestStub_BoundingBoxesAreValid はスタブ時のバウンディングボックスが
 // 有効な範囲（0.0〜1.0内かつ min < max）であることを確認する。
-func TestFallback_BoundingBoxesAreValid(t *testing.T) {
+func TestStub_BoundingBoxesAreValid(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("failed to create sqlmock: %v", err)
@@ -60,7 +60,7 @@ func TestFallback_BoundingBoxesAreValid(t *testing.T) {
 
 	rankingRowsMock(mock)
 
-	svc := services.NewScanService(&mockFailingAI{}, db)
+	svc := services.NewScanService(&mockFailingAI{}, db, true)
 	results, _ := svc.GetRanking(context.Background(), []byte("fake-image"))
 
 	for i, r := range results {
@@ -71,5 +71,27 @@ func TestFallback_BoundingBoxesAreValid(t *testing.T) {
 		if bb.YMin >= bb.YMax {
 			t.Errorf("item[%d]: YMin(%v) >= YMax(%v)", i, bb.YMin, bb.YMax)
 		}
+	}
+}
+
+// TestAIError_IsReturnedOnFailure はUSE_STUB=falseかつAI失敗時に*AIErrorが返ることを確認する。
+func TestAIError_IsReturnedOnFailure(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("failed to create sqlmock: %v", err)
+	}
+	defer func() { _ = db.Close() }()
+
+	rankingRowsMock(mock)
+
+	svc := services.NewScanService(&mockFailingAI{}, db, false)
+	_, err = svc.GetRanking(context.Background(), []byte("fake-image"))
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+
+	var aiErr *services.AIError
+	if !errors.As(err, &aiErr) {
+		t.Errorf("expected *services.AIError, got %T: %v", err, err)
 	}
 }

@@ -37,7 +37,7 @@ func TestHiddenGemsService_GetRanking_ReverseOrder(t *testing.T) {
 	}
 	mockAI := &mockAIService{items: aiItems}
 
-	svc := services.NewHiddenGemsService(mockAI, db)
+	svc := services.NewHiddenGemsService(mockAI, db, false)
 	results, err := svc.GetHiddenGemsRanking(context.Background(), []byte("fake-image"))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)

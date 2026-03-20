@@ -47,7 +47,7 @@ func TestScanService_GetRanking_AuraLevel(t *testing.T) {
 	}
 	mockAI := &mockAIService{items: aiItems}
 
-	svc := services.NewScanService(mockAI, db)
+	svc := services.NewScanService(mockAI, db, false)
 	results, err := svc.GetRanking(context.Background(), []byte("fake-image"))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
