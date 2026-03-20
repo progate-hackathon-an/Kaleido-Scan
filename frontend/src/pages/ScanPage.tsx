@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, lazy, Suspense, useEffect } from 'react';
 
 // AuraEffect は Canvas ベースのため重くはないが、スキャン成功後にのみ必要。遅延読み込みで初回起動を守る
 const AuraEffect = lazy(() =>
@@ -17,6 +17,8 @@ import type { DetectedItem, ScanMode } from '../types/scan';
 
 // ?demo=1 が付いていれば全5レベルのモックデータで起動する（デザイン確認用）
 const IS_DEMO = new URLSearchParams(window.location.search).get('demo') === '1';
+// ?fixture=1 が付いていれば /fixture.jpeg を実際のAPIに送信する（開発・動作確認用）
+const IS_FIXTURE = new URLSearchParams(window.location.search).get('fixture') === '1';
 
 export function ScanPage() {
   const { scan, result: scanResult, isLoading, error, reset } = useScan();
@@ -37,6 +39,28 @@ export function ScanPage() {
     setCapturedUrl(URL.createObjectURL(file));
     void scan(file, mode);
   };
+
+  useEffect(() => {
+    if (!IS_FIXTURE) return;
+    void (async () => {
+      try {
+        const res = await fetch('/fixture.jpeg');
+        if (!res.ok) {
+          // fixture 画像が取得できない場合はスキャンを実行しない
+          // eslint-disable-next-line no-console
+          console.error('Failed to load /fixture.jpeg for fixture mode:', res.status, res.statusText);
+          return;
+        }
+        const blob = await res.blob();
+        const file = new File([blob], 'fixture.jpeg', { type: 'image/jpeg' });
+        handleCapture(file, 'ranking');
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Error while loading /fixture.jpeg for fixture mode:', e);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleItemSelect = async (item: DetectedItem) => {
     setSelectedItem(item);
@@ -132,7 +156,7 @@ export function ScanPage() {
         </div>
       )}
 
-      <LoadingOverlay isLoading={isLoading} />
+      <LoadingOverlay isLoading={isLoading} capturedUrl={capturedUrl} />
 
       {errorMessage && (
         <ErrorModal isOpen={true} message={errorMessage} onClose={handleErrorClose} />
