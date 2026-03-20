@@ -16,9 +16,9 @@ func TestTrendingService_GetRanking_GrowthRate(t *testing.T) {
 	defer func() { _ = db.Close() }()
 
 	// 急上昇ランキングクエリのモック（名前もここから取得する。オレンジが growth_rate=130.8 で上位）
-	trendingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "current_quantity", "prev_quantity", "growth_rate", "trending_rank"}).
-		AddRow("44444444-4444-4444-4444-444444444444", "オレンジ 500ml", "説明A", "drink", 1700, 1300, 130.8, 1).
-		AddRow("33333333-3333-3333-3333-333333333333", "ブラックコーヒー 500ml", "説明B", "drink", 9800, 9600, 102.1, 2)
+	trendingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "growth_rate", "trending_rank"}).
+		AddRow("44444444-4444-4444-4444-444444444444", "オレンジ 500ml", "説明A", "drink", 130.8, 1).
+		AddRow("33333333-3333-3333-3333-333333333333", "ブラックコーヒー 500ml", "説明B", "drink", 102.1, 2)
 	mock.ExpectQuery("SELECT").WillReturnRows(trendingRows)
 
 	aiItems := []services.AIItem{
@@ -83,9 +83,9 @@ func TestTrendingService_GetRanking_NoPrevWeek(t *testing.T) {
 	}
 	defer func() { _ = db.Close() }()
 
-	// 前週データなし: prev_quantity=0, growth_rate=NULL（名前もここから取得する）
-	trendingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "current_quantity", "prev_quantity", "growth_rate", "trending_rank"}).
-		AddRow("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", "新商品A", "新しい商品", "food", 500, 0, nil, 1)
+	// 前週データなし: growth_rate=NULL → trending_rank は NULLS LAST 扱い（名前もここから取得する）
+	trendingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "growth_rate", "trending_rank"}).
+		AddRow("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", "新商品A", "新しい商品", "food", nil, 1)
 	mock.ExpectQuery("SELECT").WillReturnRows(trendingRows)
 
 	aiItems := []services.AIItem{
@@ -103,10 +103,7 @@ func TestTrendingService_GetRanking_NoPrevWeek(t *testing.T) {
 		t.Fatalf("expected 1 result, got %d", len(results))
 	}
 
-	// 前週データなし → prev_quantity=0, growth_rate=nil
-	if results[0].PrevQuantity != 0 {
-		t.Errorf("expected prev_quantity=0, got %d", results[0].PrevQuantity)
-	}
+	// 前週データなし → growth_rate=nil
 	if results[0].GrowthRate != nil {
 		t.Errorf("expected growth_rate=nil for no prev week data, got %v", results[0].GrowthRate)
 	}

@@ -9,7 +9,6 @@ const mockItem: DetectedItem = {
   description: '炭火で香ばしく焼き上げた紅しゃけを中の具にした手巻おにぎり。',
   category: 'food',
   rank: 1,
-  total_quantity: 12500,
   aura_level: 5,
   bounding_box: { x_min: 0.1, y_min: 0.2, x_max: 0.4, y_max: 0.7 },
 };

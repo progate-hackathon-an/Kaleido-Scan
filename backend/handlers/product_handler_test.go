@@ -27,10 +27,10 @@ func TestGetProduct_Success(t *testing.T) {
 	}
 	defer func() { _ = db.Close() }()
 
-	cols := []string{"name", "description", "category", "total_quantity", "rank"}
+	cols := []string{"name", "description", "category", "rank"}
 	mock.ExpectQuery("SELECT").
 		WillReturnRows(sqlmock.NewRows(cols).AddRow(
-			"炭火焼紅しゃけおにぎり", "説明", "food", 12500, 1,
+			"炭火焼紅しゃけおにぎり", "説明", "food", 1,
 		))
 
 	r := newGetProductRouter(db)
@@ -74,7 +74,7 @@ func TestGetProduct_NotFound(t *testing.T) {
 	defer func() { _ = db.Close() }()
 
 	mock.ExpectQuery("SELECT").
-		WillReturnRows(sqlmock.NewRows([]string{"name", "description", "category", "total_quantity", "rank"}))
+		WillReturnRows(sqlmock.NewRows([]string{"name", "description", "category", "rank"}))
 
 	r := newGetProductRouter(db)
 	req := httptest.NewRequest(http.MethodGet, "/products/00000000-0000-0000-0000-000000000000", nil)

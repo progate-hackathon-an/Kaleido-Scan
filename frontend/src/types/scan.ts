@@ -13,7 +13,6 @@ export type DetectedItem = {
   description: string;
   category: string;
   rank: number;
-  total_quantity: number;
   aura_level: number;
   bounding_box: BoundingBox;
 };
@@ -35,6 +34,5 @@ export type ProductDetail = {
   description: string;
   category: string;
   rank: number;
-  total_quantity: number;
   aura_level: number;
 };

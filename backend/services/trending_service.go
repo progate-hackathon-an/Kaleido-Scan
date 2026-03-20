@@ -8,16 +8,14 @@ import (
 
 // TrendingResult は /scan/trending レスポンスの1商品エントリを表す。
 type TrendingResult struct {
-	ProductID       string      `json:"product_id"`
-	Name            string      `json:"name"`
-	Description     string      `json:"description"`
-	Category        string      `json:"category"`
-	Rank            int         `json:"rank"`
-	CurrentQuantity int         `json:"current_quantity"`
-	PrevQuantity    int         `json:"prev_quantity"`
-	GrowthRate      *float64    `json:"growth_rate"`
-	AuraLevel       int         `json:"aura_level"`
-	BoundingBox     BoundingBox `json:"bounding_box"`
+	ProductID   string      `json:"product_id"`
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	Category    string      `json:"category"`
+	Rank        int         `json:"rank"`
+	GrowthRate  *float64    `json:"growth_rate"`
+	AuraLevel   int         `json:"aura_level"`
+	BoundingBox BoundingBox `json:"bounding_box"`
 }
 
 // TrendingService はカメラ画像から急上昇ランキングを返すサービス。
@@ -59,14 +57,12 @@ func (s *TrendingService) GetTrendingRanking(ctx context.Context, imageData []by
 
 // trendingRow は急上昇ランキングクエリの1行を表す内部型。
 type trendingRow struct {
-	id              string
-	name            string
-	description     string
-	category        string
-	currentQuantity int
-	prevQuantity    int
-	growthRate      sql.NullFloat64
-	trendingRank    int
+	id           string
+	name         string
+	description  string
+	category     string
+	growthRate   sql.NullFloat64
+	trendingRank int
 }
 
 func (s *TrendingService) fetchTrendingRankings(ctx context.Context) ([]trendingRow, error) {
@@ -90,8 +86,6 @@ func (s *TrendingService) fetchTrendingRankings(ctx context.Context) ([]trending
 				p.name,
 				p.description,
 				p.category,
-				cw.quantity AS current_quantity,
-				COALESCE(pw.quantity, 0) AS prev_quantity,
 				ROUND(
 					cw.quantity::NUMERIC
 					/ NULLIF(COALESCE(pw.quantity, 0), 0) * 100,
@@ -106,8 +100,6 @@ func (s *TrendingService) fetchTrendingRankings(ctx context.Context) ([]trending
 			name,
 			description,
 			category,
-			current_quantity,
-			prev_quantity,
 			growth_rate,
 			RANK() OVER (ORDER BY growth_rate DESC NULLS LAST) AS trending_rank
 		FROM trending
@@ -122,8 +114,7 @@ func (s *TrendingService) fetchTrendingRankings(ctx context.Context) ([]trending
 	var rankings []trendingRow
 	for rows.Next() {
 		var r trendingRow
-		if err := rows.Scan(&r.id, &r.name, &r.description, &r.category,
-			&r.currentQuantity, &r.prevQuantity, &r.growthRate, &r.trendingRank); err != nil {
+		if err := rows.Scan(&r.id, &r.name, &r.description, &r.category, &r.growthRate, &r.trendingRank); err != nil {
 			return nil, fmt.Errorf("rows.Scan: %w", err)
 		}
 		rankings = append(rankings, r)
@@ -153,16 +144,14 @@ func (s *TrendingService) mergeTrendingResults(aiItems []AIItem, rankings []tren
 			growthRate = &v
 		}
 		results = append(results, TrendingResult{
-			ProductID:       r.id,
-			Name:            r.name,
-			Description:     r.description,
-			Category:        r.category,
-			Rank:            r.trendingRank,
-			CurrentQuantity: r.currentQuantity,
-			PrevQuantity:    r.prevQuantity,
-			GrowthRate:      growthRate,
-			AuraLevel:       CalcAuraLevel(r.trendingRank),
-			BoundingBox:     item.BoundingBox,
+			ProductID:   r.id,
+			Name:        r.name,
+			Description: r.description,
+			Category:    r.category,
+			Rank:        r.trendingRank,
+			GrowthRate:  growthRate,
+			AuraLevel:   CalcAuraLevel(r.trendingRank),
+			BoundingBox: item.BoundingBox,
 		})
 	}
 	return results

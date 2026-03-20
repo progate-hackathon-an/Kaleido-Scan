@@ -9,12 +9,11 @@ import (
 
 // rankingRow はランキングクエリの1行を表す内部型。
 type rankingRow struct {
-	id            string
-	name          string
-	description   string
-	category      string
-	totalQuantity int
-	rank          int
+	id          string
+	name        string
+	description string
+	category    string
+	rank        int
 }
 
 // namesFromRankingRows はrankingRowスライスから商品名のスライスを抽出するヘルパー。
@@ -30,7 +29,6 @@ func namesFromRankingRows(rows []rankingRow) []string {
 func fetchSalesRankings(ctx context.Context, db *sql.DB) ([]rankingRow, error) {
 	const query = `
 		SELECT p.id, p.name, p.description, p.category,
-		       SUM(ws.quantity) AS total_quantity,
 		       RANK() OVER (ORDER BY SUM(ws.quantity) DESC) AS rank
 		FROM products p
 		JOIN weekly_sales ws ON p.id = ws.product_id
@@ -45,7 +43,7 @@ func fetchSalesRankings(ctx context.Context, db *sql.DB) ([]rankingRow, error) {
 	var rankings []rankingRow
 	for rows.Next() {
 		var r rankingRow
-		if err := rows.Scan(&r.id, &r.name, &r.description, &r.category, &r.totalQuantity, &r.rank); err != nil {
+		if err := rows.Scan(&r.id, &r.name, &r.description, &r.category, &r.rank); err != nil {
 			return nil, fmt.Errorf("rows.Scan: %w", err)
 		}
 		rankings = append(rankings, r)

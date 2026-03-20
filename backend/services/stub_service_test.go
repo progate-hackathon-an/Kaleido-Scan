@@ -18,10 +18,10 @@ func (m *mockFailingAI) Recognize(_ context.Context, _ []byte, _ []string) ([]se
 
 func rankingRowsMock(mock sqlmock.Sqlmock) {
 	mock.ExpectQuery("SELECT").WillReturnRows(
-		sqlmock.NewRows([]string{"id", "name", "description", "category", "total_quantity", "rank"}).
-			AddRow("11111111-1111-1111-1111-111111111111", "商品A", "説明A", "food", 5000, 1).
-			AddRow("22222222-2222-2222-2222-222222222222", "商品B", "説明B", "drink", 4000, 2).
-			AddRow("33333333-3333-3333-3333-333333333333", "商品C", "説明C", "snack", 3000, 3),
+		sqlmock.NewRows([]string{"id", "name", "description", "category", "rank"}).
+			AddRow("11111111-1111-1111-1111-111111111111", "商品A", "説明A", "food", 1).
+			AddRow("22222222-2222-2222-2222-222222222222", "商品B", "説明B", "drink", 2).
+			AddRow("33333333-3333-3333-3333-333333333333", "商品C", "説明C", "snack", 3),
 	)
 }
 

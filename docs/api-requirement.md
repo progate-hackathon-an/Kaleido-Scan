@@ -128,7 +128,6 @@ Bedrock は API パラメータとして JSON Schema を渡すことで出力形
       "description": "炭火で香ばしく焼き上げた紅しゃけを中の具にした手巻おにぎり。パリッとした海苔を巻いて食べる。",
       "category": "food",
       "rank": 1,
-      "total_quantity": 12500,
       "aura_level": 5,
       "bounding_box": {
         "x_min": 0.1,
@@ -143,7 +142,6 @@ Bedrock は API パラメータとして JSON Schema を渡すことで出力形
       "description": "ブラックコーヒー本来の飲みごたえと香り豊かで飲みやすい味わいを両立した無糖ブラックコーヒー。",
       "category": "drink",
       "rank": 3,
-      "total_quantity": 9800,
       "aura_level": 3,
       "bounding_box": {
         "x_min": 0.5,
@@ -164,7 +162,6 @@ Bedrock は API パラメータとして JSON Schema を渡すことで出力形
 | `description` | string | 商品説明 |
 | `category` | string | カテゴリ（`food` / `drink` / `snack`） |
 | `rank` | integer | 売上ランキング（1〜5） |
-| `total_quantity` | integer | 累計売上個数 |
 | `aura_level` | integer | オーラ強度（1〜5。rank 1 → aura_level 5） |
 | `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
 
@@ -212,7 +209,6 @@ aura_level = 6 - rank
   "description": "炭火で香ばしく焼き上げた紅しゃけを中の具にした手巻おにぎり。パリッとした海苔を巻いて食べる。",
   "category": "food",
   "rank": 1,
-  "total_quantity": 12500,
   "aura_level": 5
 }
 ```
@@ -282,8 +278,6 @@ Content-Type: multipart/form-data
       "description": "大人も子供もゴクゴク飲めるすっきりした味わい。果実の味を楽しめるオレンジの低果汁飲料。",
       "category": "drink",
       "rank": 1,
-      "current_quantity": 1700,
-      "prev_quantity": 1300,
       "growth_rate": 130.8,
       "aura_level": 5,
       "bounding_box": {
@@ -305,9 +299,7 @@ Content-Type: multipart/form-data
 | `description` | string | 商品説明 |
 | `category` | string | カテゴリ（`food` / `drink` / `snack`） |
 | `rank` | integer | 急上昇ランキング（1〜5。増加率が高いほど上位） |
-| `current_quantity` | integer | 直近週の売上個数 |
-| `prev_quantity` | integer | 前週の売上個数（データなし時は `0`） |
-| `growth_rate` | number \| null | 前週比（%）。前週データなし（`prev_quantity = 0`）の場合は `null` |
+| `growth_rate` | number \| null | 前週比（%）。前週データなし時は `null` |
 | `aura_level` | integer | オーラ強度（1〜5。`rank 1` → `aura_level 5`） |
 | `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
 
@@ -323,7 +315,7 @@ aura_level = 6 - rank
 growth_rate(%) = current_quantity ÷ prev_quantity × 100
 ```
 
-前週データが存在しない（`prev_quantity = 0`）場合は `growth_rate = null` とし、`rank` は最下位（`NULLS LAST`）扱い。
+前週データが存在しない場合は `growth_rate = null` とし、`rank` は最下位（`NULLS LAST`）扱い。
 
 **エラーレスポンス**
 

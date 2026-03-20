@@ -14,13 +14,12 @@ import (
 
 // productDetail は GET /products/:id レスポンスを表す（bounding_box を含まない）。
 type productDetail struct {
-	ProductID     string `json:"product_id"`
-	Name          string `json:"name"`
-	Description   string `json:"description"`
-	Category      string `json:"category"`
-	Rank          int    `json:"rank"`
-	TotalQuantity int    `json:"total_quantity"`
-	AuraLevel     int    `json:"aura_level"`
+	ProductID   string `json:"product_id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Category    string `json:"category"`
+	Rank        int    `json:"rank"`
+	AuraLevel   int    `json:"aura_level"`
 }
 
 // ProductHandler は /products/:id エンドポイントのハンドラ。
@@ -55,14 +54,13 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 	c.JSON(http.StatusOK, d)
 }
 
-// rankやtotal_quantityはproductsテーブルには存在しないため、JOINクエリで集計してから返す。
+// rankはproductsテーブルには存在しないため、JOINクエリで集計してから返す。
 func (h *ProductHandler) queryProductByID(ctx context.Context, id uuid.UUID) (*productDetail, error) {
 	const query = `
-		SELECT p.name, p.description, p.category, ranked.total_quantity, ranked.rank
+		SELECT p.name, p.description, p.category, ranked.rank
 		FROM products p
 		JOIN (
 			SELECT p2.id,
-			       SUM(ws.quantity) AS total_quantity,
 			       RANK() OVER (ORDER BY SUM(ws.quantity) DESC) AS rank
 			FROM products p2
 			JOIN weekly_sales ws ON p2.id = ws.product_id
@@ -74,7 +72,7 @@ func (h *ProductHandler) queryProductByID(ctx context.Context, id uuid.UUID) (*p
 	d.ProductID = id.String()
 
 	err := h.db.QueryRowContext(ctx, query, id).Scan(
-		&d.Name, &d.Description, &d.Category, &d.TotalQuantity, &d.Rank,
+		&d.Name, &d.Description, &d.Category, &d.Rank,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("queryProductByID: %w", err)
