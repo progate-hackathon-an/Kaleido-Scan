@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
+	"os"
 
 	"github.com/Hiru-ge/Kaleido-Scan/backend/config"
 	"github.com/Hiru-ge/Kaleido-Scan/backend/database"
@@ -10,6 +12,9 @@ import (
 	"github.com/Hiru-ge/Kaleido-Scan/backend/middleware"
 	"github.com/Hiru-ge/Kaleido-Scan/backend/routes"
 	"github.com/Hiru-ge/Kaleido-Scan/backend/services"
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -32,7 +37,7 @@ func main() {
 		}
 	}()
 
-	if err := database.RunMigrations(db, "/db/migrations"); err != nil {
+	if err := database.RunMigrations(db, "db/migrations"); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	log.Println("Migrations applied")
@@ -66,8 +71,15 @@ func main() {
 
 	routes.Setup(r, scanHandler, hiddenGemsHandler, productHandler)
 
-	log.Printf("Server starting on :%s", cfg.Port)
-	if err := r.Run(":" + cfg.Port); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+	if os.Getenv("AWS_LAMBDA_FUNCTION_NAME") != "" {
+		adapter := httpadapter.NewV2(r)
+		lambda.Start(func(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+			return adapter.ProxyWithContext(ctx, req)
+		})
+	} else {
+		log.Printf("Server starting on :%s", cfg.Port)
+		if err := r.Run(":" + cfg.Port); err != nil {
+			log.Fatalf("Failed to start server: %v", err)
+		}
 	}
 }

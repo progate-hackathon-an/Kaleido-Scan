@@ -1,0 +1,21 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "0d2a6af6d1332dc4fb0f60c51c15b0a73945291f8ebd1c8905b0f413f8a96f46": {
+      "displayName": "KaleidoDatabaseStack Template",
+      "source": {
+        "path": "KaleidoDatabaseStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "097395515323-us-east-1-e198d3b7": {
+          "bucketName": "cdk-hnb659fds-assets-097395515323-us-east-1",
+          "objectKey": "0d2a6af6d1332dc4fb0f60c51c15b0a73945291f8ebd1c8905b0f413f8a96f46.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::097395515323:role/cdk-hnb659fds-file-publishing-role-097395515323-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

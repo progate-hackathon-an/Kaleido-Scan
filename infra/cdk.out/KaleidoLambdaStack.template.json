@@ -1,0 +1,372 @@
+{
+ "Resources": {
+  "KaleidoFunctionServiceRoleBEC632C1": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/KaleidoFunction/ServiceRole/Resource"
+   }
+  },
+  "KaleidoFunctionServiceRoleDefaultPolicy65DEC5AC": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::ImportValue": "KaleidoDatabaseStack:ExportsOutputRefKaleidoClusterSecretAttachmentFFB020B226E63EA8"
+       }
+      },
+      {
+       "Action": [
+        "aws-marketplace:Subscribe",
+        "aws-marketplace:Unsubscribe",
+        "aws-marketplace:ViewSubscriptions",
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "KaleidoFunctionServiceRoleDefaultPolicy65DEC5AC",
+    "Roles": [
+     {
+      "Ref": "KaleidoFunctionServiceRoleBEC632C1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/KaleidoFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "KaleidoFunction0AD121D6": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-097395515323-us-east-1",
+     "S3Key": "1d5a8d2d91e56fa96b1e561da2097168fc312d2bc0937d031a7e84964634aa0b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "DB_HOST": {
+       "Fn::ImportValue": "KaleidoDatabaseStack:ExportsOutputFnGetAttKaleidoCluster6A5B15C4EndpointAddress4410A3D8"
+      },
+      "DB_PORT": "5432",
+      "DB_USER": "postgres",
+      "DB_NAME": "kaleido_scan",
+      "DB_SSL_MODE": "require",
+      "DB_SECRET_ARN": {
+       "Fn::ImportValue": "KaleidoDatabaseStack:ExportsOutputRefKaleidoClusterSecretAttachmentFFB020B226E63EA8"
+      },
+      "AI_PROVIDER": "bedrock",
+      "BEDROCK_MODEL_ID": "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+      "FRONTEND_URL": "*",
+      "SEED_ON_STARTUP": "true"
+     }
+    },
+    "Handler": "bootstrap",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "KaleidoFunctionServiceRoleBEC632C1",
+      "Arn"
+     ]
+    },
+    "Runtime": "provided.al2023",
+    "Timeout": 30,
+    "VpcConfig": {
+     "SecurityGroupIds": [
+      {
+       "Fn::ImportValue": "KaleidoNetworkStack:ExportsOutputFnGetAttLambdaSG9DBFCFB7GroupId1E50A8F5"
+      }
+     ],
+     "SubnetIds": [
+      {
+       "Fn::ImportValue": "KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet1SubnetBDD5F1C0F64C41EF"
+      },
+      {
+       "Fn::ImportValue": "KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet2Subnet3D56289CFD17B195"
+      }
+     ]
+    }
+   },
+   "DependsOn": [
+    "KaleidoFunctionServiceRoleDefaultPolicy65DEC5AC",
+    "KaleidoFunctionServiceRoleBEC632C1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/KaleidoFunction/Resource",
+    "aws:asset:path": "asset.1d5a8d2d91e56fa96b1e561da2097168fc312d2bc0937d031a7e84964634aa0b.zip",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "KaleidoApi14AC32C9": {
+   "Type": "AWS::ApiGatewayV2::Api",
+   "Properties": {
+    "CorsConfiguration": {
+     "AllowHeaders": [
+      "*"
+     ],
+     "AllowMethods": [
+      "*"
+     ],
+     "AllowOrigins": [
+      "*"
+     ]
+    },
+    "Name": "KaleidoApi",
+    "ProtocolType": "HTTP"
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/KaleidoApi/Resource"
+   }
+  },
+  "KaleidoApiDefaultStage2C4D5B3E": {
+   "Type": "AWS::ApiGatewayV2::Stage",
+   "Properties": {
+    "ApiId": {
+     "Ref": "KaleidoApi14AC32C9"
+    },
+    "AutoDeploy": true,
+    "StageName": "$default"
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/KaleidoApi/DefaultStage/Resource"
+   }
+  },
+  "KaleidoApiANYproxyLambdaIntegrationA75F0DD6": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "KaleidoApi14AC32C9"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "KaleidoFunction0AD121D6",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/LambdaIntegration/Resource"
+   }
+  },
+  "KaleidoApiANYproxyLambdaIntegrationPermission4BBAA982": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "KaleidoFunction0AD121D6",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:097395515323:",
+       {
+        "Ref": "KaleidoApi14AC32C9"
+       },
+       "/*/*/{proxy+}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/LambdaIntegration-Permission"
+   }
+  },
+  "KaleidoApiANYproxy9DAAC474": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "KaleidoApi14AC32C9"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "ANY /{proxy+}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "KaleidoApiANYproxyLambdaIntegrationA75F0DD6"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/Resource"
+   }
+  },
+  "KaleidoApiANYLambdaIntegrationPermission7BE2E48B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "KaleidoFunction0AD121D6",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:aws:execute-api:us-east-1:097395515323:",
+       {
+        "Ref": "KaleidoApi14AC32C9"
+       },
+       "/*/*/"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/KaleidoApi/ANY--/LambdaIntegration-Permission"
+   }
+  },
+  "KaleidoApiANYF74704DB": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "KaleidoApi14AC32C9"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "ANY /",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "KaleidoApiANYproxyLambdaIntegrationA75F0DD6"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/KaleidoApi/ANY--/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/11O22rDMAz9lr472pZ1sNd2ULanlewDiupoQU1ih0huKcb/vthhMPZ0LjqSTg31dguPG7xJZdu+GvgM8UvR9maxTnHA8dwixENwVtk78/bt/vIjzSOLLCoZxhFi4wfKg4JHP7C9l1xhycjzCUVIBXYZFg37YHvSPQoZnLhDpRverzXEd9VpN3Fez5Dl0qwr51eSrcYHXdmHU+pm/K32T5ZcSqb8zevsuux/Bp2CJuN8S3CRh2v9Aq/wtLkIczUHpzwSNCv+AF8aFUQuAQAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "KaleidoLambdaStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ApiUrl": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "KaleidoApi14AC32C9"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
