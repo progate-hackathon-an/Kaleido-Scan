@@ -7,6 +7,15 @@ import { ShareButton } from './ShareButton';
 // オーラカラーが取得できない場合のフォールバック（sw-orange）
 const FALLBACK_AURA_COLOR = '#FF9100';
 
+const ORDINAL_SUFFIXES = ['th', 'st', 'nd', 'rd'];
+
+function ordinalSuffix(n: number): string {
+  // 11, 12, 13 は例外的に "th"
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return 'th';
+  return ORDINAL_SUFFIXES[n % 10] ?? 'th';
+}
+
 function WireframePlaceholder() {
   return <div className="w-full aspect-square animate-pulse bg-sw-steel rounded-2xl" />;
 }
@@ -15,7 +24,7 @@ function RankBadge({ rank, color }: { rank: number; color: string }) {
   return (
     <div
       // aria-label でスクリーンリーダー向けの自然な読み上げ（"Rank 1"）を提供する。
-      // 内部スパンの視覚表現（ゼロ埋め "01"）は aria-hidden で読み上げ対象から除外する。
+      // 内部スパンの視覚表現（"1st" 等）は aria-hidden で読み上げ対象から除外する。
       aria-label={`Rank ${rank}`}
       className="shrink-0 flex flex-col items-center px-3 py-1.5 rounded-lg bg-sw-black/80"
       style={{
@@ -35,7 +44,8 @@ function RankBadge({ rank, color }: { rank: number; color: string }) {
         className="font-display text-base leading-none tracking-widest"
         style={{ color }}
       >
-        {String(rank).padStart(2, '0')}
+        {rank}
+        <span className="text-[10px] leading-none">{ordinalSuffix(rank)}</span>
       </span>
     </div>
   );
