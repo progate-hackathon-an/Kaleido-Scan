@@ -8,14 +8,13 @@ import (
 
 // ScanResult は /scan/ranking レスポンスの1商品エントリを表す。
 type ScanResult struct {
-	ProductID     string      `json:"product_id"`
-	Name          string      `json:"name"`
-	Description   string      `json:"description"`
-	Category      string      `json:"category"`
-	Rank          int         `json:"rank"`
-	TotalQuantity int         `json:"total_quantity"`
-	AuraLevel     int         `json:"aura_level"`
-	BoundingBox   BoundingBox `json:"bounding_box"`
+	ProductID   string      `json:"product_id"`
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	Category    string      `json:"category"`
+	Rank        int         `json:"rank"`
+	AuraLevel   int         `json:"aura_level"`
+	BoundingBox BoundingBox `json:"bounding_box"`
 }
 
 // ScanService はカメラ画像から商品を識別し、ランキング情報を付与するサービス。
@@ -64,14 +63,13 @@ func (s *ScanService) mergeResults(aiItems []AIItem, rankings []rankingRow) []Sc
 			continue
 		}
 		results = append(results, ScanResult{
-			ProductID:     r.id,
-			Name:          r.name,
-			Description:   r.description,
-			Category:      r.category,
-			Rank:          r.rank,
-			TotalQuantity: r.totalQuantity,
-			AuraLevel:     CalcAuraLevel(r.rank),
-			BoundingBox:   item.BoundingBox,
+			ProductID:   r.id,
+			Name:        r.name,
+			Description: r.description,
+			Category:    r.category,
+			Rank:        r.rank,
+			AuraLevel:   CalcAuraLevel(r.rank),
+			BoundingBox: item.BoundingBox,
 		})
 	}
 	return results

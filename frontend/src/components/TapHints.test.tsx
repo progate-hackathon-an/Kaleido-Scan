@@ -16,7 +16,6 @@ const makeItem = (
   aura_level: 3,
   bounding_box: { x_min, y_min: 0, x_max, y_max },
   rank: 1,
-  total_quantity: 10,
 });
 
 describe('TapHints', () => {

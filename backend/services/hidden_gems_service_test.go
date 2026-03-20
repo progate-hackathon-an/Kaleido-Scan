@@ -16,15 +16,15 @@ func TestHiddenGemsService_GetRanking_ReverseOrder(t *testing.T) {
 	defer func() { _ = db.Close() }()
 
 	// ランキングクエリのモック（名前もここから取得する）
-	rankingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "total_quantity", "rank"}).
-		AddRow("11111111-1111-1111-1111-111111111111", "商品A", "説明A", "food", 12500, 1).
-		AddRow("22222222-2222-2222-2222-222222222222", "商品B", "説明B", "food", 10800, 2).
-		AddRow("33333333-3333-3333-3333-333333333333", "商品C", "説明C", "drink", 9800, 3).
-		AddRow("44444444-4444-4444-4444-444444444444", "商品D", "説明D", "snack", 8200, 4).
-		AddRow("55555555-5555-5555-5555-555555555555", "商品E", "説明E", "drink", 7100, 5)
+	rankingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "rank"}).
+		AddRow("11111111-1111-1111-1111-111111111111", "商品A", "説明A", "food", 1).
+		AddRow("22222222-2222-2222-2222-222222222222", "商品B", "説明B", "food", 2).
+		AddRow("33333333-3333-3333-3333-333333333333", "商品C", "説明C", "drink", 3).
+		AddRow("44444444-4444-4444-4444-444444444444", "商品D", "説明D", "snack", 4).
+		AddRow("55555555-5555-5555-5555-555555555555", "商品E", "説明E", "drink", 5)
 	mock.ExpectQuery("SELECT").WillReturnRows(rankingRows)
 
-	// AIはsales_rank=1の商品とsales_rank=5の商品を返す
+	// AIは売上1位（商品A）と売上5位（商品E）を返す
 	aiItems := []services.AIItem{
 		{
 			ProductName: "商品A",
@@ -49,34 +49,34 @@ func TestHiddenGemsService_GetRanking_ReverseOrder(t *testing.T) {
 
 	var topSalesResult, bottomSalesResult *services.HiddenGemResult
 	for i := range results {
-		if results[i].SalesRank == 1 {
+		if results[i].Name == "商品A" {
 			topSalesResult = &results[i]
 		}
-		if results[i].SalesRank == 5 {
+		if results[i].Name == "商品E" {
 			bottomSalesResult = &results[i]
 		}
 	}
 
-	// 売上最下位(sales_rank=5)の商品がaura_level最大(5)になること
+	// 売上最下位（商品E）がaura_level最大(5)になること
 	if bottomSalesResult == nil {
-		t.Fatal("sales_rank=5 result not found")
+		t.Fatal("商品E result not found")
 	}
 	if bottomSalesResult.Rank != 1 {
-		t.Errorf("sales_rank=5 should have rank=1, got %d", bottomSalesResult.Rank)
+		t.Errorf("商品E should have rank=1, got %d", bottomSalesResult.Rank)
 	}
 	if bottomSalesResult.AuraLevel != 5 {
-		t.Errorf("sales_rank=5 should have aura_level=5 (max), got %d", bottomSalesResult.AuraLevel)
+		t.Errorf("商品E should have aura_level=5 (max), got %d", bottomSalesResult.AuraLevel)
 	}
 
-	// 売上最上位(sales_rank=1)の商品がaura_level最小(1)になること
+	// 売上最上位（商品A）がaura_level最小(1)になること
 	if topSalesResult == nil {
-		t.Fatal("sales_rank=1 result not found")
+		t.Fatal("商品A result not found")
 	}
 	if topSalesResult.Rank != 5 {
-		t.Errorf("sales_rank=1 should have rank=5, got %d", topSalesResult.Rank)
+		t.Errorf("商品A should have rank=5, got %d", topSalesResult.Rank)
 	}
 	if topSalesResult.AuraLevel != 1 {
-		t.Errorf("sales_rank=1 should have aura_level=1, got %d", topSalesResult.AuraLevel)
+		t.Errorf("商品A should have aura_level=1, got %d", topSalesResult.AuraLevel)
 	}
 
 	if err := mock.ExpectationsWereMet(); err != nil {

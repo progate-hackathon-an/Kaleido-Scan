@@ -26,12 +26,12 @@ func TestScanService_GetRanking_AuraLevel(t *testing.T) {
 	defer func() { _ = db.Close() }()
 
 	// ランキングクエリのモック（名前もここから取得する）
-	rankingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "total_quantity", "rank"}).
-		AddRow("11111111-1111-1111-1111-111111111111", "炭火焼紅しゃけおにぎり", "説明1", "food", 12500, 1).
-		AddRow("22222222-2222-2222-2222-222222222222", "ツナマヨおにぎり", "説明2", "food", 10800, 2).
-		AddRow("33333333-3333-3333-3333-333333333333", "ブラックコーヒー 500ml", "説明3", "drink", 9800, 3).
-		AddRow("44444444-4444-4444-4444-444444444444", "ポテトチップス うすしお味", "説明4", "snack", 8200, 4).
-		AddRow("55555555-5555-5555-5555-555555555555", "緑茶 350ml", "説明5", "drink", 7100, 5)
+	rankingRows := sqlmock.NewRows([]string{"id", "name", "description", "category", "rank"}).
+		AddRow("11111111-1111-1111-1111-111111111111", "炭火焼紅しゃけおにぎり", "説明1", "food", 1).
+		AddRow("22222222-2222-2222-2222-222222222222", "ツナマヨおにぎり", "説明2", "food", 2).
+		AddRow("33333333-3333-3333-3333-333333333333", "ブラックコーヒー 500ml", "説明3", "drink", 3).
+		AddRow("44444444-4444-4444-4444-444444444444", "ポテトチップス うすしお味", "説明4", "snack", 4).
+		AddRow("55555555-5555-5555-5555-555555555555", "緑茶 350ml", "説明5", "drink", 5)
 	mock.ExpectQuery("SELECT").WillReturnRows(rankingRows)
 
 	// AIはrank1の商品とrank5の商品を返す

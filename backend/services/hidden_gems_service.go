@@ -8,15 +8,13 @@ import (
 
 // HiddenGemResult は /scan/hidden-gems レスポンスの1商品エントリを表す。
 type HiddenGemResult struct {
-	ProductID     string      `json:"product_id"`
-	Name          string      `json:"name"`
-	Description   string      `json:"description"`
-	Category      string      `json:"category"`
-	SalesRank     int         `json:"sales_rank"`
-	Rank          int         `json:"rank"`
-	TotalQuantity int         `json:"total_quantity"`
-	AuraLevel     int         `json:"aura_level"`
-	BoundingBox   BoundingBox `json:"bounding_box"`
+	ProductID   string      `json:"product_id"`
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	Category    string      `json:"category"`
+	Rank        int         `json:"rank"`
+	AuraLevel   int         `json:"aura_level"`
+	BoundingBox BoundingBox `json:"bounding_box"`
 }
 
 // HiddenGemsService はカメラ画像から商品を識別し、掘り出し物ランキング情報を付与するサービス。
@@ -69,15 +67,13 @@ func (s *HiddenGemsService) mergeHiddenGemsResults(aiItems []AIItem, rankings []
 		}
 		hiddenRank := (maxRank + 1) - r.rank
 		results = append(results, HiddenGemResult{
-			ProductID:     r.id,
-			Name:          r.name,
-			Description:   r.description,
-			Category:      r.category,
-			SalesRank:     r.rank,
-			Rank:          hiddenRank,
-			TotalQuantity: r.totalQuantity,
-			AuraLevel:     CalcAuraLevel(hiddenRank),
-			BoundingBox:   item.BoundingBox,
+			ProductID:   r.id,
+			Name:        r.name,
+			Description: r.description,
+			Category:    r.category,
+			Rank:        hiddenRank,
+			AuraLevel:   CalcAuraLevel(hiddenRank),
+			BoundingBox: item.BoundingBox,
 		})
 	}
 	return results

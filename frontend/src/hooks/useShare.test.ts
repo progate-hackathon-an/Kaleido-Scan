@@ -10,7 +10,6 @@ const mockItem: DetectedItem = {
   description: 'テスト説明',
   category: 'food',
   rank: 1,
-  total_quantity: 100,
   aura_level: 5,
   bounding_box: { x_min: 0.1, y_min: 0.1, x_max: 0.9, y_max: 0.9 },
 };

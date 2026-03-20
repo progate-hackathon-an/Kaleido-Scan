@@ -83,14 +83,13 @@ func TestScanRanking_Success(t *testing.T) {
 	mock := &mockScanRanker{
 		results: []services.ScanResult{
 			{
-				ProductID:     "11111111-1111-1111-1111-111111111111",
-				Name:          "炭火焼紅しゃけおにぎり",
-				Description:   "説明",
-				Category:      "food",
-				Rank:          1,
-				TotalQuantity: 12500,
-				AuraLevel:     5,
-				BoundingBox:   services.BoundingBox{XMin: 0.1, YMin: 0.2, XMax: 0.4, YMax: 0.7},
+				ProductID:   "11111111-1111-1111-1111-111111111111",
+				Name:        "炭火焼紅しゃけおにぎり",
+				Description: "説明",
+				Category:    "food",
+				Rank:        1,
+				AuraLevel:   5,
+				BoundingBox: services.BoundingBox{XMin: 0.1, YMin: 0.2, XMax: 0.4, YMax: 0.7},
 			},
 		},
 	}
@@ -166,15 +165,13 @@ func TestScanHiddenGems_Success(t *testing.T) {
 	mock := &mockHiddenGemsGetter{
 		results: []services.HiddenGemResult{
 			{
-				ProductID:     "55555555-5555-5555-5555-555555555555",
-				Name:          "セブンプレミアム アーモンドボール",
-				Description:   "アーモンドをホワイトチョコレートでコーティングしたひとくちサイズのスナック。香ばしいアーモンドとチョコレートの絶妙な組み合わせ。",
-				Category:      "snack",
-				SalesRank:     5,
-				Rank:          1,
-				TotalQuantity: 4850,
-				AuraLevel:     5,
-				BoundingBox:   services.BoundingBox{XMin: 0.2, YMin: 0.3, XMax: 0.6, YMax: 0.8},
+				ProductID:   "55555555-5555-5555-5555-555555555555",
+				Name:        "セブンプレミアム アーモンドボール",
+				Description: "アーモンドをホワイトチョコレートでコーティングしたひとくちサイズのスナック。香ばしいアーモンドとチョコレートの絶妙な組み合わせ。",
+				Category:    "snack",
+				Rank:        1,
+				AuraLevel:   5,
+				BoundingBox: services.BoundingBox{XMin: 0.2, YMin: 0.3, XMax: 0.6, YMax: 0.8},
 			},
 		},
 	}
@@ -235,16 +232,14 @@ func TestScanTrending_Success(t *testing.T) {
 	trendingMock := &mockTrendingRanker{
 		results: []services.TrendingResult{
 			{
-				ProductID:       "44444444-4444-4444-4444-444444444444",
-				Name:            "オレンジ 500ml",
-				Description:     "説明",
-				Category:        "drink",
-				Rank:            1,
-				CurrentQuantity: 1700,
-				PrevQuantity:    1300,
-				GrowthRate:      &growthRate,
-				AuraLevel:       5,
-				BoundingBox:     services.BoundingBox{XMin: 0.5, YMin: 0.1, XMax: 0.8, YMax: 0.6},
+				ProductID:   "44444444-4444-4444-4444-444444444444",
+				Name:        "オレンジ 500ml",
+				Description: "説明",
+				Category:    "drink",
+				Rank:        1,
+				GrowthRate:  &growthRate,
+				AuraLevel:   5,
+				BoundingBox: services.BoundingBox{XMin: 0.5, YMin: 0.1, XMax: 0.8, YMax: 0.6},
 			},
 		},
 	}
