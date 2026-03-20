@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import type { DetectedItem, ScanMode } from '../types/scan';
 import { renderFlameAura } from '../utils/auraRenderer';
 
@@ -16,6 +16,10 @@ type Props = {
 export function AuraEffect({ items, mode = 'ranking' }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
+
+  // items 変更時に一度だけソートし、毎フレームの配列生成・ソートコストを避ける
+  // rank 降順（5位→1位）: Canvas は後から描いた要素が手前になるため1位が最前面になる
+  const sortedItems = useMemo(() => [...items].sort((a, b) => b.rank - a.rank), [items]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -37,10 +41,9 @@ export function AuraEffect({ items, mode = 'ranking' }: Props) {
       const t = timestamp * 0.001;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // rank 昇順（1位が最後）で描画し、高順位オーラが手前レイヤーになるようにする
-      [...items]
-        .sort((a, b) => b.rank - a.rank)
-        .forEach((item) => renderFlameAura(ctx, item, canvas.width, canvas.height, mode, t));
+      sortedItems.forEach((item) =>
+        renderFlameAura(ctx, item, canvas.width, canvas.height, mode, t)
+      );
 
       rafRef.current = requestAnimationFrame(draw);
     };
@@ -51,7 +54,7 @@ export function AuraEffect({ items, mode = 'ranking' }: Props) {
       cancelAnimationFrame(rafRef.current);
       ro.disconnect();
     };
-  }, [items, mode]);
+  }, [sortedItems, mode]);
 
   return (
     <canvas
