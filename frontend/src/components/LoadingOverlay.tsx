@@ -1,40 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-
-const RETICLE_SIZE = 112; // w-28 = 7rem = 112px
-
-type Position = { x: number; y: number };
-
-/** 現在位置から対角線の半分以上離れた次の位置をランダムに返す */
-function getNextPosition(current: Position): Position {
-  const w = window.innerWidth || 375;
-  const h = window.innerHeight || 667;
-  const maxX = Math.max(0, w - RETICLE_SIZE);
-  const maxY = Math.max(0, h - RETICLE_SIZE);
-  const desiredMinDist = Math.min(w, h);
-  const maxPossibleDist = Math.hypot(maxX, maxY);
-  const minDist = Math.min(desiredMinDist, maxPossibleDist);
-
-  for (let i = 0; i < 30; i++) {
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
-    const dx = x - current.x;
-    const dy = y - current.y;
-    if (Math.hypot(dx, dy) >= minDist) return { x, y };
-  }
-
-  // フォールバック: 4隅のうち最も遠い頂点
-  const corners: Position[] = [
-    { x: 0, y: 0 },
-    { x: maxX, y: 0 },
-    { x: 0, y: maxY },
-    { x: maxX, y: maxY },
-  ];
-  return corners.reduce((best, c) => {
-    const d = (c.x - current.x) ** 2 + (c.y - current.y) ** 2;
-    const bd = (best.x - current.x) ** 2 + (best.y - current.y) ** 2;
-    return d > bd ? c : best;
-  });
-}
+import { getNextPosition, type Position } from './loadingOverlayUtils';
 
 /** 外枠: ゲームHUD風の4コーナーブラケット（画面全体をカバー） */
 function OuterFrame() {
@@ -75,8 +40,9 @@ function MovingReticle() {
     return () => cancelAnimationFrame(rafId);
   }, []);
 
+  // transform 1本でトランジションすることで transitionend が1回だけ発火し、片軸変化でも停止しない
   const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
-    if (e.propertyName !== 'left') return;
+    if (e.propertyName !== 'transform') return;
     setPos((cur) => getNextPosition(cur));
   };
 
@@ -85,10 +51,8 @@ function MovingReticle() {
       ref={containerRef}
       className="absolute z-10"
       style={{
-        left: pos.x,
-        top: pos.y,
-        transition:
-          'left 1.8s cubic-bezier(0.45, 0, 0.55, 1), top 1.8s cubic-bezier(0.45, 0, 0.55, 1)',
+        transform: `translate(${pos.x}px, ${pos.y}px)`,
+        transition: 'transform 1.8s cubic-bezier(0.45, 0, 0.55, 1)',
       }}
       onTransitionEnd={handleTransitionEnd}
     >
