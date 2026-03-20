@@ -31,7 +31,7 @@ func Load() *Config {
 		DBSSLMode:      getEnv("DB_SSL_MODE", "disable"),
 		GeminiAPIKey:   getEnv("GEMINI_API_KEY", ""),
 		AIProvider:     getEnv("AI_PROVIDER", "gemini"),
-		AWSRegion:      getEnv("AWS_REGION", "ap-northeast-1"),
+		AWSRegion:      getEnv("AWS_DEFAULT_REGION", "us-east-1"),
 		BedrockModelID: getEnv("BEDROCK_MODEL_ID", ""),
 		SeedOnStartup:  getEnv("SEED_ON_STARTUP", "false") == "true",
 		UseStub:        getEnv("USE_STUB", "false") == "true",

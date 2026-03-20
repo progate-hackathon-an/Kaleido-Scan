@@ -3,6 +3,7 @@ package services_test
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/Hiru-ge/Kaleido-Scan/backend/services"
@@ -100,8 +101,10 @@ func TestBedrockService_Recognize_EmptyItems(t *testing.T) {
 	}
 }
 
-func TestBedrockService_Recognize_SetsAdditionalModelFields(t *testing.T) {
-	// additionalModelRequestFields（JSON Schema）がリクエストに設定されていることを確認する
+func TestBedrockService_Recognize_PromptContainsJSONInstruction(t *testing.T) {
+	// AdditionalModelRequestFields によるスキーマ強制は廃止され、
+	// プロンプト内にJSON出力指示を含めるアプローチに変更された。
+	// リクエストのメッセージテキストにJSON形式の例が含まれることを確認する。
 	mock := &mockBedrockClient{
 		output: makeBedrockOutput(`{"items":[]}`),
 	}
@@ -111,8 +114,22 @@ func TestBedrockService_Recognize_SetsAdditionalModelFields(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if mock.capturedInput.AdditionalModelRequestFields == nil {
-		t.Error("expected AdditionalModelRequestFields to be set, got nil")
+
+	// メッセージ内のテキストブロックからプロンプトを取得する
+	var promptText string
+	for _, block := range mock.capturedInput.Messages[0].Content {
+		if tb, ok := block.(*types.ContentBlockMemberText); ok {
+			promptText = tb.Value
+			break
+		}
+	}
+	if promptText == "" {
+		t.Fatal("expected text block in request message, got none")
+	}
+	for _, keyword := range []string{`"items"`, `"product_name"`, `"bounding_box"`} {
+		if !strings.Contains(promptText, keyword) {
+			t.Errorf("expected prompt to contain %q, got: %s", keyword, promptText)
+		}
 	}
 }
 

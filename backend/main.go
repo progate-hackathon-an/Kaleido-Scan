@@ -44,6 +44,10 @@ func main() {
 		log.Println("Seed data inserted successfully")
 	}
 
+	log.Printf("AI provider: %s", cfg.AIProvider)
+	if cfg.AIProvider == "bedrock" {
+		log.Printf("Bedrock region: %s, modelID: %q", cfg.AWSRegion, cfg.BedrockModelID)
+	}
 	ai, err := services.NewAIService(cfg.AIProvider, cfg.GeminiAPIKey, cfg.AWSRegion, cfg.BedrockModelID)
 	if err != nil {
 		log.Fatalf("Failed to initialize AI service: %v", err)
