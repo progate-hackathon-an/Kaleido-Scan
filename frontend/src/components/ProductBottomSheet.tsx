@@ -3,6 +3,10 @@ import type { DetectedItem } from '../types/scan';
 import { useSwipeDown } from '../hooks/useSwipeDown';
 import { ShareButton } from './ShareButton';
 
+function WireframePlaceholder() {
+  return <div className="w-full aspect-square animate-pulse bg-sw-steel rounded-2xl" />;
+}
+
 type Props = {
   isOpen: boolean;
   item: DetectedItem | null;
@@ -132,12 +136,14 @@ export function ProductBottomSheet({
             </span>
           </div>
 
-          {/* Product image */}
-          {croppedImageUrl && (
-            <div className="bg-sw-black rounded-2xl overflow-hidden">
+          {/* Product image — ロード完了まではワイヤーフレームを表示 */}
+          <div className="bg-sw-black rounded-2xl overflow-hidden">
+            {croppedImageUrl ? (
               <img src={croppedImageUrl} alt={item.name} className="w-full object-contain" />
-            </div>
-          )}
+            ) : (
+              <WireframePlaceholder />
+            )}
+          </div>
 
           {/* Product description */}
           <div className="bg-sw-black/50 rounded-2xl p-4">
