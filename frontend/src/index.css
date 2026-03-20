@@ -25,23 +25,6 @@
   }
 }
 
-@keyframes z-scan {
-  0% {
-    transform: translate(-50px, -50px);
-  }
-  25% {
-    transform: translate(50px, -50px);
-  }
-  50% {
-    transform: translate(-50px, 50px);
-  }
-  75% {
-    transform: translate(50px, 50px);
-  }
-  100% {
-    transform: translate(-50px, -50px);
-  }
-}
 
 /* ─── Base ───────────────────────────────────────────── */
 :root {
