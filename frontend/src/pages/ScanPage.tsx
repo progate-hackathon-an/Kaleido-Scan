@@ -18,8 +18,14 @@ import type { DetectedItem, ScanMode } from '../types/scan';
 
 // ?demo=1 が付いていれば全5レベルのモックデータで起動する（デザイン確認用）
 const IS_DEMO = new URLSearchParams(window.location.search).get('demo') === '1';
-// ?fixture=1 が付いていれば /fixture.jpeg を実際のAPIに送信する（開発・動作確認用）
-const IS_FIXTURE = new URLSearchParams(window.location.search).get('fixture') === '1';
+// ?fixture=1 → /fixture.jpeg, ?fixture=2 → /fixture2.jpeg を実際のAPIに送信する（開発・動作確認用）
+const _FIXTURE_MAP: Record<string, string> = {
+  '1': 'fixture.jpeg',
+  '2': 'fixture2.jpeg',
+  '3': 'fixture3.jpeg',
+};
+const FIXTURE_FILENAME =
+  _FIXTURE_MAP[new URLSearchParams(window.location.search).get('fixture') ?? ''] ?? null;
 
 export function ScanPage() {
   const { scan, result: scanResult, isLoading, error, reset } = useScan();
@@ -43,26 +49,26 @@ export function ScanPage() {
   };
 
   useEffect(() => {
-    if (!IS_FIXTURE) return;
+    if (!FIXTURE_FILENAME) return;
     void (async () => {
       try {
-        const res = await fetch('/fixture.jpeg');
+        const res = await fetch(`/${FIXTURE_FILENAME}`);
         if (!res.ok) {
           // fixture 画像が取得できない場合はスキャンを実行しない
           // eslint-disable-next-line no-console
           console.error(
-            'Failed to load /fixture.jpeg for fixture mode:',
+            `Failed to load /${FIXTURE_FILENAME} for fixture mode:`,
             res.status,
             res.statusText
           );
           return;
         }
         const blob = await res.blob();
-        const file = new File([blob], 'fixture.jpeg', { type: 'image/jpeg' });
+        const file = new File([blob], FIXTURE_FILENAME, { type: 'image/jpeg' });
         handleCapture(file, 'ranking');
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.error('Error while loading /fixture.jpeg for fixture mode:', e);
+        console.error(`Error while loading /${FIXTURE_FILENAME} for fixture mode:`, e);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
