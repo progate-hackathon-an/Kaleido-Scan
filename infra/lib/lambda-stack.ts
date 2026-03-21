@@ -37,7 +37,6 @@ export class LambdaStack extends cdk.Stack {
         AI_PROVIDER: 'bedrock',
         BEDROCK_MODEL_ID: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
         FRONTEND_URL: 'https://main.d1n9t8h3zlm71f.amplifyapp.com',
-        SEED_ON_STARTUP: 'true',
       },
     });
 
