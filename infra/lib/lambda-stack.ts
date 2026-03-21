@@ -23,7 +23,7 @@ export class LambdaStack extends cdk.Stack {
       handler: "bootstrap",
       code: lambda.Code.fromAsset("../backend/handler.zip"),
       memorySize: 512,
-      timeout: cdk.Duration.seconds(30),
+      timeout: cdk.Duration.seconds(28),
       vpc: props.vpc,
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
       securityGroups: [props.lambdaSG],
@@ -34,10 +34,9 @@ export class LambdaStack extends cdk.Stack {
         DB_NAME: "kaleido_scan",
         DB_SSL_MODE: "require",
         DB_SECRET_ARN: props.dbSecretArn,
-        AI_PROVIDER: "bedrock",
-        BEDROCK_MODEL_ID: "us.amazon.nova-pro-v1:0",
-        FRONTEND_URL: "*",
-        SEED_ON_STARTUP: "true",
+        AI_PROVIDER: 'bedrock',
+        BEDROCK_MODEL_ID: 'us.amazon.nova-pro-v1:0',
+        FRONTEND_URL: 'https://main.d1n9t8h3zlm71f.amplifyapp.com',
       },
     });
 
@@ -60,7 +59,7 @@ export class LambdaStack extends cdk.Stack {
 
     const api = new apigwv2.HttpApi(this, "KaleidoApi", {
       corsPreflight: {
-        allowOrigins: ["*"],
+        allowOrigins: ['https://main.d1n9t8h3zlm71f.amplifyapp.com'],
         allowMethods: [apigwv2.CorsHttpMethod.ANY],
         allowHeaders: ["*"],
       },
