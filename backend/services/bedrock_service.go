@@ -105,7 +105,7 @@ func buildImageMessage(imageData []byte, mimeType, prompt string) types.Message 
 	}
 }
 
-// buildRecognizePrompt は商品識別＋位置特定の1段階処理用プロンプトを生成する。
+// buildRecognizePrompt は商品識別＋位置特定（正面ラベル範囲）の1段階処理用プロンプトを生成する。
 func buildRecognizePrompt(productNames []string) string {
 	var sb strings.Builder
 	sb.WriteString("以下の画像を解析し、写っているコンビニ商品を識別して、各商品の正面ラベルのバウンディングボックスを返してください。\n")
@@ -116,8 +116,9 @@ func buildRecognizePrompt(productNames []string) string {
 		sb.WriteString(name)
 		sb.WriteString("\n")
 	}
-	sb.WriteString("\nバウンディングボックスは商品の正面ラベル（商品名・デザインが印刷されている面）を囲む最小の矩形を、")
+	sb.WriteString("\nバウンディングボックスは商品の正面ラベル（商品名・ブランドロゴが印刷されている面）を囲む矩形を、")
 	sb.WriteString("画像全体を0〜1000のスケールで表現してください。\n")
+	sb.WriteString("商品名テキストがバウンディングボックスのほぼ中央に来るよう、ラベル範囲を調整してください。\n")
 	sb.WriteString("商品が検出できない場合はitemsを空配列で返してください。\n")
 	return sb.String()
 }
