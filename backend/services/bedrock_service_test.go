@@ -13,19 +13,33 @@ import (
 )
 
 // mockBedrockClient はBedrockRuntimeClientのテスト用モック実装。
+// outputs に複数のレスポンスを設定すると呼び出し順に返す。
 type mockBedrockClient struct {
-	output        *bedrockruntime.ConverseOutput
-	err           error
-	capturedInput *bedrockruntime.ConverseInput // アサーション用にリクエストを保持
+	outputs        []*bedrockruntime.ConverseOutput
+	errs           []error
+	callCount      int
+	capturedInputs []*bedrockruntime.ConverseInput
 }
 
-func (m *mockBedrockClient) Converse(ctx context.Context, params *bedrockruntime.ConverseInput, optFns ...func(*bedrockruntime.Options)) (*bedrockruntime.ConverseOutput, error) {
-	m.capturedInput = params
-	return m.output, m.err
+func (m *mockBedrockClient) Converse(_ context.Context, params *bedrockruntime.ConverseInput, _ ...func(*bedrockruntime.Options)) (*bedrockruntime.ConverseOutput, error) {
+	m.capturedInputs = append(m.capturedInputs, params)
+	i := m.callCount
+	m.callCount++
+
+	var out *bedrockruntime.ConverseOutput
+	if i < len(m.outputs) {
+		out = m.outputs[i]
+	}
+	var err error
+	if i < len(m.errs) {
+		err = m.errs[i]
+	}
+	return out, err
 }
 
-// makeBedrockToolUseOutput はツール使用レスポンスを持つConverseOutputを生成するヘルパー。
-func makeBedrockToolUseOutput(input map[string]interface{}) *bedrockruntime.ConverseOutput {
+// makeRecognizeOutput は recognize_products ツール呼び出しのレスポンスを生成するヘルパー。
+// Nova の0〜1000座標スケールを使用する。
+func makeRecognizeOutput(items []map[string]any) *bedrockruntime.ConverseOutput {
 	return &bedrockruntime.ConverseOutput{
 		Output: &types.ConverseOutputMemberMessage{
 			Value: types.Message{
@@ -35,7 +49,7 @@ func makeBedrockToolUseOutput(input map[string]interface{}) *bedrockruntime.Conv
 						Value: types.ToolUseBlock{
 							ToolUseId: aws.String("tool-1"),
 							Name:      aws.String("recognize_products"),
-							Input:     bedrockdoc.NewLazyDocument(input),
+							Input:     bedrockdoc.NewLazyDocument(map[string]any{"items": items}),
 						},
 					},
 				},
@@ -46,23 +60,19 @@ func makeBedrockToolUseOutput(input map[string]interface{}) *bedrockruntime.Conv
 
 func TestBedrockService_Recognize_Success(t *testing.T) {
 	mock := &mockBedrockClient{
-		output: makeBedrockToolUseOutput(map[string]interface{}{
-			"items": []interface{}{
-				map[string]interface{}{
+		outputs: []*bedrockruntime.ConverseOutput{
+			makeRecognizeOutput([]map[string]any{
+				{
 					"product_name": "炭火焼紅しゃけおにぎり",
-					"bounding_box": map[string]interface{}{
-						"x_min": 0.1, "y_min": 0.2, "x_max": 0.4, "y_max": 0.7,
-					},
+					// Nova スケール（0〜1000）で指定 → 0.1, 0.2, 0.4, 0.7 に正規化される
+					"bounding_box": map[string]any{"x_min": 100.0, "y_min": 200.0, "x_max": 400.0, "y_max": 700.0},
 				},
-			},
-		}),
+			}),
+		},
 	}
 
 	svc := services.NewBedrockServiceWithClient(mock, "test-model")
-	imageData := []byte{0xFF, 0xD8, 0xFF, 0xE0} // JPEG magic bytes
-	productNames := []string{"炭火焼紅しゃけおにぎり", "ツナマヨおにぎり"}
-
-	items, err := svc.Recognize(context.Background(), imageData, productNames)
+	items, err := svc.Recognize(context.Background(), []byte{0xFF, 0xD8, 0xFF, 0xE0}, []string{"炭火焼紅しゃけおにぎり", "ツナマヨおにぎり"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -75,65 +85,36 @@ func TestBedrockService_Recognize_Success(t *testing.T) {
 	if items[0].BoundingBox.XMin != 0.1 {
 		t.Errorf("expected x_min 0.1, got %f", items[0].BoundingBox.XMin)
 	}
-}
-
-func TestBedrockService_Recognize_OutOfRangeBoundingBox(t *testing.T) {
-	// ラベルが画像端にかかっている場合、0.0〜1.0の範囲外の座標も許容する
-	mock := &mockBedrockClient{
-		output: makeBedrockToolUseOutput(map[string]interface{}{
-			"items": []interface{}{
-				map[string]interface{}{
-					"product_name": "炭火焼紅しゃけおにぎり",
-					"bounding_box": map[string]interface{}{
-						"x_min": -0.05, "y_min": 0.2, "x_max": 0.35, "y_max": 0.7,
-					},
-				},
-			},
-		}),
-	}
-
-	svc := services.NewBedrockServiceWithClient(mock, "test-model")
-	imageData := []byte{0xFF, 0xD8, 0xFF, 0xE0}
-	productNames := []string{"炭火焼紅しゃけおにぎり"}
-
-	items, err := svc.Recognize(context.Background(), imageData, productNames)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if len(items) != 1 {
-		t.Fatalf("expected 1 item, got %d", len(items))
-	}
-	if items[0].BoundingBox.XMin != -0.05 {
-		t.Errorf("expected x_min -0.05, got %f", items[0].BoundingBox.XMin)
+	if mock.callCount != 1 {
+		t.Errorf("expected 1 API call (single-stage), got %d", mock.callCount)
 	}
 }
 
 func TestBedrockService_Recognize_EmptyItems(t *testing.T) {
 	mock := &mockBedrockClient{
-		output: makeBedrockToolUseOutput(map[string]interface{}{
-			"items": []interface{}{},
-		}),
+		outputs: []*bedrockruntime.ConverseOutput{
+			makeRecognizeOutput([]map[string]any{}),
+		},
 	}
 
 	svc := services.NewBedrockServiceWithClient(mock, "test-model")
-	imageData := []byte{0xFF, 0xD8, 0xFF, 0xE0}
-	productNames := []string{"炭火焼紅しゃけおにぎり"}
-
-	items, err := svc.Recognize(context.Background(), imageData, productNames)
+	items, err := svc.Recognize(context.Background(), []byte{0xFF, 0xD8, 0xFF, 0xE0}, []string{"炭火焼紅しゃけおにぎり"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 	if len(items) != 0 {
 		t.Errorf("expected 0 items, got %d", len(items))
 	}
+	if mock.callCount != 1 {
+		t.Errorf("expected 1 API call, got %d", mock.callCount)
+	}
 }
 
-func TestBedrockService_Recognize_UsesToolConfig(t *testing.T) {
-	// ToolConfigにrecognize_productsツールが設定され、SpecificToolChoiceで強制されることを確認する
+func TestBedrockService_Recognize_UsesCorrectTool(t *testing.T) {
 	mock := &mockBedrockClient{
-		output: makeBedrockToolUseOutput(map[string]interface{}{
-			"items": []interface{}{},
-		}),
+		outputs: []*bedrockruntime.ConverseOutput{
+			makeRecognizeOutput([]map[string]any{}),
+		},
 	}
 
 	svc := services.NewBedrockServiceWithClient(mock, "test-model")
@@ -142,38 +123,65 @@ func TestBedrockService_Recognize_UsesToolConfig(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if mock.capturedInput.ToolConfig == nil {
+	if mock.callCount != 1 {
+		t.Fatalf("expected 1 API call, got %d", mock.callCount)
+	}
+
+	input := mock.capturedInputs[0]
+	if input.ToolConfig == nil {
 		t.Fatal("expected ToolConfig to be set")
 	}
-	if len(mock.capturedInput.ToolConfig.Tools) != 1 {
-		t.Fatalf("expected 1 tool, got %d", len(mock.capturedInput.ToolConfig.Tools))
+	tool := input.ToolConfig.Tools[0].(*types.ToolMemberToolSpec)
+	if aws.ToString(tool.Value.Name) != "recognize_products" {
+		t.Errorf("expected tool 'recognize_products', got '%s'", aws.ToString(tool.Value.Name))
 	}
-	toolSpec, ok := mock.capturedInput.ToolConfig.Tools[0].(*types.ToolMemberToolSpec)
-	if !ok {
-		t.Fatal("expected ToolMemberToolSpec")
+	choice := input.ToolConfig.ToolChoice.(*types.ToolChoiceMemberTool)
+	if aws.ToString(choice.Value.Name) != "recognize_products" {
+		t.Errorf("expected tool choice 'recognize_products', got '%s'", aws.ToString(choice.Value.Name))
 	}
-	if aws.ToString(toolSpec.Value.Name) != "recognize_products" {
-		t.Errorf("expected tool name 'recognize_products', got '%s'", aws.ToString(toolSpec.Value.Name))
+}
+
+func TestBedrockService_Recognize_NormalizesNovaCoordinates(t *testing.T) {
+	mock := &mockBedrockClient{
+		outputs: []*bedrockruntime.ConverseOutput{
+			makeRecognizeOutput([]map[string]any{
+				{
+					"product_name": "商品A",
+					"bounding_box": map[string]any{"x_min": 0.0, "y_min": 500.0, "x_max": 1000.0, "y_max": 1000.0},
+				},
+			}),
+		},
 	}
-	toolChoice, ok := mock.capturedInput.ToolConfig.ToolChoice.(*types.ToolChoiceMemberTool)
-	if !ok {
-		t.Fatal("expected ToolChoiceMemberTool")
+
+	svc := services.NewBedrockServiceWithClient(mock, "test-model")
+	items, err := svc.Recognize(context.Background(), []byte{0xFF, 0xD8, 0xFF, 0xE0}, []string{"商品A"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
 	}
-	if aws.ToString(toolChoice.Value.Name) != "recognize_products" {
-		t.Errorf("expected tool choice 'recognize_products', got '%s'", aws.ToString(toolChoice.Value.Name))
+	if len(items) != 1 {
+		t.Fatalf("expected 1 item, got %d", len(items))
+	}
+	if items[0].BoundingBox.XMin != 0.0 {
+		t.Errorf("expected x_min 0.0, got %f", items[0].BoundingBox.XMin)
+	}
+	if items[0].BoundingBox.YMin != 0.5 {
+		t.Errorf("expected y_min 0.5, got %f", items[0].BoundingBox.YMin)
+	}
+	if items[0].BoundingBox.XMax != 1.0 {
+		t.Errorf("expected x_max 1.0, got %f", items[0].BoundingBox.XMax)
+	}
+	if items[0].BoundingBox.YMax != 1.0 {
+		t.Errorf("expected y_max 1.0, got %f", items[0].BoundingBox.YMax)
 	}
 }
 
 func TestBedrockService_Recognize_APIError(t *testing.T) {
 	mock := &mockBedrockClient{
-		err: errors.New("bedrock: AccessDeniedException"),
+		errs: []error{errors.New("bedrock: AccessDeniedException")},
 	}
 
 	svc := services.NewBedrockServiceWithClient(mock, "test-model")
-	imageData := []byte{0xFF, 0xD8, 0xFF, 0xE0}
-	productNames := []string{"炭火焼紅しゃけおにぎり"}
-
-	_, err := svc.Recognize(context.Background(), imageData, productNames)
+	_, err := svc.Recognize(context.Background(), []byte{0xFF, 0xD8, 0xFF, 0xE0}, []string{"炭火焼紅しゃけおにぎり"})
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}

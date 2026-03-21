@@ -1,13 +1,13 @@
-// パッケージ内テスト（unexportedの buildProductSchema を直接テストする）
+// パッケージ内テスト（unexportedの buildRecognizeSchema を直接テストする）
 package services
 
 import (
 	"testing"
 )
 
-func TestBuildProductSchema_ContainsProductNamesInEnum(t *testing.T) {
+func TestBuildRecognizeSchema_ContainsProductNamesInEnum(t *testing.T) {
 	productNames := []string{"炭火焼紅しゃけおにぎり", "ツナマヨおにぎり"}
-	schema := buildProductSchema(productNames)
+	schema := buildRecognizeSchema(productNames)
 
 	enum := extractEnum(t, schema)
 	if len(enum) != 2 {
@@ -21,8 +21,8 @@ func TestBuildProductSchema_ContainsProductNamesInEnum(t *testing.T) {
 	}
 }
 
-func TestBuildProductSchema_TopLevelRequiredItems(t *testing.T) {
-	schema := buildProductSchema([]string{"商品A"})
+func TestBuildRecognizeSchema_TopLevelRequiredItems(t *testing.T) {
+	schema := buildRecognizeSchema([]string{"商品A"})
 
 	required, ok := schema["required"].([]string)
 	if !ok {
@@ -33,40 +33,40 @@ func TestBuildProductSchema_TopLevelRequiredItems(t *testing.T) {
 	}
 }
 
-func TestBuildProductSchema_BoundingBoxHasNumberBounds(t *testing.T) {
-	schema := buildProductSchema([]string{"商品A"})
+func TestBuildRecognizeSchema_BoundingBoxHasNovaBounds(t *testing.T) {
+	schema := buildRecognizeSchema([]string{"商品A"})
 
 	bbox := extractBoundingBoxSchema(t, schema)
-	bboxProps := bbox["properties"].(map[string]interface{})
+	bboxProps := bbox["properties"].(map[string]any)
 
 	for _, axis := range []string{"x_min", "y_min", "x_max", "y_max"} {
-		axisSchema := bboxProps[axis].(map[string]interface{})
-		if axisSchema["minimum"].(float64) != -1.5 {
-			t.Errorf("%s: expected minimum -1.5, got %v", axis, axisSchema["minimum"])
+		axisSchema := bboxProps[axis].(map[string]any)
+		if axisSchema["minimum"].(float64) != 0 {
+			t.Errorf("%s: expected minimum 0, got %v", axis, axisSchema["minimum"])
 		}
-		if axisSchema["maximum"].(float64) != 2.5 {
-			t.Errorf("%s: expected maximum 2.5, got %v", axis, axisSchema["maximum"])
+		if axisSchema["maximum"].(float64) != 1000 {
+			t.Errorf("%s: expected maximum 1000, got %v", axis, axisSchema["maximum"])
 		}
 	}
 }
 
 // --- ヘルパー ---
 
-func extractEnum(t *testing.T, schema map[string]interface{}) []interface{} {
+func extractEnum(t *testing.T, schema map[string]any) []any {
 	t.Helper()
-	props := schema["properties"].(map[string]interface{})
-	itemsArray := props["items"].(map[string]interface{})
-	itemSchema := itemsArray["items"].(map[string]interface{})
-	itemProps := itemSchema["properties"].(map[string]interface{})
-	productName := itemProps["product_name"].(map[string]interface{})
-	return productName["enum"].([]interface{})
+	props := schema["properties"].(map[string]any)
+	itemsArray := props["items"].(map[string]any)
+	itemSchema := itemsArray["items"].(map[string]any)
+	itemProps := itemSchema["properties"].(map[string]any)
+	productName := itemProps["product_name"].(map[string]any)
+	return productName["enum"].([]any)
 }
 
-func extractBoundingBoxSchema(t *testing.T, schema map[string]interface{}) map[string]interface{} {
+func extractBoundingBoxSchema(t *testing.T, schema map[string]any) map[string]any {
 	t.Helper()
-	props := schema["properties"].(map[string]interface{})
-	itemsArray := props["items"].(map[string]interface{})
-	itemSchema := itemsArray["items"].(map[string]interface{})
-	itemProps := itemSchema["properties"].(map[string]interface{})
-	return itemProps["bounding_box"].(map[string]interface{})
+	props := schema["properties"].(map[string]any)
+	itemsArray := props["items"].(map[string]any)
+	itemSchema := itemsArray["items"].(map[string]any)
+	itemProps := itemSchema["properties"].(map[string]any)
+	return itemProps["bounding_box"].(map[string]any)
 }

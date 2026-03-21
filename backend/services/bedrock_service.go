@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
@@ -14,7 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/bedrockruntime/types"
 )
 
-const bedrockDefaultModelID = "us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+const bedrockDefaultModelID = "us.amazon.nova-pro-v1:0"
 
 // BedrockRuntimeClient はBedrockRuntime APIのインターフェース。
 // テスト時にモックを注入できるよう抽象化する。
@@ -22,7 +23,7 @@ type BedrockRuntimeClient interface {
 	Converse(ctx context.Context, params *bedrockruntime.ConverseInput, optFns ...func(*bedrockruntime.Options)) (*bedrockruntime.ConverseOutput, error)
 }
 
-// BedrockService はAWS Bedrock（Claude Sonnet）を使ったAIService実装。
+// BedrockService はAWS Bedrock（Amazon Nova Pro）を使ったAIService実装。
 // Lambda上ではIAMロールによる自動認証を使用する。
 type BedrockService struct {
 	client  BedrockRuntimeClient
@@ -50,43 +51,25 @@ func NewBedrockServiceWithClient(client BedrockRuntimeClient, modelID string) *B
 	return &BedrockService{client: client, modelID: modelID}
 }
 
-// Recognize は画像データをBedrock（Claude Sonnet）に送信し、検出商品リストを返す。
-// ToolConfig に JSON Schema を渡してツール使用を強制することで出力形式をモデルレベルで保証する。
-// product_name の enum に商品名リストを設定し、存在しない商品名の返却を根本から防ぐ。
+// Recognize は画像から商品を識別し、bboxを1回のAPI呼び出しで返す。
+// Amazon Nova Pro のビジュアルグラウンディング機能を活用する。
 func (s *BedrockService) Recognize(ctx context.Context, imageData []byte, productNames []string) ([]AIItem, error) {
 	mimeType := detectMIMEType(imageData)
-	prompt := buildBedrockPrompt(productNames)
 
-	log.Printf("[bedrock] Converse start: modelID=%s imageSize=%dB mimeType=%s products=%d", s.modelID, len(imageData), mimeType, len(productNames))
+	log.Printf("[bedrock] Recognize start: modelID=%s imageSize=%dB products=%d", s.modelID, len(imageData), len(productNames))
 
+	start := time.Now()
 	output, err := s.client.Converse(ctx, &bedrockruntime.ConverseInput{
-		ModelId: aws.String(s.modelID),
-		Messages: []types.Message{
-			{
-				Role: types.ConversationRoleUser,
-				Content: []types.ContentBlock{
-					&types.ContentBlockMemberImage{
-						Value: types.ImageBlock{
-							Format: toBedrockImageFormat(mimeType),
-							Source: &types.ImageSourceMemberBytes{
-								Value: imageData,
-							},
-						},
-					},
-					&types.ContentBlockMemberText{
-						Value: prompt,
-					},
-				},
-			},
-		},
+		ModelId:  aws.String(s.modelID),
+		Messages: []types.Message{buildImageMessage(imageData, mimeType, buildRecognizePrompt(productNames))},
 		ToolConfig: &types.ToolConfiguration{
 			Tools: []types.Tool{
 				&types.ToolMemberToolSpec{
 					Value: types.ToolSpecification{
 						Name:        aws.String("recognize_products"),
-						Description: aws.String("画像から検出されたコンビニ商品と、各商品の正面ラベル領域のバウンディングボックスを返す"),
+						Description: aws.String("画像内に写っているコンビニ商品とその正面ラベルのバウンディングボックスを返す"),
 						InputSchema: &types.ToolInputSchemaMemberJson{
-							Value: bedrockdoc.NewLazyDocument(buildProductSchema(productNames)),
+							Value: bedrockdoc.NewLazyDocument(buildRecognizeSchema(productNames)),
 						},
 					},
 				},
@@ -96,113 +79,81 @@ func (s *BedrockService) Recognize(ctx context.Context, imageData []byte, produc
 			},
 		},
 	})
+	elapsed := time.Since(start)
 	if err != nil {
-		log.Printf("[bedrock] Converse error: %v", err)
-		return nil, &AIError{Cause: fmt.Errorf("bedrock Converse: %w", err)}
+		log.Printf("[bedrock] Recognize error (elapsed=%.2fs): %v", elapsed.Seconds(), err)
+		return nil, &AIError{Cause: fmt.Errorf("bedrock Converse Recognize: %w", err)}
 	}
+	logConverseMetrics("Recognize", output, elapsed)
 
-	log.Printf("[bedrock] Converse success")
-	return parseBedrockResponse(output)
+	return parseRecognizeResponse(output)
 }
 
-func parseBedrockResponse(output *bedrockruntime.ConverseOutput) ([]AIItem, error) {
-	msg, ok := output.Output.(*types.ConverseOutputMemberMessage)
-	if !ok || len(msg.Value.Content) == 0 {
-		return []AIItem{}, nil
-	}
-
-	for _, block := range msg.Value.Content {
-		toolUse, ok := block.(*types.ContentBlockMemberToolUse)
-		if !ok {
-			continue
-		}
-		return parseToolUseInput(toolUse.Value.Input)
-	}
-
-	return []AIItem{}, nil
-}
-
-func parseToolUseInput(input bedrockdoc.Interface) ([]AIItem, error) {
-	inputBytes, err := input.MarshalSmithyDocument()
-	if err != nil {
-		return nil, fmt.Errorf("MarshalSmithyDocument toolUse input: %w", err)
-	}
-
-	log.Printf("[bedrock] tool use input: %s", inputBytes)
-
-	var result aiItemsResult
-	if err := json.Unmarshal(inputBytes, &result); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal toolUse input: %w", err)
-	}
-
-	items := make([]AIItem, 0, len(result.Items))
-	for _, it := range result.Items {
-		items = append(items, AIItem{
-			ProductName: it.ProductName,
-			BoundingBox: BoundingBox{
-				XMin: it.BoundingBox.XMin,
-				YMin: it.BoundingBox.YMin,
-				XMax: it.BoundingBox.XMax,
-				YMax: it.BoundingBox.YMax,
+// buildImageMessage は画像とテキストを含むConverseメッセージを生成する。
+func buildImageMessage(imageData []byte, mimeType, prompt string) types.Message {
+	return types.Message{
+		Role: types.ConversationRoleUser,
+		Content: []types.ContentBlock{
+			&types.ContentBlockMemberImage{
+				Value: types.ImageBlock{
+					Format: toBedrockImageFormat(mimeType),
+					Source: &types.ImageSourceMemberBytes{Value: imageData},
+				},
 			},
-		})
+			&types.ContentBlockMemberText{Value: prompt},
+		},
 	}
-	return items, nil
 }
 
-// buildBedrockPrompt はBedrock用プロンプトを生成する。
-// 出力形式はToolConfigのJSONスキーマで強制するため、プロンプトには含めない。
-func buildBedrockPrompt(productNames []string) string {
+// buildRecognizePrompt は商品識別＋位置特定の1段階処理用プロンプトを生成する。
+func buildRecognizePrompt(productNames []string) string {
 	var sb strings.Builder
-	sb.WriteString("以下の画像を解析し、写っているコンビニ商品を識別してください。\n")
-	sb.WriteString("識別可能な商品のみ返してください。\n\n")
+	sb.WriteString("以下の画像を解析し、写っているコンビニ商品を識別して、各商品の正面ラベルのバウンディングボックスを返してください。\n")
+	sb.WriteString("対象商品リストに含まれる商品のみ返してください。\n\n")
 	sb.WriteString("対象商品リスト（この中から識別してください）:\n")
 	for _, name := range productNames {
 		sb.WriteString("- ")
 		sb.WriteString(name)
 		sb.WriteString("\n")
 	}
-	sb.WriteString("\nバウンディングボックスは商品全体ではなく、商品の正面ラベル（商品名・デザインが印刷されている面）の範囲を、画像全体を1×1とした相対座標で表現してください。\n")
-	sb.WriteString("ラベルが画像からはみ出している場合も、ラベル全体から推定した座標を返してください（-1.5〜2.5の範囲で指定）。\n")
-	sb.WriteString("商品が検出できない場合は items を空配列で返してください。\n")
+	sb.WriteString("\nバウンディングボックスは商品の正面ラベル（商品名・デザインが印刷されている面）を囲む最小の矩形を、")
+	sb.WriteString("画像全体を0〜1000のスケールで表現してください。\n")
+	sb.WriteString("商品が検出できない場合はitemsを空配列で返してください。\n")
 	return sb.String()
 }
 
-// buildProductSchema は商品認識結果のJSON Schemaを生成する。
-// product_name の enum に商品名リストを設定することで、存在しない商品名の返却をモデルレベルで防ぐ。
-func buildProductSchema(productNames []string) map[string]interface{} {
-	enum := make([]interface{}, len(productNames))
+// buildRecognizeSchema は1段階処理用JSONスキーマを生成する（Nova の0〜1000座標スケール）。
+func buildRecognizeSchema(productNames []string) map[string]any {
+	enum := make([]any, len(productNames))
 	for i, name := range productNames {
 		enum[i] = name
 	}
-
-	numberAxis := func() map[string]interface{} {
-		return map[string]interface{}{
+	coordAxis := func() map[string]any {
+		return map[string]any{
 			"type":    "number",
-			"minimum": float64(-1.5),
-			"maximum": float64(2.5),
+			"minimum": float64(0),
+			"maximum": float64(1000),
 		}
 	}
-
-	return map[string]interface{}{
+	return map[string]any{
 		"type": "object",
-		"properties": map[string]interface{}{
-			"items": map[string]interface{}{
+		"properties": map[string]any{
+			"items": map[string]any{
 				"type": "array",
-				"items": map[string]interface{}{
+				"items": map[string]any{
 					"type": "object",
-					"properties": map[string]interface{}{
-						"product_name": map[string]interface{}{
+					"properties": map[string]any{
+						"product_name": map[string]any{
 							"type": "string",
 							"enum": enum,
 						},
-						"bounding_box": map[string]interface{}{
+						"bounding_box": map[string]any{
 							"type": "object",
-							"properties": map[string]interface{}{
-								"x_min": numberAxis(),
-								"y_min": numberAxis(),
-								"x_max": numberAxis(),
-								"y_max": numberAxis(),
+							"properties": map[string]any{
+								"x_min": coordAxis(),
+								"y_min": coordAxis(),
+								"x_max": coordAxis(),
+								"y_max": coordAxis(),
 							},
 							"required": []string{"x_min", "y_min", "x_max", "y_max"},
 						},
@@ -213,6 +164,75 @@ func buildProductSchema(productNames []string) map[string]interface{} {
 		},
 		"required": []string{"items"},
 	}
+}
+
+// logConverseMetrics はBedrockのレスポンスからトークン数・レイテンシをログ出力する。
+func logConverseMetrics(stage string, output *bedrockruntime.ConverseOutput, clientElapsed time.Duration) {
+	var inputTokens, outputTokens int32
+	if output.Usage != nil {
+		inputTokens = aws.ToInt32(output.Usage.InputTokens)
+		outputTokens = aws.ToInt32(output.Usage.OutputTokens)
+	}
+	var bedrockLatencyMs int64
+	if output.Metrics != nil {
+		bedrockLatencyMs = aws.ToInt64(output.Metrics.LatencyMs)
+	}
+	log.Printf("[bedrock] %s success: inputTokens=%d outputTokens=%d totalTokens=%d bedrockLatency=%dms clientElapsed=%.2fs",
+		stage, inputTokens, outputTokens, inputTokens+outputTokens, bedrockLatencyMs, clientElapsed.Seconds())
+}
+
+// parseRecognizeResponse はレスポンスからAIItemリストを取り出す。
+// Nova の0〜1000座標スケールを0.0〜1.0に正規化する。
+func parseRecognizeResponse(output *bedrockruntime.ConverseOutput) ([]AIItem, error) {
+	msg, ok := output.Output.(*types.ConverseOutputMemberMessage)
+	if !ok || len(msg.Value.Content) == 0 {
+		return []AIItem{}, nil
+	}
+	for _, block := range msg.Value.Content {
+		toolUse, ok := block.(*types.ContentBlockMemberToolUse)
+		if !ok {
+			continue
+		}
+		return parseRecognizeToolInput(toolUse.Value.Input)
+	}
+	return []AIItem{}, nil
+}
+
+func parseRecognizeToolInput(input bedrockdoc.Interface) ([]AIItem, error) {
+	inputBytes, err := input.MarshalSmithyDocument()
+	if err != nil {
+		return nil, fmt.Errorf("MarshalSmithyDocument recognize input: %w", err)
+	}
+	log.Printf("[bedrock] Recognize tool use input: %s", inputBytes)
+
+	var result struct {
+		Items []struct {
+			ProductName string `json:"product_name"`
+			BoundingBox struct {
+				XMin float64 `json:"x_min"`
+				YMin float64 `json:"y_min"`
+				XMax float64 `json:"x_max"`
+				YMax float64 `json:"y_max"`
+			} `json:"bounding_box"`
+		} `json:"items"`
+	}
+	if err := json.Unmarshal(inputBytes, &result); err != nil {
+		return nil, fmt.Errorf("json.Unmarshal recognize input: %w", err)
+	}
+
+	items := make([]AIItem, 0, len(result.Items))
+	for _, it := range result.Items {
+		items = append(items, AIItem{
+			ProductName: it.ProductName,
+			BoundingBox: BoundingBox{
+				XMin: it.BoundingBox.XMin / 1000.0,
+				YMin: it.BoundingBox.YMin / 1000.0,
+				XMax: it.BoundingBox.XMax / 1000.0,
+				YMax: it.BoundingBox.YMax / 1000.0,
+			},
+		})
+	}
+	return items, nil
 }
 
 // toBedrockImageFormat はMIMEタイプをBedrockのImageFormat型に変換する。
