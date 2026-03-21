@@ -126,5 +126,31 @@ describe('CameraView', () => {
 
       expect(isActiveTab('売り上げ')).toBe(true);
     });
+
+    it('TestCameraView_DragBelowThreshold_PillTransformReset: 閾値未満のドラッグ後、ピルのtransformが元位置に戻ること', () => {
+      const { container } = render(<CameraView onCapture={vi.fn()} />);
+      const view = container.firstChild as HTMLElement;
+      const pill = container.querySelector('[aria-hidden="true"]') as HTMLElement;
+
+      // 初期は ranking(index=1)
+      touchStart(view, 200);
+      touchMove(view, 240); // delta = +40px < 50 → rAF でピルが中間へ
+      touchEnd(view, 240);
+
+      // rAF が動かした offset が消えて元位置に戻ること
+      expect(pill.style.transform).toBe('translateX(calc(1 * (100% + 4px)))');
+    });
+
+    it('TestCameraView_TouchCancel_PillTransformReset: touchcancel後、ピルのtransformが元位置に戻ること', () => {
+      const { container } = render(<CameraView onCapture={vi.fn()} />);
+      const view = container.firstChild as HTMLElement;
+      const pill = container.querySelector('[aria-hidden="true"]') as HTMLElement;
+
+      touchStart(view, 200);
+      touchMove(view, 270); // delta = +70px → rAF でピルが中間へ
+      touchCancel(view);
+
+      expect(pill.style.transform).toBe('translateX(calc(1 * (100% + 4px)))');
+    });
   });
 });
