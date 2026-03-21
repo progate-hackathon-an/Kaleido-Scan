@@ -23,7 +23,7 @@ export class LambdaStack extends cdk.Stack {
       handler: 'bootstrap',
       code: lambda.Code.fromAsset('../backend/handler.zip'),
       memorySize: 512,
-      timeout: cdk.Duration.seconds(30),
+      timeout: cdk.Duration.seconds(28),
       vpc: props.vpc,
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
       securityGroups: [props.lambdaSG],
