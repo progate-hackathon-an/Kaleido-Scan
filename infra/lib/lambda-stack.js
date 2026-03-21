@@ -1,62 +1,72 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.LambdaStack = void 0;
-const cdk = require("aws-cdk-lib");
-const ec2 = require("aws-cdk-lib/aws-ec2");
-const lambda = require("aws-cdk-lib/aws-lambda");
-const apigwv2 = require("aws-cdk-lib/aws-apigatewayv2");
-const integrations = require("aws-cdk-lib/aws-apigatewayv2-integrations");
-const iam = require("aws-cdk-lib/aws-iam");
+const cdk = require('aws-cdk-lib');
+const ec2 = require('aws-cdk-lib/aws-ec2');
+const lambda = require('aws-cdk-lib/aws-lambda');
+const apigwv2 = require('aws-cdk-lib/aws-apigatewayv2');
+const integrations = require('aws-cdk-lib/aws-apigatewayv2-integrations');
+const iam = require('aws-cdk-lib/aws-iam');
 class LambdaStack extends cdk.Stack {
-    constructor(scope, id, props) {
-        super(scope, id, props);
-        const fn = new lambda.Function(this, 'KaleidoFunction', {
-            runtime: lambda.Runtime.PROVIDED_AL2023,
-            architecture: lambda.Architecture.ARM_64,
-            handler: 'bootstrap',
-            code: lambda.Code.fromAsset('../backend/handler.zip'),
-            memorySize: 512,
-            timeout: cdk.Duration.seconds(30),
-            vpc: props.vpc,
-            vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
-            securityGroups: [props.lambdaSG],
-            environment: {
-                DB_HOST: props.dbEndpoint,
-                DB_PORT: '5432',
-                DB_USER: 'postgres',
-                DB_NAME: 'kaleido_scan',
-                DB_SSL_MODE: 'require',
-                DB_SECRET_ARN: props.dbSecretArn,
-                AI_PROVIDER: 'bedrock',
-                BEDROCK_MODEL_ID: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
-                FRONTEND_URL: '*',
-                SEED_ON_STARTUP: 'true',
-            },
-        });
-        fn.addToRolePolicy(new iam.PolicyStatement({
-            actions: ['secretsmanager:GetSecretValue'],
-            resources: [props.dbSecretArn],
-        }));
-        fn.addToRolePolicy(new iam.PolicyStatement({
-            actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
-            resources: ['*'],
-        }));
-        fn.addToRolePolicy(new iam.PolicyStatement({
-            actions: ['aws-marketplace:ViewSubscriptions', 'aws-marketplace:Subscribe', 'aws-marketplace:Unsubscribe'],
-            resources: ['*'],
-        }));
-        const api = new apigwv2.HttpApi(this, 'KaleidoApi', {
-            corsPreflight: {
-                allowOrigins: ['*'],
-                allowMethods: [apigwv2.CorsHttpMethod.ANY],
-                allowHeaders: ['*'],
-            },
-        });
-        const integration = new integrations.HttpLambdaIntegration('LambdaIntegration', fn);
-        api.addRoutes({ path: '/{proxy+}', methods: [apigwv2.HttpMethod.ANY], integration });
-        api.addRoutes({ path: '/', methods: [apigwv2.HttpMethod.ANY], integration });
-        new cdk.CfnOutput(this, 'ApiUrl', { value: api.url });
-    }
+  constructor(scope, id, props) {
+    super(scope, id, props);
+    const fn = new lambda.Function(this, 'KaleidoFunction', {
+      runtime: lambda.Runtime.PROVIDED_AL2023,
+      architecture: lambda.Architecture.ARM_64,
+      handler: 'bootstrap',
+      code: lambda.Code.fromAsset('../backend/handler.zip'),
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(30),
+      vpc: props.vpc,
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      securityGroups: [props.lambdaSG],
+      environment: {
+        DB_HOST: props.dbEndpoint,
+        DB_PORT: '5432',
+        DB_USER: 'postgres',
+        DB_NAME: 'kaleido_scan',
+        DB_SSL_MODE: 'require',
+        DB_SECRET_ARN: props.dbSecretArn,
+        AI_PROVIDER: 'bedrock',
+        BEDROCK_MODEL_ID: 'us.amazon.nova-pro-v1:0',
+        FRONTEND_URL: '*',
+        SEED_ON_STARTUP: 'true',
+      },
+    });
+    fn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['secretsmanager:GetSecretValue'],
+        resources: [props.dbSecretArn],
+      })
+    );
+    fn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
+        resources: ['*'],
+      })
+    );
+    fn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'aws-marketplace:ViewSubscriptions',
+          'aws-marketplace:Subscribe',
+          'aws-marketplace:Unsubscribe',
+        ],
+        resources: ['*'],
+      })
+    );
+    const api = new apigwv2.HttpApi(this, 'KaleidoApi', {
+      corsPreflight: {
+        allowOrigins: ['*'],
+        allowMethods: [apigwv2.CorsHttpMethod.ANY],
+        allowHeaders: ['*'],
+      },
+    });
+    const integration = new integrations.HttpLambdaIntegration('LambdaIntegration', fn);
+    api.addRoutes({ path: '/{proxy+}', methods: [apigwv2.HttpMethod.ANY], integration });
+    api.addRoutes({ path: '/', methods: [apigwv2.HttpMethod.ANY], integration });
+    new cdk.CfnOutput(this, 'ApiUrl', { value: api.url });
+  }
 }
 exports.LambdaStack = LambdaStack;
 //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibGFtYmRhLXN0YWNrLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsibGFtYmRhLXN0YWNrLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUFBLG1DQUFtQztBQUNuQywyQ0FBMkM7QUFDM0MsaURBQWlEO0FBQ2pELHdEQUF3RDtBQUN4RCwwRUFBMEU7QUFDMUUsMkNBQTJDO0FBVTNDLE1BQWEsV0FBWSxTQUFRLEdBQUcsQ0FBQyxLQUFLO0lBQ3hDLFlBQVksS0FBZ0IsRUFBRSxFQUFVLEVBQUUsS0FBdUI7UUFDL0QsS0FBSyxDQUFDLEtBQUssRUFBRSxFQUFFLEVBQUUsS0FBSyxDQUFDLENBQUM7UUFFeEIsTUFBTSxFQUFFLEdBQUcsSUFBSSxNQUFNLENBQUMsUUFBUSxDQUFDLElBQUksRUFBRSxpQkFBaUIsRUFBRTtZQUN0RCxPQUFPLEVBQUUsTUFBTSxDQUFDLE9BQU8sQ0FBQyxlQUFlO1lBQ3ZDLFlBQVksRUFBRSxNQUFNLENBQUMsWUFBWSxDQUFDLE1BQU07WUFDeEMsT0FBTyxFQUFFLFdBQVc7WUFDcEIsSUFBSSxFQUFFLE1BQU0sQ0FBQyxJQUFJLENBQUMsU0FBUyxDQUFDLHdCQUF3QixDQUFDO1lBQ3JELFVBQVUsRUFBRSxHQUFHO1lBQ2YsT0FBTyxFQUFFLEdBQUcsQ0FBQyxRQUFRLENBQUMsT0FBTyxDQUFDLEVBQUUsQ0FBQztZQUNqQyxHQUFHLEVBQUUsS0FBSyxDQUFDLEdBQUc7WUFDZCxVQUFVLEVBQUUsRUFBRSxVQUFVLEVBQUUsR0FBRyxDQUFDLFVBQVUsQ0FBQyxtQkFBbUIsRUFBRTtZQUM5RCxjQUFjLEVBQUUsQ0FBQyxLQUFLLENBQUMsUUFBUSxDQUFDO1lBQ2hDLFdBQVcsRUFBRTtnQkFDWCxPQUFPLEVBQUUsS0FBSyxDQUFDLFVBQVU7Z0JBQ3pCLE9BQU8sRUFBRSxNQUFNO2dCQUNmLE9BQU8sRUFBRSxVQUFVO2dCQUNuQixPQUFPLEVBQUUsY0FBYztnQkFDdkIsV0FBVyxFQUFFLFNBQVM7Z0JBQ3RCLGFBQWEsRUFBRSxLQUFLLENBQUMsV0FBVztnQkFDaEMsV0FBVyxFQUFFLFNBQVM7Z0JBQ3RCLGdCQUFnQixFQUFFLDhDQUE4QztnQkFDaEUsWUFBWSxFQUFFLEdBQUc7Z0JBQ2pCLGVBQWUsRUFBRSxNQUFNO2FBQ3hCO1NBQ0YsQ0FBQyxDQUFDO1FBRUgsRUFBRSxDQUFDLGVBQWUsQ0FBQyxJQUFJLEdBQUcsQ0FBQyxlQUFlLENBQUM7WUFDekMsT0FBTyxFQUFFLENBQUMsK0JBQStCLENBQUM7WUFDMUMsU0FBUyxFQUFFLENBQUMsS0FBSyxDQUFDLFdBQVcsQ0FBQztTQUMvQixDQUFDLENBQUMsQ0FBQztRQUVKLEVBQUUsQ0FBQyxlQUFlLENBQUMsSUFBSSxHQUFHLENBQUMsZUFBZSxDQUFDO1lBQ3pDLE9BQU8sRUFBRSxDQUFDLHFCQUFxQixFQUFFLHVDQUF1QyxDQUFDO1lBQ3pFLFNBQVMsRUFBRSxDQUFDLEdBQUcsQ0FBQztTQUNqQixDQUFDLENBQUMsQ0FBQztRQUVKLEVBQUUsQ0FBQyxlQUFlLENBQUMsSUFBSSxHQUFHLENBQUMsZUFBZSxDQUFDO1lBQ3pDLE9BQU8sRUFBRSxDQUFDLG1DQUFtQyxFQUFFLDJCQUEyQixFQUFFLDZCQUE2QixDQUFDO1lBQzFHLFNBQVMsRUFBRSxDQUFDLEdBQUcsQ0FBQztTQUNqQixDQUFDLENBQUMsQ0FBQztRQUVKLE1BQU0sR0FBRyxHQUFHLElBQUksT0FBTyxDQUFDLE9BQU8sQ0FBQyxJQUFJLEVBQUUsWUFBWSxFQUFFO1lBQ2xELGFBQWEsRUFBRTtnQkFDYixZQUFZLEVBQUUsQ0FBQyxHQUFHLENBQUM7Z0JBQ25CLFlBQVksRUFBRSxDQUFDLE9BQU8sQ0FBQyxjQUFjLENBQUMsR0FBRyxDQUFDO2dCQUMxQyxZQUFZLEVBQUUsQ0FBQyxHQUFHLENBQUM7YUFDcEI7U0FDRixDQUFDLENBQUM7UUFFSCxNQUFNLFdBQVcsR0FBRyxJQUFJLFlBQVksQ0FBQyxxQkFBcUIsQ0FBQyxtQkFBbUIsRUFBRSxFQUFFLENBQUMsQ0FBQztRQUVwRixHQUFHLENBQUMsU0FBUyxDQUFDLEVBQUUsSUFBSSxFQUFFLFdBQVcsRUFBRSxPQUFPLEVBQUUsQ0FBQyxPQUFPLENBQUMsVUFBVSxDQUFDLEdBQUcsQ0FBQyxFQUFFLFdBQVcsRUFBRSxDQUFDLENBQUM7UUFDckYsR0FBRyxDQUFDLFNBQVMsQ0FBQyxFQUFFLElBQUksRUFBRSxHQUFHLEVBQUUsT0FBTyxFQUFFLENBQUMsT0FBTyxDQUFDLFVBQVUsQ0FBQyxHQUFHLENBQUMsRUFBRSxXQUFXLEVBQUUsQ0FBQyxDQUFDO1FBRTdFLElBQUksR0FBRyxDQUFDLFNBQVMsQ0FBQyxJQUFJLEVBQUUsUUFBUSxFQUFFLEVBQUUsS0FBSyxFQUFFLEdBQUcsQ0FBQyxHQUFJLEVBQUUsQ0FBQyxDQUFDO0lBQ3pELENBQUM7Q0FDRjtBQTFERCxrQ0EwREMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgKiBhcyBjZGsgZnJvbSAnYXdzLWNkay1saWInO1xuaW1wb3J0ICogYXMgZWMyIGZyb20gJ2F3cy1jZGstbGliL2F3cy1lYzInO1xuaW1wb3J0ICogYXMgbGFtYmRhIGZyb20gJ2F3cy1jZGstbGliL2F3cy1sYW1iZGEnO1xuaW1wb3J0ICogYXMgYXBpZ3d2MiBmcm9tICdhd3MtY2RrLWxpYi9hd3MtYXBpZ2F0ZXdheXYyJztcbmltcG9ydCAqIGFzIGludGVncmF0aW9ucyBmcm9tICdhd3MtY2RrLWxpYi9hd3MtYXBpZ2F0ZXdheXYyLWludGVncmF0aW9ucyc7XG5pbXBvcnQgKiBhcyBpYW0gZnJvbSAnYXdzLWNkay1saWIvYXdzLWlhbSc7XG5pbXBvcnQgeyBDb25zdHJ1Y3QgfSBmcm9tICdjb25zdHJ1Y3RzJztcblxuaW50ZXJmYWNlIExhbWJkYVN0YWNrUHJvcHMgZXh0ZW5kcyBjZGsuU3RhY2tQcm9wcyB7XG4gIHZwYzogZWMyLlZwYztcbiAgbGFtYmRhU0c6IGVjMi5TZWN1cml0eUdyb3VwO1xuICBkYkVuZHBvaW50OiBzdHJpbmc7XG4gIGRiU2VjcmV0QXJuOiBzdHJpbmc7XG59XG5cbmV4cG9ydCBjbGFzcyBMYW1iZGFTdGFjayBleHRlbmRzIGNkay5TdGFjayB7XG4gIGNvbnN0cnVjdG9yKHNjb3BlOiBDb25zdHJ1Y3QsIGlkOiBzdHJpbmcsIHByb3BzOiBMYW1iZGFTdGFja1Byb3BzKSB7XG4gICAgc3VwZXIoc2NvcGUsIGlkLCBwcm9wcyk7XG5cbiAgICBjb25zdCBmbiA9IG5ldyBsYW1iZGEuRnVuY3Rpb24odGhpcywgJ0thbGVpZG9GdW5jdGlvbicsIHtcbiAgICAgIHJ1bnRpbWU6IGxhbWJkYS5SdW50aW1lLlBST1ZJREVEX0FMMjAyMyxcbiAgICAgIGFyY2hpdGVjdHVyZTogbGFtYmRhLkFyY2hpdGVjdHVyZS5BUk1fNjQsXG4gICAgICBoYW5kbGVyOiAnYm9vdHN0cmFwJyxcbiAgICAgIGNvZGU6IGxhbWJkYS5Db2RlLmZyb21Bc3NldCgnLi4vYmFja2VuZC9oYW5kbGVyLnppcCcpLFxuICAgICAgbWVtb3J5U2l6ZTogNTEyLFxuICAgICAgdGltZW91dDogY2RrLkR1cmF0aW9uLnNlY29uZHMoMzApLFxuICAgICAgdnBjOiBwcm9wcy52cGMsXG4gICAgICB2cGNTdWJuZXRzOiB7IHN1Ym5ldFR5cGU6IGVjMi5TdWJuZXRUeXBlLlBSSVZBVEVfV0lUSF9FR1JFU1MgfSxcbiAgICAgIHNlY3VyaXR5R3JvdXBzOiBbcHJvcHMubGFtYmRhU0ddLFxuICAgICAgZW52aXJvbm1lbnQ6IHtcbiAgICAgICAgREJfSE9TVDogcHJvcHMuZGJFbmRwb2ludCxcbiAgICAgICAgREJfUE9SVDogJzU0MzInLFxuICAgICAgICBEQl9VU0VSOiAncG9zdGdyZXMnLFxuICAgICAgICBEQl9OQU1FOiAna2FsZWlkb19zY2FuJyxcbiAgICAgICAgREJfU1NMX01PREU6ICdyZXF1aXJlJyxcbiAgICAgICAgREJfU0VDUkVUX0FSTjogcHJvcHMuZGJTZWNyZXRBcm4sXG4gICAgICAgIEFJX1BST1ZJREVSOiAnYmVkcm9jaycsXG4gICAgICAgIEJFRFJPQ0tfTU9ERUxfSUQ6ICd1cy5hbnRocm9waWMuY2xhdWRlLXNvbm5ldC00LTUtMjAyNTA5MjktdjE6MCcsXG4gICAgICAgIEZST05URU5EX1VSTDogJyonLFxuICAgICAgICBTRUVEX09OX1NUQVJUVVA6ICd0cnVlJyxcbiAgICAgIH0sXG4gICAgfSk7XG5cbiAgICBmbi5hZGRUb1JvbGVQb2xpY3kobmV3IGlhbS5Qb2xpY3lTdGF0ZW1lbnQoe1xuICAgICAgYWN0aW9uczogWydzZWNyZXRzbWFuYWdlcjpHZXRTZWNyZXRWYWx1ZSddLFxuICAgICAgcmVzb3VyY2VzOiBbcHJvcHMuZGJTZWNyZXRBcm5dLFxuICAgIH0pKTtcblxuICAgIGZuLmFkZFRvUm9sZVBvbGljeShuZXcgaWFtLlBvbGljeVN0YXRlbWVudCh7XG4gICAgICBhY3Rpb25zOiBbJ2JlZHJvY2s6SW52b2tlTW9kZWwnLCAnYmVkcm9jazpJbnZva2VNb2RlbFdpdGhSZXNwb25zZVN0cmVhbSddLFxuICAgICAgcmVzb3VyY2VzOiBbJyonXSxcbiAgICB9KSk7XG5cbiAgICBmbi5hZGRUb1JvbGVQb2xpY3kobmV3IGlhbS5Qb2xpY3lTdGF0ZW1lbnQoe1xuICAgICAgYWN0aW9uczogWydhd3MtbWFya2V0cGxhY2U6Vmlld1N1YnNjcmlwdGlvbnMnLCAnYXdzLW1hcmtldHBsYWNlOlN1YnNjcmliZScsICdhd3MtbWFya2V0cGxhY2U6VW5zdWJzY3JpYmUnXSxcbiAgICAgIHJlc291cmNlczogWycqJ10sXG4gICAgfSkpO1xuXG4gICAgY29uc3QgYXBpID0gbmV3IGFwaWd3djIuSHR0cEFwaSh0aGlzLCAnS2FsZWlkb0FwaScsIHtcbiAgICAgIGNvcnNQcmVmbGlnaHQ6IHtcbiAgICAgICAgYWxsb3dPcmlnaW5zOiBbJyonXSxcbiAgICAgICAgYWxsb3dNZXRob2RzOiBbYXBpZ3d2Mi5Db3JzSHR0cE1ldGhvZC5BTlldLFxuICAgICAgICBhbGxvd0hlYWRlcnM6IFsnKiddLFxuICAgICAgfSxcbiAgICB9KTtcblxuICAgIGNvbnN0IGludGVncmF0aW9uID0gbmV3IGludGVncmF0aW9ucy5IdHRwTGFtYmRhSW50ZWdyYXRpb24oJ0xhbWJkYUludGVncmF0aW9uJywgZm4pO1xuXG4gICAgYXBpLmFkZFJvdXRlcyh7IHBhdGg6ICcve3Byb3h5K30nLCBtZXRob2RzOiBbYXBpZ3d2Mi5IdHRwTWV0aG9kLkFOWV0sIGludGVncmF0aW9uIH0pO1xuICAgIGFwaS5hZGRSb3V0ZXMoeyBwYXRoOiAnLycsIG1ldGhvZHM6IFthcGlnd3YyLkh0dHBNZXRob2QuQU5ZXSwgaW50ZWdyYXRpb24gfSk7XG5cbiAgICBuZXcgY2RrLkNmbk91dHB1dCh0aGlzLCAnQXBpVXJsJywgeyB2YWx1ZTogYXBpLnVybCEgfSk7XG4gIH1cbn1cbiJdfQ==

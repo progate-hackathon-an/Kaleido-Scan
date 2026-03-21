@@ -54,7 +54,7 @@ func TestGeminiService_Recognize_Success(t *testing.T) {
 }
 
 func TestGeminiService_Recognize_OutOfRangeBoundingBox(t *testing.T) {
-	// 商品が画像からはみ出している場合、0.0〜1.0の範囲外の座標が返ることを許容する
+	// ラベルが画像端にかかっている場合、0.0〜1.0の範囲外の座標が返ってもパース可能であることを確認する
 	geminiResp := map[string]any{
 		"candidates": []map[string]any{
 			{

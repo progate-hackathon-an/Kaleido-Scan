@@ -65,8 +65,8 @@ Gemini はプロンプト内に JSON 形式の指示を含める方式。
   ]
 }
 
-バウンディングボックスは画像全体を1×1とした相対座標で表現してください。
-商品が画像からはみ出している場合も、商品全体から推定した座標を返してください（-1.5〜2.5の範囲で指定）。
+バウンディングボックスは商品全体ではなく、商品の正面ラベル（商品名・デザインが印刷されている面）の範囲を、画像全体を1×1とした相対座標で表現してください。
+ラベルが画像からはみ出している場合も、ラベル全体から推定した座標を返してください（-1.5〜2.5の範囲で指定）。
 商品が検出できない場合は items を空配列で返してください。
 対象商品リストにない商品名は絶対に返さないでください。
 ```
@@ -163,7 +163,7 @@ Bedrock は API パラメータとして JSON Schema を渡すことで出力形
 | `category` | string | カテゴリ（`food` / `drink` / `snack`） |
 | `rank` | integer | 売上ランキング（1〜5） |
 | `aura_level` | integer | オーラ強度（1〜5。rank 1 → aura_level 5） |
-| `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
+| `bounding_box` | object | 商品正面ラベルの位置座標（画像全体を1×1とした相対座標。はみ出し時は -1.5〜2.5） |
 
 **aura_level の計算式**
 
@@ -301,7 +301,7 @@ Content-Type: multipart/form-data
 | `rank` | integer | 急上昇ランキング（1〜5。増加率が高いほど上位） |
 | `growth_rate` | number \| null | 前週比（%）。前週データなし時は `null` |
 | `aura_level` | integer | オーラ強度（1〜5。`rank 1` → `aura_level 5`） |
-| `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
+| `bounding_box` | object | 商品正面ラベルの位置座標（画像全体を1×1とした相対座標。はみ出し時は -1.5〜2.5） |
 
 **aura_level の計算式**
 
@@ -378,7 +378,7 @@ Content-Type: multipart/form-data
 | `category` | string | カテゴリ（`food` / `drink` / `snack`） |
 | `rank` | integer | 掘り出し物ランキング（1〜5。売上が少ないほど上位） |
 | `aura_level` | integer | オーラ強度（1〜5。`rank 1` → `aura_level 5`） |
-| `bounding_box` | object | 商品の位置座標（画像全体を1×1とした相対座標） |
+| `bounding_box` | object | 商品正面ラベルの位置座標（画像全体を1×1とした相対座標。はみ出し時は -1.5〜2.5） |
 
 **aura_level の計算式**
 

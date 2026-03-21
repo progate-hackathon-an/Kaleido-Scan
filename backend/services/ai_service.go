@@ -10,7 +10,7 @@ type AIItem struct {
 	BoundingBox BoundingBox
 }
 
-// BoundingBox は画像全体を1×1とした相対座標（0.0〜1.0）を表す。
+// BoundingBox は商品正面ラベルの範囲を画像全体を1×1とした相対座標（0.0〜1.0）で表す。
 type BoundingBox struct {
 	XMin float64 `json:"x_min"`
 	YMin float64 `json:"y_min"`
