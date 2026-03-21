@@ -1,10 +1,10 @@
-import * as cdk from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
-import * as apigwv2 from 'aws-cdk-lib/aws-apigatewayv2';
-import * as integrations from 'aws-cdk-lib/aws-apigatewayv2-integrations';
-import * as iam from 'aws-cdk-lib/aws-iam';
-import { Construct } from 'constructs';
+import * as cdk from "aws-cdk-lib";
+import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as apigwv2 from "aws-cdk-lib/aws-apigatewayv2";
+import * as integrations from "aws-cdk-lib/aws-apigatewayv2-integrations";
+import * as iam from "aws-cdk-lib/aws-iam";
+import { Construct } from "constructs";
 
 interface LambdaStackProps extends cdk.StackProps {
   vpc: ec2.Vpc;
@@ -17,11 +17,11 @@ export class LambdaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: LambdaStackProps) {
     super(scope, id, props);
 
-    const fn = new lambda.Function(this, 'KaleidoFunction', {
+    const fn = new lambda.Function(this, "KaleidoFunction", {
       runtime: lambda.Runtime.PROVIDED_AL2023,
       architecture: lambda.Architecture.ARM_64,
-      handler: 'bootstrap',
-      code: lambda.Code.fromAsset('../backend/handler.zip'),
+      handler: "bootstrap",
+      code: lambda.Code.fromAsset("../backend/handler.zip"),
       memorySize: 512,
       timeout: cdk.Duration.seconds(30),
       vpc: props.vpc,
@@ -29,46 +29,59 @@ export class LambdaStack extends cdk.Stack {
       securityGroups: [props.lambdaSG],
       environment: {
         DB_HOST: props.dbEndpoint,
-        DB_PORT: '5432',
-        DB_USER: 'postgres',
-        DB_NAME: 'kaleido_scan',
-        DB_SSL_MODE: 'require',
+        DB_PORT: "5432",
+        DB_USER: "postgres",
+        DB_NAME: "kaleido_scan",
+        DB_SSL_MODE: "require",
         DB_SECRET_ARN: props.dbSecretArn,
-        AI_PROVIDER: 'bedrock',
-        BEDROCK_MODEL_ID: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
-        FRONTEND_URL: '*',
-        SEED_ON_STARTUP: 'true',
+        AI_PROVIDER: "bedrock",
+        BEDROCK_MODEL_ID: "us.amazon.nova-pro-v1:0",
+        FRONTEND_URL: "*",
+        SEED_ON_STARTUP: "true",
       },
     });
 
-    fn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['secretsmanager:GetSecretValue'],
-      resources: [props.dbSecretArn],
-    }));
+    fn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["secretsmanager:GetSecretValue"],
+        resources: [props.dbSecretArn],
+      }),
+    );
 
-    fn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['bedrock:InvokeModel', 'bedrock:InvokeModelWithResponseStream'],
-      resources: ['*'],
-    }));
+    fn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          "bedrock:InvokeModel",
+          "bedrock:InvokeModelWithResponseStream",
+        ],
+        resources: ["*"],
+      }),
+    );
 
-    fn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['aws-marketplace:ViewSubscriptions', 'aws-marketplace:Subscribe', 'aws-marketplace:Unsubscribe'],
-      resources: ['*'],
-    }));
-
-    const api = new apigwv2.HttpApi(this, 'KaleidoApi', {
+    const api = new apigwv2.HttpApi(this, "KaleidoApi", {
       corsPreflight: {
-        allowOrigins: ['*'],
+        allowOrigins: ["*"],
         allowMethods: [apigwv2.CorsHttpMethod.ANY],
-        allowHeaders: ['*'],
+        allowHeaders: ["*"],
       },
     });
 
-    const integration = new integrations.HttpLambdaIntegration('LambdaIntegration', fn);
+    const integration = new integrations.HttpLambdaIntegration(
+      "LambdaIntegration",
+      fn,
+    );
 
-    api.addRoutes({ path: '/{proxy+}', methods: [apigwv2.HttpMethod.ANY], integration });
-    api.addRoutes({ path: '/', methods: [apigwv2.HttpMethod.ANY], integration });
+    api.addRoutes({
+      path: "/{proxy+}",
+      methods: [apigwv2.HttpMethod.ANY],
+      integration,
+    });
+    api.addRoutes({
+      path: "/",
+      methods: [apigwv2.HttpMethod.ANY],
+      integration,
+    });
 
-    new cdk.CfnOutput(this, 'ApiUrl', { value: api.url! });
+    new cdk.CfnOutput(this, "ApiUrl", { value: api.url! });
   }
 }

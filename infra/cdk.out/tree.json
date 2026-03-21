@@ -1,1 +1,1346 @@
-{"version":"tree-0.1","tree":{"id":"App","path":"","constructInfo":{"fqn":"aws-cdk-lib.App","version":"2.244.0"},"children":{"KaleidoNetworkStack":{"id":"KaleidoNetworkStack","path":"KaleidoNetworkStack","constructInfo":{"fqn":"aws-cdk-lib.Stack","version":"2.244.0"},"children":{"KaleidoVpc":{"id":"KaleidoVpc","path":"KaleidoNetworkStack/KaleidoVpc","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.Vpc","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoNetworkStack/KaleidoVpc/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnVPC","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::VPC","aws:cdk:cloudformation:props":{"cidrBlock":"10.0.0.0/16","enableDnsHostnames":true,"enableDnsSupport":true,"instanceTenancy":"default","tags":[{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc"}]}}},"publicSubnet1":{"id":"publicSubnet1","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.PublicSubnet","version":"2.244.0"},"children":{"Subnet":{"id":"Subnet","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1/Subnet","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSubnet","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::Subnet","aws:cdk:cloudformation:props":{"availabilityZone":"us-east-1a","cidrBlock":"10.0.0.0/24","mapPublicIpOnLaunch":true,"tags":[{"key":"aws-cdk:subnet-name","value":"public"},{"key":"aws-cdk:subnet-type","value":"Public"},{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1"}],"vpcId":{"Ref":"KaleidoVpc8D76B8DB"}}}},"Acl":{"id":"Acl","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1/Acl","constructInfo":{"fqn":"aws-cdk-lib.Resource","version":"2.244.0"}},"RouteTable":{"id":"RouteTable","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1/RouteTable","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnRouteTable","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::RouteTable","aws:cdk:cloudformation:props":{"tags":[{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1"}],"vpcId":{"Ref":"KaleidoVpc8D76B8DB"}}}},"RouteTableAssociation":{"id":"RouteTableAssociation","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1/RouteTableAssociation","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::SubnetRouteTableAssociation","aws:cdk:cloudformation:props":{"routeTableId":{"Ref":"KaleidoVpcpublicSubnet1RouteTable70F6D3E7"},"subnetId":{"Ref":"KaleidoVpcpublicSubnet1Subnet16FE972A"}}}},"DefaultRoute":{"id":"DefaultRoute","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1/DefaultRoute","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnRoute","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::Route","aws:cdk:cloudformation:props":{"destinationCidrBlock":"0.0.0.0/0","gatewayId":{"Ref":"KaleidoVpcIGW42CECBEE"},"routeTableId":{"Ref":"KaleidoVpcpublicSubnet1RouteTable70F6D3E7"}}}},"EIP":{"id":"EIP","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1/EIP","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnEIP","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::EIP","aws:cdk:cloudformation:props":{"domain":"vpc","tags":[{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1"}]}}},"NATGateway":{"id":"NATGateway","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1/NATGateway","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnNatGateway","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::NatGateway","aws:cdk:cloudformation:props":{"allocationId":{"Fn::GetAtt":["KaleidoVpcpublicSubnet1EIP9665DD52","AllocationId"]},"subnetId":{"Ref":"KaleidoVpcpublicSubnet1Subnet16FE972A"},"tags":[{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc/publicSubnet1"}]}}}}},"publicSubnet2":{"id":"publicSubnet2","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet2","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.PublicSubnet","version":"2.244.0"},"children":{"Subnet":{"id":"Subnet","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet2/Subnet","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSubnet","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::Subnet","aws:cdk:cloudformation:props":{"availabilityZone":"us-east-1b","cidrBlock":"10.0.1.0/24","mapPublicIpOnLaunch":true,"tags":[{"key":"aws-cdk:subnet-name","value":"public"},{"key":"aws-cdk:subnet-type","value":"Public"},{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc/publicSubnet2"}],"vpcId":{"Ref":"KaleidoVpc8D76B8DB"}}}},"Acl":{"id":"Acl","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet2/Acl","constructInfo":{"fqn":"aws-cdk-lib.Resource","version":"2.244.0"}},"RouteTable":{"id":"RouteTable","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet2/RouteTable","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnRouteTable","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::RouteTable","aws:cdk:cloudformation:props":{"tags":[{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc/publicSubnet2"}],"vpcId":{"Ref":"KaleidoVpc8D76B8DB"}}}},"RouteTableAssociation":{"id":"RouteTableAssociation","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet2/RouteTableAssociation","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::SubnetRouteTableAssociation","aws:cdk:cloudformation:props":{"routeTableId":{"Ref":"KaleidoVpcpublicSubnet2RouteTable59C68CE4"},"subnetId":{"Ref":"KaleidoVpcpublicSubnet2Subnet4D747D36"}}}},"DefaultRoute":{"id":"DefaultRoute","path":"KaleidoNetworkStack/KaleidoVpc/publicSubnet2/DefaultRoute","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnRoute","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::Route","aws:cdk:cloudformation:props":{"destinationCidrBlock":"0.0.0.0/0","gatewayId":{"Ref":"KaleidoVpcIGW42CECBEE"},"routeTableId":{"Ref":"KaleidoVpcpublicSubnet2RouteTable59C68CE4"}}}}}},"privateSubnet1":{"id":"privateSubnet1","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet1","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.PrivateSubnet","version":"2.244.0"},"children":{"Subnet":{"id":"Subnet","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet1/Subnet","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSubnet","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::Subnet","aws:cdk:cloudformation:props":{"availabilityZone":"us-east-1a","cidrBlock":"10.0.2.0/24","mapPublicIpOnLaunch":false,"tags":[{"key":"aws-cdk:subnet-name","value":"private"},{"key":"aws-cdk:subnet-type","value":"Private"},{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc/privateSubnet1"}],"vpcId":{"Ref":"KaleidoVpc8D76B8DB"}}}},"Acl":{"id":"Acl","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet1/Acl","constructInfo":{"fqn":"aws-cdk-lib.Resource","version":"2.244.0"}},"RouteTable":{"id":"RouteTable","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet1/RouteTable","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnRouteTable","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::RouteTable","aws:cdk:cloudformation:props":{"tags":[{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc/privateSubnet1"}],"vpcId":{"Ref":"KaleidoVpc8D76B8DB"}}}},"RouteTableAssociation":{"id":"RouteTableAssociation","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet1/RouteTableAssociation","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::SubnetRouteTableAssociation","aws:cdk:cloudformation:props":{"routeTableId":{"Ref":"KaleidoVpcprivateSubnet1RouteTable4EA6C235"},"subnetId":{"Ref":"KaleidoVpcprivateSubnet1SubnetBDD5F1C0"}}}},"DefaultRoute":{"id":"DefaultRoute","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet1/DefaultRoute","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnRoute","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::Route","aws:cdk:cloudformation:props":{"destinationCidrBlock":"0.0.0.0/0","natGatewayId":{"Ref":"KaleidoVpcpublicSubnet1NATGateway00F29DE5"},"routeTableId":{"Ref":"KaleidoVpcprivateSubnet1RouteTable4EA6C235"}}}}}},"privateSubnet2":{"id":"privateSubnet2","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet2","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.PrivateSubnet","version":"2.244.0"},"children":{"Subnet":{"id":"Subnet","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet2/Subnet","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSubnet","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::Subnet","aws:cdk:cloudformation:props":{"availabilityZone":"us-east-1b","cidrBlock":"10.0.3.0/24","mapPublicIpOnLaunch":false,"tags":[{"key":"aws-cdk:subnet-name","value":"private"},{"key":"aws-cdk:subnet-type","value":"Private"},{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc/privateSubnet2"}],"vpcId":{"Ref":"KaleidoVpc8D76B8DB"}}}},"Acl":{"id":"Acl","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet2/Acl","constructInfo":{"fqn":"aws-cdk-lib.Resource","version":"2.244.0"}},"RouteTable":{"id":"RouteTable","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet2/RouteTable","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnRouteTable","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::RouteTable","aws:cdk:cloudformation:props":{"tags":[{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc/privateSubnet2"}],"vpcId":{"Ref":"KaleidoVpc8D76B8DB"}}}},"RouteTableAssociation":{"id":"RouteTableAssociation","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet2/RouteTableAssociation","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::SubnetRouteTableAssociation","aws:cdk:cloudformation:props":{"routeTableId":{"Ref":"KaleidoVpcprivateSubnet2RouteTableAC491EF7"},"subnetId":{"Ref":"KaleidoVpcprivateSubnet2Subnet3D56289C"}}}},"DefaultRoute":{"id":"DefaultRoute","path":"KaleidoNetworkStack/KaleidoVpc/privateSubnet2/DefaultRoute","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnRoute","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::Route","aws:cdk:cloudformation:props":{"destinationCidrBlock":"0.0.0.0/0","natGatewayId":{"Ref":"KaleidoVpcpublicSubnet1NATGateway00F29DE5"},"routeTableId":{"Ref":"KaleidoVpcprivateSubnet2RouteTableAC491EF7"}}}}}},"IGW":{"id":"IGW","path":"KaleidoNetworkStack/KaleidoVpc/IGW","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnInternetGateway","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::InternetGateway","aws:cdk:cloudformation:props":{"tags":[{"key":"Name","value":"KaleidoNetworkStack/KaleidoVpc"}]}}},"VPCGW":{"id":"VPCGW","path":"KaleidoNetworkStack/KaleidoVpc/VPCGW","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnVPCGatewayAttachment","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::VPCGatewayAttachment","aws:cdk:cloudformation:props":{"internetGatewayId":{"Ref":"KaleidoVpcIGW42CECBEE"},"vpcId":{"Ref":"KaleidoVpc8D76B8DB"}}}}}},"LambdaSG":{"id":"LambdaSG","path":"KaleidoNetworkStack/LambdaSG","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.SecurityGroup","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoNetworkStack/LambdaSG/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSecurityGroup","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::SecurityGroup","aws:cdk:cloudformation:props":{"groupDescription":"Security group for Lambda function","securityGroupEgress":[{"cidrIp":"0.0.0.0/0","description":"Allow all outbound traffic by default","ipProtocol":"-1"}],"vpcId":{"Ref":"KaleidoVpc8D76B8DB"}}}}}},"CDKMetadata":{"id":"CDKMetadata","path":"KaleidoNetworkStack/CDKMetadata","constructInfo":{"fqn":"constructs.Construct","version":"10.5.1"},"children":{"Default":{"id":"Default","path":"KaleidoNetworkStack/CDKMetadata/Default","constructInfo":{"fqn":"aws-cdk-lib.CfnResource","version":"2.244.0"}}}},"Exports":{"id":"Exports","path":"KaleidoNetworkStack/Exports","constructInfo":{"fqn":"constructs.Construct","version":"10.5.1"},"children":{"Output{\"Ref\":\"KaleidoVpc8D76B8DB\"}":{"id":"Output{\"Ref\":\"KaleidoVpc8D76B8DB\"}","path":"KaleidoNetworkStack/Exports/Output{\"Ref\":\"KaleidoVpc8D76B8DB\"}","constructInfo":{"fqn":"aws-cdk-lib.CfnOutput","version":"2.244.0"}},"Output{\"Fn::GetAtt\":[\"LambdaSG9DBFCFB7\",\"GroupId\"]}":{"id":"Output{\"Fn::GetAtt\":[\"LambdaSG9DBFCFB7\",\"GroupId\"]}","path":"KaleidoNetworkStack/Exports/Output{\"Fn::GetAtt\":[\"LambdaSG9DBFCFB7\",\"GroupId\"]}","constructInfo":{"fqn":"aws-cdk-lib.CfnOutput","version":"2.244.0"}},"Output{\"Ref\":\"KaleidoVpcprivateSubnet1SubnetBDD5F1C0\"}":{"id":"Output{\"Ref\":\"KaleidoVpcprivateSubnet1SubnetBDD5F1C0\"}","path":"KaleidoNetworkStack/Exports/Output{\"Ref\":\"KaleidoVpcprivateSubnet1SubnetBDD5F1C0\"}","constructInfo":{"fqn":"aws-cdk-lib.CfnOutput","version":"2.244.0"}},"Output{\"Ref\":\"KaleidoVpcprivateSubnet2Subnet3D56289C\"}":{"id":"Output{\"Ref\":\"KaleidoVpcprivateSubnet2Subnet3D56289C\"}","path":"KaleidoNetworkStack/Exports/Output{\"Ref\":\"KaleidoVpcprivateSubnet2Subnet3D56289C\"}","constructInfo":{"fqn":"aws-cdk-lib.CfnOutput","version":"2.244.0"}}}},"BootstrapVersion":{"id":"BootstrapVersion","path":"KaleidoNetworkStack/BootstrapVersion","constructInfo":{"fqn":"aws-cdk-lib.CfnParameter","version":"2.244.0"}},"CheckBootstrapVersion":{"id":"CheckBootstrapVersion","path":"KaleidoNetworkStack/CheckBootstrapVersion","constructInfo":{"fqn":"aws-cdk-lib.CfnRule","version":"2.244.0"}}}},"KaleidoDatabaseStack":{"id":"KaleidoDatabaseStack","path":"KaleidoDatabaseStack","constructInfo":{"fqn":"aws-cdk-lib.Stack","version":"2.244.0"},"children":{"DatabaseSG":{"id":"DatabaseSG","path":"KaleidoDatabaseStack/DatabaseSG","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.SecurityGroup","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoDatabaseStack/DatabaseSG/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSecurityGroup","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::SecurityGroup","aws:cdk:cloudformation:props":{"groupDescription":"Security group for Aurora cluster","securityGroupEgress":[{"cidrIp":"0.0.0.0/0","description":"Allow all outbound traffic by default","ipProtocol":"-1"}],"vpcId":{"Fn::ImportValue":"KaleidoNetworkStack:ExportsOutputRefKaleidoVpc8D76B8DBD34AC5EA"}}}},"from KaleidoNetworkStackLambdaSG824D5007:5432":{"id":"from KaleidoNetworkStackLambdaSG824D5007:5432","path":"KaleidoDatabaseStack/DatabaseSG/from KaleidoNetworkStackLambdaSG824D5007:5432","constructInfo":{"fqn":"aws-cdk-lib.aws_ec2.CfnSecurityGroupIngress","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::EC2::SecurityGroupIngress","aws:cdk:cloudformation:props":{"description":"Allow Lambda to access Aurora","fromPort":5432,"groupId":{"Fn::GetAtt":["DatabaseSG2A23C222","GroupId"]},"ipProtocol":"tcp","sourceSecurityGroupId":{"Fn::ImportValue":"KaleidoNetworkStack:ExportsOutputFnGetAttLambdaSG9DBFCFB7GroupId1E50A8F5"},"toPort":5432}}}}},"KaleidoCluster":{"id":"KaleidoCluster","path":"KaleidoDatabaseStack/KaleidoCluster","constructInfo":{"fqn":"aws-cdk-lib.aws_rds.DatabaseCluster","version":"2.244.0"},"children":{"Subnets":{"id":"Subnets","path":"KaleidoDatabaseStack/KaleidoCluster/Subnets","constructInfo":{"fqn":"aws-cdk-lib.aws_rds.SubnetGroup","version":"2.244.0"},"children":{"Default":{"id":"Default","path":"KaleidoDatabaseStack/KaleidoCluster/Subnets/Default","constructInfo":{"fqn":"aws-cdk-lib.aws_rds.CfnDBSubnetGroup","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::RDS::DBSubnetGroup","aws:cdk:cloudformation:props":{"dbSubnetGroupDescription":"Subnets for KaleidoCluster database","subnetIds":[{"Fn::ImportValue":"KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet1SubnetBDD5F1C0F64C41EF"},{"Fn::ImportValue":"KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet2Subnet3D56289CFD17B195"}]}}}}},"AuroraPostgreSqlDatabaseClusterEngineDefaultParameterGroup":{"id":"AuroraPostgreSqlDatabaseClusterEngineDefaultParameterGroup","path":"KaleidoDatabaseStack/KaleidoCluster/AuroraPostgreSqlDatabaseClusterEngineDefaultParameterGroup","constructInfo":{"fqn":"aws-cdk-lib.Resource","version":"2.244.0"}},"Secret":{"id":"Secret","path":"KaleidoDatabaseStack/KaleidoCluster/Secret","constructInfo":{"fqn":"aws-cdk-lib.aws_rds.DatabaseSecret","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoDatabaseStack/KaleidoCluster/Secret/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_secretsmanager.CfnSecret","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::SecretsManager::Secret","aws:cdk:cloudformation:props":{"description":{"Fn::Join":["",["Generated by the CDK for stack: ",{"Ref":"AWS::StackName"}]]},"generateSecretString":{"passwordLength":30,"secretStringTemplate":"{\"username\":\"postgres\"}","generateStringKey":"password","excludeCharacters":" %+~`#$&*()|[]{}:;<>?!'/@\"\\"}}}},"Attachment":{"id":"Attachment","path":"KaleidoDatabaseStack/KaleidoCluster/Secret/Attachment","constructInfo":{"fqn":"aws-cdk-lib.aws_secretsmanager.SecretTargetAttachment","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoDatabaseStack/KaleidoCluster/Secret/Attachment/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_secretsmanager.CfnSecretTargetAttachment","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::SecretsManager::SecretTargetAttachment","aws:cdk:cloudformation:props":{"secretId":{"Ref":"KaleidoDatabaseStackKaleidoClusterSecretF5E00A123fdaad7efa858a3daf9490cf0a702aeb"},"targetId":{"Ref":"KaleidoCluster6A5B15C4"},"targetType":"AWS::RDS::DBCluster"}}}}}}},"Resource":{"id":"Resource","path":"KaleidoDatabaseStack/KaleidoCluster/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_rds.CfnDBCluster","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::RDS::DBCluster","aws:cdk:cloudformation:props":{"copyTagsToSnapshot":true,"databaseName":"kaleido_scan","dbClusterParameterGroupName":"default.aurora-postgresql16","dbSubnetGroupName":{"Ref":"KaleidoClusterSubnetsD90A5C95"},"engine":"aurora-postgresql","engineVersion":"16.4","masterUsername":"postgres","masterUserPassword":{"Fn::Join":["",["{{resolve:secretsmanager:",{"Ref":"KaleidoDatabaseStackKaleidoClusterSecretF5E00A123fdaad7efa858a3daf9490cf0a702aeb"},":SecretString:password::}}"]]},"port":5432,"serverlessV2ScalingConfiguration":{"minCapacity":0.5,"maxCapacity":4},"vpcSecurityGroupIds":[{"Fn::GetAtt":["DatabaseSG2A23C222","GroupId"]}]}}},"writer":{"id":"writer","path":"KaleidoDatabaseStack/KaleidoCluster/writer","constructInfo":{"fqn":"aws-cdk-lib.Resource","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoDatabaseStack/KaleidoCluster/writer/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_rds.CfnDBInstance","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::RDS::DBInstance","aws:cdk:cloudformation:props":{"dbClusterIdentifier":{"Ref":"KaleidoCluster6A5B15C4"},"dbInstanceClass":"db.serverless","engine":"aurora-postgresql","promotionTier":0,"publiclyAccessible":false}}}}}}},"DbEndpoint":{"id":"DbEndpoint","path":"KaleidoDatabaseStack/DbEndpoint","constructInfo":{"fqn":"aws-cdk-lib.CfnOutput","version":"2.244.0"}},"DbSecretArn":{"id":"DbSecretArn","path":"KaleidoDatabaseStack/DbSecretArn","constructInfo":{"fqn":"aws-cdk-lib.CfnOutput","version":"2.244.0"}},"CDKMetadata":{"id":"CDKMetadata","path":"KaleidoDatabaseStack/CDKMetadata","constructInfo":{"fqn":"constructs.Construct","version":"10.5.1"},"children":{"Default":{"id":"Default","path":"KaleidoDatabaseStack/CDKMetadata/Default","constructInfo":{"fqn":"aws-cdk-lib.CfnResource","version":"2.244.0"}}}},"Exports":{"id":"Exports","path":"KaleidoDatabaseStack/Exports","constructInfo":{"fqn":"constructs.Construct","version":"10.5.1"},"children":{"Output{\"Ref\":\"KaleidoClusterSecretAttachmentFFB020B2\"}":{"id":"Output{\"Ref\":\"KaleidoClusterSecretAttachmentFFB020B2\"}","path":"KaleidoDatabaseStack/Exports/Output{\"Ref\":\"KaleidoClusterSecretAttachmentFFB020B2\"}","constructInfo":{"fqn":"aws-cdk-lib.CfnOutput","version":"2.244.0"}},"Output{\"Fn::GetAtt\":[\"KaleidoCluster6A5B15C4\",\"Endpoint.Address\"]}":{"id":"Output{\"Fn::GetAtt\":[\"KaleidoCluster6A5B15C4\",\"Endpoint.Address\"]}","path":"KaleidoDatabaseStack/Exports/Output{\"Fn::GetAtt\":[\"KaleidoCluster6A5B15C4\",\"Endpoint.Address\"]}","constructInfo":{"fqn":"aws-cdk-lib.CfnOutput","version":"2.244.0"}}}},"BootstrapVersion":{"id":"BootstrapVersion","path":"KaleidoDatabaseStack/BootstrapVersion","constructInfo":{"fqn":"aws-cdk-lib.CfnParameter","version":"2.244.0"}},"CheckBootstrapVersion":{"id":"CheckBootstrapVersion","path":"KaleidoDatabaseStack/CheckBootstrapVersion","constructInfo":{"fqn":"aws-cdk-lib.CfnRule","version":"2.244.0"}}}},"KaleidoLambdaStack":{"id":"KaleidoLambdaStack","path":"KaleidoLambdaStack","constructInfo":{"fqn":"aws-cdk-lib.Stack","version":"2.244.0"},"children":{"KaleidoFunction":{"id":"KaleidoFunction","path":"KaleidoLambdaStack/KaleidoFunction","constructInfo":{"fqn":"aws-cdk-lib.aws_lambda.Function","version":"2.244.0"},"children":{"ServiceRole":{"id":"ServiceRole","path":"KaleidoLambdaStack/KaleidoFunction/ServiceRole","constructInfo":{"fqn":"aws-cdk-lib.aws_iam.Role","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoLambdaStack/KaleidoFunction/ServiceRole/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_iam.CfnRole","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::IAM::Role","aws:cdk:cloudformation:props":{"assumeRolePolicyDocument":{"Statement":[{"Action":"sts:AssumeRole","Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"}}],"Version":"2012-10-17"},"managedPolicyArns":[{"Fn::Join":["",["arn:",{"Ref":"AWS::Partition"},":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]]},{"Fn::Join":["",["arn:",{"Ref":"AWS::Partition"},":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"]]}]}}},"DefaultPolicy":{"id":"DefaultPolicy","path":"KaleidoLambdaStack/KaleidoFunction/ServiceRole/DefaultPolicy","constructInfo":{"fqn":"aws-cdk-lib.aws_iam.Policy","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoLambdaStack/KaleidoFunction/ServiceRole/DefaultPolicy/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_iam.CfnPolicy","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::IAM::Policy","aws:cdk:cloudformation:props":{"policyDocument":{"Statement":[{"Action":"secretsmanager:GetSecretValue","Effect":"Allow","Resource":{"Fn::ImportValue":"KaleidoDatabaseStack:ExportsOutputRefKaleidoClusterSecretAttachmentFFB020B226E63EA8"}},{"Action":["aws-marketplace:Subscribe","aws-marketplace:Unsubscribe","aws-marketplace:ViewSubscriptions","bedrock:InvokeModel","bedrock:InvokeModelWithResponseStream"],"Effect":"Allow","Resource":"*"}],"Version":"2012-10-17"},"policyName":"KaleidoFunctionServiceRoleDefaultPolicy65DEC5AC","roles":[{"Ref":"KaleidoFunctionServiceRoleBEC632C1"}]}}}}}}},"Code":{"id":"Code","path":"KaleidoLambdaStack/KaleidoFunction/Code","constructInfo":{"fqn":"aws-cdk-lib.aws_s3_assets.Asset","version":"2.244.0"},"children":{"Stage":{"id":"Stage","path":"KaleidoLambdaStack/KaleidoFunction/Code/Stage","constructInfo":{"fqn":"aws-cdk-lib.AssetStaging","version":"2.244.0"}},"AssetBucket":{"id":"AssetBucket","path":"KaleidoLambdaStack/KaleidoFunction/Code/AssetBucket","constructInfo":{"fqn":"aws-cdk-lib.aws_s3.BucketBase","version":"2.244.0"}}}},"Resource":{"id":"Resource","path":"KaleidoLambdaStack/KaleidoFunction/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_lambda.CfnFunction","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::Lambda::Function","aws:cdk:cloudformation:props":{"architectures":["arm64"],"code":{"s3Bucket":"cdk-hnb659fds-assets-097395515323-us-east-1","s3Key":"1d5a8d2d91e56fa96b1e561da2097168fc312d2bc0937d031a7e84964634aa0b.zip"},"environment":{"variables":{"DB_HOST":{"Fn::ImportValue":"KaleidoDatabaseStack:ExportsOutputFnGetAttKaleidoCluster6A5B15C4EndpointAddress4410A3D8"},"DB_PORT":"5432","DB_USER":"postgres","DB_NAME":"kaleido_scan","DB_SSL_MODE":"require","DB_SECRET_ARN":{"Fn::ImportValue":"KaleidoDatabaseStack:ExportsOutputRefKaleidoClusterSecretAttachmentFFB020B226E63EA8"},"AI_PROVIDER":"bedrock","BEDROCK_MODEL_ID":"us.anthropic.claude-sonnet-4-5-20250929-v1:0","FRONTEND_URL":"*","SEED_ON_STARTUP":"true"}},"handler":"bootstrap","memorySize":512,"role":{"Fn::GetAtt":["KaleidoFunctionServiceRoleBEC632C1","Arn"]},"runtime":"provided.al2023","timeout":30,"vpcConfig":{"subnetIds":[{"Fn::ImportValue":"KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet1SubnetBDD5F1C0F64C41EF"},{"Fn::ImportValue":"KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet2Subnet3D56289CFD17B195"}],"securityGroupIds":[{"Fn::ImportValue":"KaleidoNetworkStack:ExportsOutputFnGetAttLambdaSG9DBFCFB7GroupId1E50A8F5"}]}}}}}},"KaleidoApi":{"id":"KaleidoApi","path":"KaleidoLambdaStack/KaleidoApi","constructInfo":{"fqn":"aws-cdk-lib.aws_apigatewayv2.HttpApi","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoLambdaStack/KaleidoApi/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_apigatewayv2.CfnApi","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::ApiGatewayV2::Api","aws:cdk:cloudformation:props":{"corsConfiguration":{"allowHeaders":["*"],"allowMethods":["*"],"allowOrigins":["*"]},"name":"KaleidoApi","protocolType":"HTTP"}}},"DefaultStage":{"id":"DefaultStage","path":"KaleidoLambdaStack/KaleidoApi/DefaultStage","constructInfo":{"fqn":"aws-cdk-lib.aws_apigatewayv2.HttpStage","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoLambdaStack/KaleidoApi/DefaultStage/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_apigatewayv2.CfnStage","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::ApiGatewayV2::Stage","aws:cdk:cloudformation:props":{"apiId":{"Ref":"KaleidoApi14AC32C9"},"autoDeploy":true,"stageName":"$default"}}}}},"ANY--{proxy+}":{"id":"ANY--{proxy+}","path":"KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}","constructInfo":{"fqn":"aws-cdk-lib.aws_apigatewayv2.HttpRoute","version":"2.244.0"},"children":{"LambdaIntegration":{"id":"LambdaIntegration","path":"KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/LambdaIntegration","constructInfo":{"fqn":"aws-cdk-lib.aws_apigatewayv2.HttpIntegration","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/LambdaIntegration/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_apigatewayv2.CfnIntegration","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::ApiGatewayV2::Integration","aws:cdk:cloudformation:props":{"apiId":{"Ref":"KaleidoApi14AC32C9"},"integrationType":"AWS_PROXY","integrationUri":{"Fn::GetAtt":["KaleidoFunction0AD121D6","Arn"]},"payloadFormatVersion":"2.0"}}}}},"LambdaIntegration-Permission":{"id":"LambdaIntegration-Permission","path":"KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/LambdaIntegration-Permission","constructInfo":{"fqn":"aws-cdk-lib.aws_lambda.CfnPermission","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::Lambda::Permission","aws:cdk:cloudformation:props":{"action":"lambda:InvokeFunction","functionName":{"Fn::GetAtt":["KaleidoFunction0AD121D6","Arn"]},"principal":"apigateway.amazonaws.com","sourceArn":{"Fn::Join":["",["arn:aws:execute-api:us-east-1:097395515323:",{"Ref":"KaleidoApi14AC32C9"},"/*/*/{proxy+}"]]}}}},"Resource":{"id":"Resource","path":"KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_apigatewayv2.CfnRoute","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::ApiGatewayV2::Route","aws:cdk:cloudformation:props":{"apiId":{"Ref":"KaleidoApi14AC32C9"},"authorizationType":"NONE","routeKey":"ANY /{proxy+}","target":{"Fn::Join":["",["integrations/",{"Ref":"KaleidoApiANYproxyLambdaIntegrationA75F0DD6"}]]}}}}}},"ANY--":{"id":"ANY--","path":"KaleidoLambdaStack/KaleidoApi/ANY--","constructInfo":{"fqn":"aws-cdk-lib.aws_apigatewayv2.HttpRoute","version":"2.244.0"},"children":{"LambdaIntegration-Permission":{"id":"LambdaIntegration-Permission","path":"KaleidoLambdaStack/KaleidoApi/ANY--/LambdaIntegration-Permission","constructInfo":{"fqn":"aws-cdk-lib.aws_lambda.CfnPermission","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::Lambda::Permission","aws:cdk:cloudformation:props":{"action":"lambda:InvokeFunction","functionName":{"Fn::GetAtt":["KaleidoFunction0AD121D6","Arn"]},"principal":"apigateway.amazonaws.com","sourceArn":{"Fn::Join":["",["arn:aws:execute-api:us-east-1:097395515323:",{"Ref":"KaleidoApi14AC32C9"},"/*/*/"]]}}}},"Resource":{"id":"Resource","path":"KaleidoLambdaStack/KaleidoApi/ANY--/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_apigatewayv2.CfnRoute","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::ApiGatewayV2::Route","aws:cdk:cloudformation:props":{"apiId":{"Ref":"KaleidoApi14AC32C9"},"authorizationType":"NONE","routeKey":"ANY /","target":{"Fn::Join":["",["integrations/",{"Ref":"KaleidoApiANYproxyLambdaIntegrationA75F0DD6"}]]}}}}}}}},"ApiUrl":{"id":"ApiUrl","path":"KaleidoLambdaStack/ApiUrl","constructInfo":{"fqn":"aws-cdk-lib.CfnOutput","version":"2.244.0"}},"CDKMetadata":{"id":"CDKMetadata","path":"KaleidoLambdaStack/CDKMetadata","constructInfo":{"fqn":"constructs.Construct","version":"10.5.1"},"children":{"Default":{"id":"Default","path":"KaleidoLambdaStack/CDKMetadata/Default","constructInfo":{"fqn":"aws-cdk-lib.CfnResource","version":"2.244.0"}}}},"BootstrapVersion":{"id":"BootstrapVersion","path":"KaleidoLambdaStack/BootstrapVersion","constructInfo":{"fqn":"aws-cdk-lib.CfnParameter","version":"2.244.0"}},"CheckBootstrapVersion":{"id":"CheckBootstrapVersion","path":"KaleidoLambdaStack/CheckBootstrapVersion","constructInfo":{"fqn":"aws-cdk-lib.CfnRule","version":"2.244.0"}}}},"KaleidoGithubOidc":{"id":"KaleidoGithubOidc","path":"KaleidoGithubOidc","constructInfo":{"fqn":"aws-cdk-lib.Stack","version":"2.244.0"},"children":{"GithubOidc":{"id":"GithubOidc","path":"KaleidoGithubOidc/GithubOidc","constructInfo":{"fqn":"aws-cdk-lib.aws_iam.OpenIdConnectProvider","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoGithubOidc/GithubOidc/Resource","constructInfo":{"fqn":"aws-cdk-lib.CustomResource","version":"2.244.0"},"children":{"Default":{"id":"Default","path":"KaleidoGithubOidc/GithubOidc/Resource/Default","constructInfo":{"fqn":"aws-cdk-lib.CfnResource","version":"2.244.0"}}}}}},"Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider":{"id":"Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider","path":"KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider","constructInfo":{"fqn":"aws-cdk-lib.CustomResourceProviderBase","version":"2.244.0"},"children":{"Staging":{"id":"Staging","path":"KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Staging","constructInfo":{"fqn":"aws-cdk-lib.AssetStaging","version":"2.244.0"}},"Role":{"id":"Role","path":"KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Role","constructInfo":{"fqn":"aws-cdk-lib.CfnResource","version":"2.244.0"}},"Handler":{"id":"Handler","path":"KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Handler","constructInfo":{"fqn":"aws-cdk-lib.CfnResource","version":"2.244.0"}}}},"GithubActionsRole":{"id":"GithubActionsRole","path":"KaleidoGithubOidc/GithubActionsRole","constructInfo":{"fqn":"aws-cdk-lib.aws_iam.Role","version":"2.244.0"},"children":{"Resource":{"id":"Resource","path":"KaleidoGithubOidc/GithubActionsRole/Resource","constructInfo":{"fqn":"aws-cdk-lib.aws_iam.CfnRole","version":"2.244.0"},"attributes":{"aws:cdk:cloudformation:type":"AWS::IAM::Role","aws:cdk:cloudformation:props":{"assumeRolePolicyDocument":{"Statement":[{"Action":"sts:AssumeRoleWithWebIdentity","Condition":{"StringLike":{"token.actions.githubusercontent.com:sub":"repo:progate-hackathon-an/Kaleido-Scan:ref:refs/heads/main"}},"Effect":"Allow","Principal":{"Federated":{"Ref":"GithubOidc86785739"}}}],"Version":"2012-10-17"},"managedPolicyArns":[{"Fn::Join":["",["arn:",{"Ref":"AWS::Partition"},":iam::aws:policy/AdministratorAccess"]]}],"roleName":"github-actions-role"}}}}},"CDKMetadata":{"id":"CDKMetadata","path":"KaleidoGithubOidc/CDKMetadata","constructInfo":{"fqn":"constructs.Construct","version":"10.5.1"},"children":{"Default":{"id":"Default","path":"KaleidoGithubOidc/CDKMetadata/Default","constructInfo":{"fqn":"aws-cdk-lib.CfnResource","version":"2.244.0"}}}},"BootstrapVersion":{"id":"BootstrapVersion","path":"KaleidoGithubOidc/BootstrapVersion","constructInfo":{"fqn":"aws-cdk-lib.CfnParameter","version":"2.244.0"}},"CheckBootstrapVersion":{"id":"CheckBootstrapVersion","path":"KaleidoGithubOidc/CheckBootstrapVersion","constructInfo":{"fqn":"aws-cdk-lib.CfnRule","version":"2.244.0"}}}},"Tree":{"id":"Tree","path":"Tree","constructInfo":{"fqn":"constructs.Construct","version":"10.5.1"}}}}}
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "constructInfo": { "fqn": "aws-cdk-lib.App", "version": "2.244.0" },
+    "children": {
+      "KaleidoNetworkStack": {
+        "id": "KaleidoNetworkStack",
+        "path": "KaleidoNetworkStack",
+        "constructInfo": { "fqn": "aws-cdk-lib.Stack", "version": "2.244.0" },
+        "children": {
+          "KaleidoVpc": {
+            "id": "KaleidoVpc",
+            "path": "KaleidoNetworkStack/KaleidoVpc",
+            "constructInfo": { "fqn": "aws-cdk-lib.aws_ec2.Vpc", "version": "2.244.0" },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "KaleidoNetworkStack/KaleidoVpc/Resource",
+                "constructInfo": { "fqn": "aws-cdk-lib.aws_ec2.CfnVPC", "version": "2.244.0" },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::VPC",
+                  "aws:cdk:cloudformation:props": {
+                    "cidrBlock": "10.0.0.0/16",
+                    "enableDnsHostnames": true,
+                    "enableDnsSupport": true,
+                    "instanceTenancy": "default",
+                    "tags": [{ "key": "Name", "value": "KaleidoNetworkStack/KaleidoVpc" }]
+                  }
+                }
+              },
+              "publicSubnet1": {
+                "id": "publicSubnet1",
+                "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                  "version": "2.244.0"
+                },
+                "children": {
+                  "Subnet": {
+                    "id": "Subnet",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/Subnet",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                      "aws:cdk:cloudformation:props": {
+                        "availabilityZone": "us-east-1a",
+                        "cidrBlock": "10.0.0.0/24",
+                        "mapPublicIpOnLaunch": true,
+                        "tags": [
+                          { "key": "aws-cdk:subnet-name", "value": "public" },
+                          { "key": "aws-cdk:subnet-type", "value": "Public" },
+                          { "key": "Name", "value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1" }
+                        ],
+                        "vpcId": { "Ref": "KaleidoVpc8D76B8DB" }
+                      }
+                    }
+                  },
+                  "Acl": {
+                    "id": "Acl",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/Acl",
+                    "constructInfo": { "fqn": "aws-cdk-lib.Resource", "version": "2.244.0" }
+                  },
+                  "RouteTable": {
+                    "id": "RouteTable",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/RouteTable",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                      "aws:cdk:cloudformation:props": {
+                        "tags": [
+                          { "key": "Name", "value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1" }
+                        ],
+                        "vpcId": { "Ref": "KaleidoVpc8D76B8DB" }
+                      }
+                    }
+                  },
+                  "RouteTableAssociation": {
+                    "id": "RouteTableAssociation",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/RouteTableAssociation",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": { "Ref": "KaleidoVpcpublicSubnet1RouteTable70F6D3E7" },
+                        "subnetId": { "Ref": "KaleidoVpcpublicSubnet1Subnet16FE972A" }
+                      }
+                    }
+                  },
+                  "DefaultRoute": {
+                    "id": "DefaultRoute",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/DefaultRoute",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "gatewayId": { "Ref": "KaleidoVpcIGW42CECBEE" },
+                        "routeTableId": { "Ref": "KaleidoVpcpublicSubnet1RouteTable70F6D3E7" }
+                      }
+                    }
+                  },
+                  "EIP": {
+                    "id": "EIP",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/EIP",
+                    "constructInfo": { "fqn": "aws-cdk-lib.aws_ec2.CfnEIP", "version": "2.244.0" },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
+                      "aws:cdk:cloudformation:props": {
+                        "domain": "vpc",
+                        "tags": [
+                          { "key": "Name", "value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1" }
+                        ]
+                      }
+                    }
+                  },
+                  "NATGateway": {
+                    "id": "NATGateway",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1/NATGateway",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
+                      "aws:cdk:cloudformation:props": {
+                        "allocationId": {
+                          "Fn::GetAtt": ["KaleidoVpcpublicSubnet1EIP9665DD52", "AllocationId"]
+                        },
+                        "subnetId": { "Ref": "KaleidoVpcpublicSubnet1Subnet16FE972A" },
+                        "tags": [
+                          { "key": "Name", "value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet1" }
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "publicSubnet2": {
+                "id": "publicSubnet2",
+                "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                  "version": "2.244.0"
+                },
+                "children": {
+                  "Subnet": {
+                    "id": "Subnet",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2/Subnet",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                      "aws:cdk:cloudformation:props": {
+                        "availabilityZone": "us-east-1b",
+                        "cidrBlock": "10.0.1.0/24",
+                        "mapPublicIpOnLaunch": true,
+                        "tags": [
+                          { "key": "aws-cdk:subnet-name", "value": "public" },
+                          { "key": "aws-cdk:subnet-type", "value": "Public" },
+                          { "key": "Name", "value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2" }
+                        ],
+                        "vpcId": { "Ref": "KaleidoVpc8D76B8DB" }
+                      }
+                    }
+                  },
+                  "Acl": {
+                    "id": "Acl",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2/Acl",
+                    "constructInfo": { "fqn": "aws-cdk-lib.Resource", "version": "2.244.0" }
+                  },
+                  "RouteTable": {
+                    "id": "RouteTable",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2/RouteTable",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                      "aws:cdk:cloudformation:props": {
+                        "tags": [
+                          { "key": "Name", "value": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2" }
+                        ],
+                        "vpcId": { "Ref": "KaleidoVpc8D76B8DB" }
+                      }
+                    }
+                  },
+                  "RouteTableAssociation": {
+                    "id": "RouteTableAssociation",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2/RouteTableAssociation",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": { "Ref": "KaleidoVpcpublicSubnet2RouteTable59C68CE4" },
+                        "subnetId": { "Ref": "KaleidoVpcpublicSubnet2Subnet4D747D36" }
+                      }
+                    }
+                  },
+                  "DefaultRoute": {
+                    "id": "DefaultRoute",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/publicSubnet2/DefaultRoute",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "gatewayId": { "Ref": "KaleidoVpcIGW42CECBEE" },
+                        "routeTableId": { "Ref": "KaleidoVpcpublicSubnet2RouteTable59C68CE4" }
+                      }
+                    }
+                  }
+                }
+              },
+              "privateSubnet1": {
+                "id": "privateSubnet1",
+                "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                  "version": "2.244.0"
+                },
+                "children": {
+                  "Subnet": {
+                    "id": "Subnet",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1/Subnet",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                      "aws:cdk:cloudformation:props": {
+                        "availabilityZone": "us-east-1a",
+                        "cidrBlock": "10.0.2.0/24",
+                        "mapPublicIpOnLaunch": false,
+                        "tags": [
+                          { "key": "aws-cdk:subnet-name", "value": "private" },
+                          { "key": "aws-cdk:subnet-type", "value": "Private" },
+                          {
+                            "key": "Name",
+                            "value": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1"
+                          }
+                        ],
+                        "vpcId": { "Ref": "KaleidoVpc8D76B8DB" }
+                      }
+                    }
+                  },
+                  "Acl": {
+                    "id": "Acl",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1/Acl",
+                    "constructInfo": { "fqn": "aws-cdk-lib.Resource", "version": "2.244.0" }
+                  },
+                  "RouteTable": {
+                    "id": "RouteTable",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1/RouteTable",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                      "aws:cdk:cloudformation:props": {
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1"
+                          }
+                        ],
+                        "vpcId": { "Ref": "KaleidoVpc8D76B8DB" }
+                      }
+                    }
+                  },
+                  "RouteTableAssociation": {
+                    "id": "RouteTableAssociation",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1/RouteTableAssociation",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": { "Ref": "KaleidoVpcprivateSubnet1RouteTable4EA6C235" },
+                        "subnetId": { "Ref": "KaleidoVpcprivateSubnet1SubnetBDD5F1C0" }
+                      }
+                    }
+                  },
+                  "DefaultRoute": {
+                    "id": "DefaultRoute",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet1/DefaultRoute",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "natGatewayId": { "Ref": "KaleidoVpcpublicSubnet1NATGateway00F29DE5" },
+                        "routeTableId": { "Ref": "KaleidoVpcprivateSubnet1RouteTable4EA6C235" }
+                      }
+                    }
+                  }
+                }
+              },
+              "privateSubnet2": {
+                "id": "privateSubnet2",
+                "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                  "version": "2.244.0"
+                },
+                "children": {
+                  "Subnet": {
+                    "id": "Subnet",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2/Subnet",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                      "aws:cdk:cloudformation:props": {
+                        "availabilityZone": "us-east-1b",
+                        "cidrBlock": "10.0.3.0/24",
+                        "mapPublicIpOnLaunch": false,
+                        "tags": [
+                          { "key": "aws-cdk:subnet-name", "value": "private" },
+                          { "key": "aws-cdk:subnet-type", "value": "Private" },
+                          {
+                            "key": "Name",
+                            "value": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2"
+                          }
+                        ],
+                        "vpcId": { "Ref": "KaleidoVpc8D76B8DB" }
+                      }
+                    }
+                  },
+                  "Acl": {
+                    "id": "Acl",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2/Acl",
+                    "constructInfo": { "fqn": "aws-cdk-lib.Resource", "version": "2.244.0" }
+                  },
+                  "RouteTable": {
+                    "id": "RouteTable",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2/RouteTable",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                      "aws:cdk:cloudformation:props": {
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2"
+                          }
+                        ],
+                        "vpcId": { "Ref": "KaleidoVpc8D76B8DB" }
+                      }
+                    }
+                  },
+                  "RouteTableAssociation": {
+                    "id": "RouteTableAssociation",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2/RouteTableAssociation",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": { "Ref": "KaleidoVpcprivateSubnet2RouteTableAC491EF7" },
+                        "subnetId": { "Ref": "KaleidoVpcprivateSubnet2Subnet3D56289C" }
+                      }
+                    }
+                  },
+                  "DefaultRoute": {
+                    "id": "DefaultRoute",
+                    "path": "KaleidoNetworkStack/KaleidoVpc/privateSubnet2/DefaultRoute",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "natGatewayId": { "Ref": "KaleidoVpcpublicSubnet1NATGateway00F29DE5" },
+                        "routeTableId": { "Ref": "KaleidoVpcprivateSubnet2RouteTableAC491EF7" }
+                      }
+                    }
+                  }
+                }
+              },
+              "IGW": {
+                "id": "IGW",
+                "path": "KaleidoNetworkStack/KaleidoVpc/IGW",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnInternetGateway",
+                  "version": "2.244.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::InternetGateway",
+                  "aws:cdk:cloudformation:props": {
+                    "tags": [{ "key": "Name", "value": "KaleidoNetworkStack/KaleidoVpc" }]
+                  }
+                }
+              },
+              "VPCGW": {
+                "id": "VPCGW",
+                "path": "KaleidoNetworkStack/KaleidoVpc/VPCGW",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnVPCGatewayAttachment",
+                  "version": "2.244.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::VPCGatewayAttachment",
+                  "aws:cdk:cloudformation:props": {
+                    "internetGatewayId": { "Ref": "KaleidoVpcIGW42CECBEE" },
+                    "vpcId": { "Ref": "KaleidoVpc8D76B8DB" }
+                  }
+                }
+              }
+            }
+          },
+          "LambdaSG": {
+            "id": "LambdaSG",
+            "path": "KaleidoNetworkStack/LambdaSG",
+            "constructInfo": { "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup", "version": "2.244.0" },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "KaleidoNetworkStack/LambdaSG/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                  "version": "2.244.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "groupDescription": "Security group for Lambda function",
+                    "securityGroupEgress": [
+                      {
+                        "cidrIp": "0.0.0.0/0",
+                        "description": "Allow all outbound traffic by default",
+                        "ipProtocol": "-1"
+                      }
+                    ],
+                    "vpcId": { "Ref": "KaleidoVpc8D76B8DB" }
+                  }
+                }
+              }
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "KaleidoNetworkStack/CDKMetadata",
+            "constructInfo": { "fqn": "constructs.Construct", "version": "10.5.1" },
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "KaleidoNetworkStack/CDKMetadata/Default",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnResource", "version": "2.244.0" }
+              }
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "KaleidoNetworkStack/Exports",
+            "constructInfo": { "fqn": "constructs.Construct", "version": "10.5.1" },
+            "children": {
+              "Output{\"Ref\":\"KaleidoVpc8D76B8DB\"}": {
+                "id": "Output{\"Ref\":\"KaleidoVpc8D76B8DB\"}",
+                "path": "KaleidoNetworkStack/Exports/Output{\"Ref\":\"KaleidoVpc8D76B8DB\"}",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnOutput", "version": "2.244.0" }
+              },
+              "Output{\"Fn::GetAtt\":[\"LambdaSG9DBFCFB7\",\"GroupId\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"LambdaSG9DBFCFB7\",\"GroupId\"]}",
+                "path": "KaleidoNetworkStack/Exports/Output{\"Fn::GetAtt\":[\"LambdaSG9DBFCFB7\",\"GroupId\"]}",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnOutput", "version": "2.244.0" }
+              },
+              "Output{\"Ref\":\"KaleidoVpcprivateSubnet1SubnetBDD5F1C0\"}": {
+                "id": "Output{\"Ref\":\"KaleidoVpcprivateSubnet1SubnetBDD5F1C0\"}",
+                "path": "KaleidoNetworkStack/Exports/Output{\"Ref\":\"KaleidoVpcprivateSubnet1SubnetBDD5F1C0\"}",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnOutput", "version": "2.244.0" }
+              },
+              "Output{\"Ref\":\"KaleidoVpcprivateSubnet2Subnet3D56289C\"}": {
+                "id": "Output{\"Ref\":\"KaleidoVpcprivateSubnet2Subnet3D56289C\"}",
+                "path": "KaleidoNetworkStack/Exports/Output{\"Ref\":\"KaleidoVpcprivateSubnet2Subnet3D56289C\"}",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnOutput", "version": "2.244.0" }
+              }
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "KaleidoNetworkStack/BootstrapVersion",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnParameter", "version": "2.244.0" }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "KaleidoNetworkStack/CheckBootstrapVersion",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnRule", "version": "2.244.0" }
+          }
+        }
+      },
+      "KaleidoDatabaseStack": {
+        "id": "KaleidoDatabaseStack",
+        "path": "KaleidoDatabaseStack",
+        "constructInfo": { "fqn": "aws-cdk-lib.Stack", "version": "2.244.0" },
+        "children": {
+          "DatabaseSG": {
+            "id": "DatabaseSG",
+            "path": "KaleidoDatabaseStack/DatabaseSG",
+            "constructInfo": { "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup", "version": "2.244.0" },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "KaleidoDatabaseStack/DatabaseSG/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                  "version": "2.244.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "groupDescription": "Security group for Aurora cluster",
+                    "securityGroupEgress": [
+                      {
+                        "cidrIp": "0.0.0.0/0",
+                        "description": "Allow all outbound traffic by default",
+                        "ipProtocol": "-1"
+                      }
+                    ],
+                    "vpcId": {
+                      "Fn::ImportValue": "KaleidoNetworkStack:ExportsOutputRefKaleidoVpc8D76B8DBD34AC5EA"
+                    }
+                  }
+                }
+              },
+              "from KaleidoNetworkStackLambdaSG824D5007:5432": {
+                "id": "from KaleidoNetworkStackLambdaSG824D5007:5432",
+                "path": "KaleidoDatabaseStack/DatabaseSG/from KaleidoNetworkStackLambdaSG824D5007:5432",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroupIngress",
+                  "version": "2.244.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupIngress",
+                  "aws:cdk:cloudformation:props": {
+                    "description": "Allow Lambda to access Aurora",
+                    "fromPort": 5432,
+                    "groupId": { "Fn::GetAtt": ["DatabaseSG2A23C222", "GroupId"] },
+                    "ipProtocol": "tcp",
+                    "sourceSecurityGroupId": {
+                      "Fn::ImportValue": "KaleidoNetworkStack:ExportsOutputFnGetAttLambdaSG9DBFCFB7GroupId1E50A8F5"
+                    },
+                    "toPort": 5432
+                  }
+                }
+              }
+            }
+          },
+          "KaleidoCluster": {
+            "id": "KaleidoCluster",
+            "path": "KaleidoDatabaseStack/KaleidoCluster",
+            "constructInfo": { "fqn": "aws-cdk-lib.aws_rds.DatabaseCluster", "version": "2.244.0" },
+            "children": {
+              "Subnets": {
+                "id": "Subnets",
+                "path": "KaleidoDatabaseStack/KaleidoCluster/Subnets",
+                "constructInfo": { "fqn": "aws-cdk-lib.aws_rds.SubnetGroup", "version": "2.244.0" },
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "KaleidoDatabaseStack/KaleidoCluster/Subnets/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_rds.CfnDBSubnetGroup",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::RDS::DBSubnetGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "dbSubnetGroupDescription": "Subnets for KaleidoCluster database",
+                        "subnetIds": [
+                          {
+                            "Fn::ImportValue": "KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet1SubnetBDD5F1C0F64C41EF"
+                          },
+                          {
+                            "Fn::ImportValue": "KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet2Subnet3D56289CFD17B195"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "AuroraPostgreSqlDatabaseClusterEngineDefaultParameterGroup": {
+                "id": "AuroraPostgreSqlDatabaseClusterEngineDefaultParameterGroup",
+                "path": "KaleidoDatabaseStack/KaleidoCluster/AuroraPostgreSqlDatabaseClusterEngineDefaultParameterGroup",
+                "constructInfo": { "fqn": "aws-cdk-lib.Resource", "version": "2.244.0" }
+              },
+              "Secret": {
+                "id": "Secret",
+                "path": "KaleidoDatabaseStack/KaleidoCluster/Secret",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_rds.DatabaseSecret",
+                  "version": "2.244.0"
+                },
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "KaleidoDatabaseStack/KaleidoCluster/Secret/Resource",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_secretsmanager.CfnSecret",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::SecretsManager::Secret",
+                      "aws:cdk:cloudformation:props": {
+                        "description": {
+                          "Fn::Join": [
+                            "",
+                            ["Generated by the CDK for stack: ", { "Ref": "AWS::StackName" }]
+                          ]
+                        },
+                        "generateSecretString": {
+                          "passwordLength": 30,
+                          "secretStringTemplate": "{\"username\":\"postgres\"}",
+                          "generateStringKey": "password",
+                          "excludeCharacters": " %+~`#$&*()|[]{}:;<>?!'/@\"\\"
+                        }
+                      }
+                    }
+                  },
+                  "Attachment": {
+                    "id": "Attachment",
+                    "path": "KaleidoDatabaseStack/KaleidoCluster/Secret/Attachment",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_secretsmanager.SecretTargetAttachment",
+                      "version": "2.244.0"
+                    },
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "KaleidoDatabaseStack/KaleidoCluster/Secret/Attachment/Resource",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_secretsmanager.CfnSecretTargetAttachment",
+                          "version": "2.244.0"
+                        },
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::SecretsManager::SecretTargetAttachment",
+                          "aws:cdk:cloudformation:props": {
+                            "secretId": {
+                              "Ref": "KaleidoDatabaseStackKaleidoClusterSecretF5E00A123fdaad7efa858a3daf9490cf0a702aeb"
+                            },
+                            "targetId": { "Ref": "KaleidoCluster6A5B15C4" },
+                            "targetType": "AWS::RDS::DBCluster"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "KaleidoDatabaseStack/KaleidoCluster/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_rds.CfnDBCluster",
+                  "version": "2.244.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::RDS::DBCluster",
+                  "aws:cdk:cloudformation:props": {
+                    "copyTagsToSnapshot": true,
+                    "databaseName": "kaleido_scan",
+                    "dbClusterParameterGroupName": "default.aurora-postgresql16",
+                    "dbSubnetGroupName": { "Ref": "KaleidoClusterSubnetsD90A5C95" },
+                    "engine": "aurora-postgresql",
+                    "engineVersion": "16.4",
+                    "masterUsername": "postgres",
+                    "masterUserPassword": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "{{resolve:secretsmanager:",
+                          {
+                            "Ref": "KaleidoDatabaseStackKaleidoClusterSecretF5E00A123fdaad7efa858a3daf9490cf0a702aeb"
+                          },
+                          ":SecretString:password::}}"
+                        ]
+                      ]
+                    },
+                    "port": 5432,
+                    "serverlessV2ScalingConfiguration": { "minCapacity": 0.5, "maxCapacity": 4 },
+                    "vpcSecurityGroupIds": [{ "Fn::GetAtt": ["DatabaseSG2A23C222", "GroupId"] }]
+                  }
+                }
+              },
+              "writer": {
+                "id": "writer",
+                "path": "KaleidoDatabaseStack/KaleidoCluster/writer",
+                "constructInfo": { "fqn": "aws-cdk-lib.Resource", "version": "2.244.0" },
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "KaleidoDatabaseStack/KaleidoCluster/writer/Resource",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_rds.CfnDBInstance",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::RDS::DBInstance",
+                      "aws:cdk:cloudformation:props": {
+                        "dbClusterIdentifier": { "Ref": "KaleidoCluster6A5B15C4" },
+                        "dbInstanceClass": "db.serverless",
+                        "engine": "aurora-postgresql",
+                        "promotionTier": 0,
+                        "publiclyAccessible": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "DbEndpoint": {
+            "id": "DbEndpoint",
+            "path": "KaleidoDatabaseStack/DbEndpoint",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnOutput", "version": "2.244.0" }
+          },
+          "DbSecretArn": {
+            "id": "DbSecretArn",
+            "path": "KaleidoDatabaseStack/DbSecretArn",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnOutput", "version": "2.244.0" }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "KaleidoDatabaseStack/CDKMetadata",
+            "constructInfo": { "fqn": "constructs.Construct", "version": "10.5.1" },
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "KaleidoDatabaseStack/CDKMetadata/Default",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnResource", "version": "2.244.0" }
+              }
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "KaleidoDatabaseStack/Exports",
+            "constructInfo": { "fqn": "constructs.Construct", "version": "10.5.1" },
+            "children": {
+              "Output{\"Ref\":\"KaleidoClusterSecretAttachmentFFB020B2\"}": {
+                "id": "Output{\"Ref\":\"KaleidoClusterSecretAttachmentFFB020B2\"}",
+                "path": "KaleidoDatabaseStack/Exports/Output{\"Ref\":\"KaleidoClusterSecretAttachmentFFB020B2\"}",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnOutput", "version": "2.244.0" }
+              },
+              "Output{\"Fn::GetAtt\":[\"KaleidoCluster6A5B15C4\",\"Endpoint.Address\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"KaleidoCluster6A5B15C4\",\"Endpoint.Address\"]}",
+                "path": "KaleidoDatabaseStack/Exports/Output{\"Fn::GetAtt\":[\"KaleidoCluster6A5B15C4\",\"Endpoint.Address\"]}",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnOutput", "version": "2.244.0" }
+              }
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "KaleidoDatabaseStack/BootstrapVersion",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnParameter", "version": "2.244.0" }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "KaleidoDatabaseStack/CheckBootstrapVersion",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnRule", "version": "2.244.0" }
+          }
+        }
+      },
+      "KaleidoLambdaStack": {
+        "id": "KaleidoLambdaStack",
+        "path": "KaleidoLambdaStack",
+        "constructInfo": { "fqn": "aws-cdk-lib.Stack", "version": "2.244.0" },
+        "children": {
+          "KaleidoFunction": {
+            "id": "KaleidoFunction",
+            "path": "KaleidoLambdaStack/KaleidoFunction",
+            "constructInfo": { "fqn": "aws-cdk-lib.aws_lambda.Function", "version": "2.244.0" },
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "KaleidoLambdaStack/KaleidoFunction/ServiceRole",
+                "constructInfo": { "fqn": "aws-cdk-lib.aws_iam.Role", "version": "2.244.0" },
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "KaleidoLambdaStack/KaleidoFunction/ServiceRole/Resource",
+                    "constructInfo": { "fqn": "aws-cdk-lib.aws_iam.CfnRole", "version": "2.244.0" },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": { "Service": "lambda.amazonaws.com" }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                { "Ref": "AWS::Partition" },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                { "Ref": "AWS::Partition" },
+                                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "KaleidoLambdaStack/KaleidoFunction/ServiceRole/DefaultPolicy",
+                    "constructInfo": { "fqn": "aws-cdk-lib.aws_iam.Policy", "version": "2.244.0" },
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "KaleidoLambdaStack/KaleidoFunction/ServiceRole/DefaultPolicy/Resource",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.244.0"
+                        },
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "secretsmanager:GetSecretValue",
+                                  "Effect": "Allow",
+                                  "Resource": {
+                                    "Fn::ImportValue": "KaleidoDatabaseStack:ExportsOutputRefKaleidoClusterSecretAttachmentFFB020B226E63EA8"
+                                  }
+                                },
+                                {
+                                  "Action": [
+                                    "aws-marketplace:Subscribe",
+                                    "aws-marketplace:Unsubscribe",
+                                    "aws-marketplace:ViewSubscriptions",
+                                    "bedrock:InvokeModel",
+                                    "bedrock:InvokeModelWithResponseStream"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "KaleidoFunctionServiceRoleDefaultPolicy65DEC5AC",
+                            "roles": [{ "Ref": "KaleidoFunctionServiceRoleBEC632C1" }]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "KaleidoLambdaStack/KaleidoFunction/Code",
+                "constructInfo": { "fqn": "aws-cdk-lib.aws_s3_assets.Asset", "version": "2.244.0" },
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "KaleidoLambdaStack/KaleidoFunction/Code/Stage",
+                    "constructInfo": { "fqn": "aws-cdk-lib.AssetStaging", "version": "2.244.0" }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "KaleidoLambdaStack/KaleidoFunction/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.244.0"
+                    }
+                  }
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "KaleidoLambdaStack/KaleidoFunction/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.244.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "architectures": ["arm64"],
+                    "code": {
+                      "s3Bucket": "cdk-hnb659fds-assets-097395515323-us-east-1",
+                      "s3Key": "1d5a8d2d91e56fa96b1e561da2097168fc312d2bc0937d031a7e84964634aa0b.zip"
+                    },
+                    "environment": {
+                      "variables": {
+                        "DB_HOST": {
+                          "Fn::ImportValue": "KaleidoDatabaseStack:ExportsOutputFnGetAttKaleidoCluster6A5B15C4EndpointAddress4410A3D8"
+                        },
+                        "DB_PORT": "5432",
+                        "DB_USER": "postgres",
+                        "DB_NAME": "kaleido_scan",
+                        "DB_SSL_MODE": "require",
+                        "DB_SECRET_ARN": {
+                          "Fn::ImportValue": "KaleidoDatabaseStack:ExportsOutputRefKaleidoClusterSecretAttachmentFFB020B226E63EA8"
+                        },
+                        "AI_PROVIDER": "bedrock",
+                        "BEDROCK_MODEL_ID": "us.amazon.nova-pro-v1:0",
+                        "FRONTEND_URL": "*",
+                        "SEED_ON_STARTUP": "true"
+                      }
+                    },
+                    "handler": "bootstrap",
+                    "memorySize": 512,
+                    "role": { "Fn::GetAtt": ["KaleidoFunctionServiceRoleBEC632C1", "Arn"] },
+                    "runtime": "provided.al2023",
+                    "timeout": 30,
+                    "vpcConfig": {
+                      "subnetIds": [
+                        {
+                          "Fn::ImportValue": "KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet1SubnetBDD5F1C0F64C41EF"
+                        },
+                        {
+                          "Fn::ImportValue": "KaleidoNetworkStack:ExportsOutputRefKaleidoVpcprivateSubnet2Subnet3D56289CFD17B195"
+                        }
+                      ],
+                      "securityGroupIds": [
+                        {
+                          "Fn::ImportValue": "KaleidoNetworkStack:ExportsOutputFnGetAttLambdaSG9DBFCFB7GroupId1E50A8F5"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "KaleidoApi": {
+            "id": "KaleidoApi",
+            "path": "KaleidoLambdaStack/KaleidoApi",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigatewayv2.HttpApi",
+              "version": "2.244.0"
+            },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "KaleidoLambdaStack/KaleidoApi/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnApi",
+                  "version": "2.244.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Api",
+                  "aws:cdk:cloudformation:props": {
+                    "corsConfiguration": {
+                      "allowHeaders": ["*"],
+                      "allowMethods": ["*"],
+                      "allowOrigins": ["*"]
+                    },
+                    "name": "KaleidoApi",
+                    "protocolType": "HTTP"
+                  }
+                }
+              },
+              "DefaultStage": {
+                "id": "DefaultStage",
+                "path": "KaleidoLambdaStack/KaleidoApi/DefaultStage",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigatewayv2.HttpStage",
+                  "version": "2.244.0"
+                },
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "KaleidoLambdaStack/KaleidoApi/DefaultStage/Resource",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnStage",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Stage",
+                      "aws:cdk:cloudformation:props": {
+                        "apiId": { "Ref": "KaleidoApi14AC32C9" },
+                        "autoDeploy": true,
+                        "stageName": "$default"
+                      }
+                    }
+                  }
+                }
+              },
+              "ANY--{proxy+}": {
+                "id": "ANY--{proxy+}",
+                "path": "KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigatewayv2.HttpRoute",
+                  "version": "2.244.0"
+                },
+                "children": {
+                  "LambdaIntegration": {
+                    "id": "LambdaIntegration",
+                    "path": "KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/LambdaIntegration",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigatewayv2.HttpIntegration",
+                      "version": "2.244.0"
+                    },
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/LambdaIntegration/Resource",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnIntegration",
+                          "version": "2.244.0"
+                        },
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Integration",
+                          "aws:cdk:cloudformation:props": {
+                            "apiId": { "Ref": "KaleidoApi14AC32C9" },
+                            "integrationType": "AWS_PROXY",
+                            "integrationUri": { "Fn::GetAtt": ["KaleidoFunction0AD121D6", "Arn"] },
+                            "payloadFormatVersion": "2.0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "LambdaIntegration-Permission": {
+                    "id": "LambdaIntegration-Permission",
+                    "path": "KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/LambdaIntegration-Permission",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                      "aws:cdk:cloudformation:props": {
+                        "action": "lambda:InvokeFunction",
+                        "functionName": { "Fn::GetAtt": ["KaleidoFunction0AD121D6", "Arn"] },
+                        "principal": "apigateway.amazonaws.com",
+                        "sourceArn": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "arn:aws:execute-api:us-east-1:097395515323:",
+                              { "Ref": "KaleidoApi14AC32C9" },
+                              "/*/*/{proxy+}"
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "KaleidoLambdaStack/KaleidoApi/ANY--{proxy+}/Resource",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnRoute",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "apiId": { "Ref": "KaleidoApi14AC32C9" },
+                        "authorizationType": "NONE",
+                        "routeKey": "ANY /{proxy+}",
+                        "target": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "integrations/",
+                              { "Ref": "KaleidoApiANYproxyLambdaIntegrationA75F0DD6" }
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "ANY--": {
+                "id": "ANY--",
+                "path": "KaleidoLambdaStack/KaleidoApi/ANY--",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigatewayv2.HttpRoute",
+                  "version": "2.244.0"
+                },
+                "children": {
+                  "LambdaIntegration-Permission": {
+                    "id": "LambdaIntegration-Permission",
+                    "path": "KaleidoLambdaStack/KaleidoApi/ANY--/LambdaIntegration-Permission",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                      "aws:cdk:cloudformation:props": {
+                        "action": "lambda:InvokeFunction",
+                        "functionName": { "Fn::GetAtt": ["KaleidoFunction0AD121D6", "Arn"] },
+                        "principal": "apigateway.amazonaws.com",
+                        "sourceArn": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "arn:aws:execute-api:us-east-1:097395515323:",
+                              { "Ref": "KaleidoApi14AC32C9" },
+                              "/*/*/"
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "KaleidoLambdaStack/KaleidoApi/ANY--/Resource",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigatewayv2.CfnRoute",
+                      "version": "2.244.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGatewayV2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "apiId": { "Ref": "KaleidoApi14AC32C9" },
+                        "authorizationType": "NONE",
+                        "routeKey": "ANY /",
+                        "target": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "integrations/",
+                              { "Ref": "KaleidoApiANYproxyLambdaIntegrationA75F0DD6" }
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "ApiUrl": {
+            "id": "ApiUrl",
+            "path": "KaleidoLambdaStack/ApiUrl",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnOutput", "version": "2.244.0" }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "KaleidoLambdaStack/CDKMetadata",
+            "constructInfo": { "fqn": "constructs.Construct", "version": "10.5.1" },
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "KaleidoLambdaStack/CDKMetadata/Default",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnResource", "version": "2.244.0" }
+              }
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "KaleidoLambdaStack/BootstrapVersion",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnParameter", "version": "2.244.0" }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "KaleidoLambdaStack/CheckBootstrapVersion",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnRule", "version": "2.244.0" }
+          }
+        }
+      },
+      "KaleidoGithubOidc": {
+        "id": "KaleidoGithubOidc",
+        "path": "KaleidoGithubOidc",
+        "constructInfo": { "fqn": "aws-cdk-lib.Stack", "version": "2.244.0" },
+        "children": {
+          "GithubOidc": {
+            "id": "GithubOidc",
+            "path": "KaleidoGithubOidc/GithubOidc",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.OpenIdConnectProvider",
+              "version": "2.244.0"
+            },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "KaleidoGithubOidc/GithubOidc/Resource",
+                "constructInfo": { "fqn": "aws-cdk-lib.CustomResource", "version": "2.244.0" },
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "KaleidoGithubOidc/GithubOidc/Resource/Default",
+                    "constructInfo": { "fqn": "aws-cdk-lib.CfnResource", "version": "2.244.0" }
+                  }
+                }
+              }
+            }
+          },
+          "Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider": {
+            "id": "Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider",
+            "path": "KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CustomResourceProviderBase",
+              "version": "2.244.0"
+            },
+            "children": {
+              "Staging": {
+                "id": "Staging",
+                "path": "KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Staging",
+                "constructInfo": { "fqn": "aws-cdk-lib.AssetStaging", "version": "2.244.0" }
+              },
+              "Role": {
+                "id": "Role",
+                "path": "KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Role",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnResource", "version": "2.244.0" }
+              },
+              "Handler": {
+                "id": "Handler",
+                "path": "KaleidoGithubOidc/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Handler",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnResource", "version": "2.244.0" }
+              }
+            }
+          },
+          "GithubActionsRole": {
+            "id": "GithubActionsRole",
+            "path": "KaleidoGithubOidc/GithubActionsRole",
+            "constructInfo": { "fqn": "aws-cdk-lib.aws_iam.Role", "version": "2.244.0" },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "KaleidoGithubOidc/GithubActionsRole/Resource",
+                "constructInfo": { "fqn": "aws-cdk-lib.aws_iam.CfnRole", "version": "2.244.0" },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRoleWithWebIdentity",
+                          "Condition": {
+                            "StringLike": {
+                              "token.actions.githubusercontent.com:sub": "repo:progate-hackathon-an/Kaleido-Scan:ref:refs/heads/main"
+                            }
+                          },
+                          "Effect": "Allow",
+                          "Principal": { "Federated": { "Ref": "GithubOidc86785739" } }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "managedPolicyArns": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            { "Ref": "AWS::Partition" },
+                            ":iam::aws:policy/AdministratorAccess"
+                          ]
+                        ]
+                      }
+                    ],
+                    "roleName": "github-actions-role"
+                  }
+                }
+              }
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "KaleidoGithubOidc/CDKMetadata",
+            "constructInfo": { "fqn": "constructs.Construct", "version": "10.5.1" },
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "KaleidoGithubOidc/CDKMetadata/Default",
+                "constructInfo": { "fqn": "aws-cdk-lib.CfnResource", "version": "2.244.0" }
+              }
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "KaleidoGithubOidc/BootstrapVersion",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnParameter", "version": "2.244.0" }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "KaleidoGithubOidc/CheckBootstrapVersion",
+            "constructInfo": { "fqn": "aws-cdk-lib.CfnRule", "version": "2.244.0" }
+          }
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": { "fqn": "constructs.Construct", "version": "10.5.1" }
+      }
+    }
+  }
+}
