@@ -14,6 +14,11 @@ const TABS: Tab[] = [
 
 const TAB_COUNT = TABS.length;
 const SWIPE_THRESHOLD = 50;
+// タブセレクターの padding (p-1 = 4px) と pill 間の gap (gap-1 = 4px)
+const PILL_PADDING = 4;
+const PILL_GAP = 4;
+// コンテナ幅から pill 幅を算出する際に引く合計オフセット: 左右padding + (TAB_COUNT-1)個のgap
+const PILL_TOTAL_INSET = PILL_PADDING * 2 + PILL_GAP * (TAB_COUNT - 1);
 
 type Props = {
   onCapture: (file: File, mode: ScanMode) => void;
@@ -23,12 +28,14 @@ type Props = {
 export function CameraView({ onCapture, isScanning = false }: Props) {
   const { videoRef, isReady, startCamera, capturePhoto } = useCamera();
   const [activeMode, setActiveMode] = useState<ScanMode>('ranking');
-  const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const touchStartXRef = useRef<number | null>(null);
   // ref でも保持しておき、touchend 時に stale closure を避ける
   const dragXRef = useRef(0);
   const tabContainerRef = useRef<HTMLDivElement>(null);
+  // ピル要素を ref で直接操作してドラッグ追従の再レンダーを回避する
+  const pillRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     void startCamera();
@@ -51,25 +58,44 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
       if (activeModeIndex === 0 && delta < 0) delta /= 3;
       if (activeModeIndex === TAB_COUNT - 1 && delta > 0) delta /= 3;
       dragXRef.current = delta;
-      setDragX(delta);
+
+      // ピル要素の transform を rAF 経由で直接更新し、React の再レンダーをスキップする
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        const pill = pillRef.current;
+        if (pill) {
+          pill.style.transform = `translateX(calc(${activeModeIndex} * (100% + ${PILL_GAP}px) + ${dragXRef.current}px))`;
+        }
+        rafRef.current = null;
+      });
     },
     [activeModeIndex]
   );
 
-  const onTouchEnd = useCallback(() => {
-    const delta = dragXRef.current;
-    setIsDragging(false);
-    setDragX(0);
+  // touchend / touchcancel 共通のドラッグ状態リセット
+  const resetDrag = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
     dragXRef.current = 0;
     touchStartXRef.current = null;
+    // isDragging を false にすると React が再レンダーし、JSX 側の transform と transition を復元する
+    setIsDragging(false);
+  }, []);
+
+  const onTouchEnd = useCallback(() => {
+    const delta = dragXRef.current;
+    resetDrag();
 
     if (Math.abs(delta) < SWIPE_THRESHOLD) return;
 
     // コンテナ幅からピル1ステップ分のピクセル数を算出し、移動ステップ数を決定する
-    // ピル幅 = (containerWidth - padding8 - gap8) / TAB_COUNT、ステップ = ピル幅 + gap4
     const containerWidth = tabContainerRef.current?.offsetWidth ?? 0;
     const stepWidth =
-      containerWidth > 0 ? (containerWidth - 16) / TAB_COUNT + 4 : SWIPE_THRESHOLD * 2;
+      containerWidth > 0
+        ? (containerWidth - PILL_TOTAL_INSET) / TAB_COUNT + PILL_GAP
+        : SWIPE_THRESHOLD * 2;
     const steps = Math.min(Math.max(1, Math.round(Math.abs(delta) / stepWidth)), TAB_COUNT - 1);
 
     const newIndex =
@@ -78,7 +104,12 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
         : Math.max(activeModeIndex - steps, 0);
     const tab = TABS[newIndex];
     if (tab) setActiveMode(tab.mode);
-  }, [activeModeIndex]);
+  }, [activeModeIndex, resetDrag]);
+
+  // OS によるジェスチャーキャンセル時もドラッグ状態をリセットする（タブ切替は行わない）
+  const onTouchCancel = useCallback(() => {
+    resetDrag();
+  }, [resetDrag]);
 
   const handleShutter = () => {
     const file = capturePhoto();
@@ -91,6 +122,7 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
+      onTouchCancel={onTouchCancel}
     >
       {/* カメラ映像 */}
       <video
@@ -124,12 +156,13 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
           >
             {/* スライドするアクティブピル — ドラッグ中は指に追従し、離したらスナップ */}
             <div
+              ref={pillRef}
               aria-hidden="true"
               className="absolute top-1 bottom-1 rounded-full bg-white"
               style={{
-                left: '4px',
-                width: `calc((100% - 16px) / ${TAB_COUNT})`,
-                transform: `translateX(calc(${activeModeIndex} * (100% + 4px) + ${dragX}px))`,
+                left: `${PILL_PADDING}px`,
+                width: `calc((100% - ${PILL_TOTAL_INSET}px) / ${TAB_COUNT})`,
+                transform: `translateX(calc(${activeModeIndex} * (100% + ${PILL_GAP}px)))`,
                 transition: isDragging ? 'none' : 'transform 300ms cubic-bezier(0.34,1.56,0.64,1)',
               }}
             />
