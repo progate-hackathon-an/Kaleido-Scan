@@ -65,7 +65,7 @@ describe('useScan', () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it('TestUseScan_ServerError: scan失敗時にerrorに「スキャンに失敗しました」が格納されること', async () => {
+  it('TestUseScan_ServerError: scan失敗時にerrorに「オーラを捉えられませんでした」が格納されること', async () => {
     mockPostScan.mockRejectedValue(new Error('Internal Server Error'));
 
     const { result } = renderHook(() => useScan());
@@ -75,7 +75,7 @@ describe('useScan', () => {
       await result.current.scan(file, 'ranking');
     });
 
-    expect(result.current.error).toBe('スキャンに失敗しました');
+    expect(result.current.error).toBe('オーラを捉えられませんでした — もう一度試してみてください');
     expect(result.current.result).toBeNull();
   });
 });

@@ -48,7 +48,7 @@ export function ShareButton({ canvas, items, topItem, backgroundImage }: Props) 
       className="w-full bg-white text-sw-black font-body font-medium rounded-full py-4 min-h-14 flex items-center justify-center gap-2 active:scale-95 transition-transform duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <ShareIcon />
-      共有する
+      発見をシェアする
     </button>
   );
 }

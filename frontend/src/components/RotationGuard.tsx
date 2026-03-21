@@ -110,7 +110,7 @@ export function RotationGuard() {
 
       <div className="flex flex-col items-center gap-2 text-center">
         <p className="font-display text-lg tracking-widest text-sw-orange">ROTATE DEVICE</p>
-        <p className="font-body text-sm text-slate-400">縦向きでご利用ください</p>
+        <p className="font-body text-sm text-slate-400">縦画面モードで起動してください</p>
       </div>
     </div>
   );

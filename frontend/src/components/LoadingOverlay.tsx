@@ -304,9 +304,7 @@ export function LoadingOverlay({ isLoading, capturedUrl }: Props) {
         >
           Kaleido Scan
         </h1>
-        <p className="font-body text-slate-200 text-sm leading-relaxed">
-          商品の「オーラ」を可視化しています...
-        </p>
+        <p className="font-body text-slate-200 text-sm leading-relaxed">オーラを解析中...</p>
       </div>
     </div>
   );

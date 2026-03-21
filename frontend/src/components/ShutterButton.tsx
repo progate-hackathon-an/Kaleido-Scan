@@ -19,7 +19,7 @@ export function ShutterButton({ onCapture, isReady, isScanning }: Props) {
     <button
       onClick={onCapture}
       disabled={!isReady || isScanning}
-      aria-label="オーラを診断する"
+      aria-label="オーラを解析する"
       className={clsx(
         // Layout
         'relative flex items-center justify-center',

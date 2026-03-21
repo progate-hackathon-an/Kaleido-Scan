@@ -37,7 +37,7 @@ describe('RotationGuard', () => {
     mockOrientation('landscape-primary');
     render(<RotationGuard />);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText('縦向きでご利用ください')).toBeInTheDocument();
+    expect(screen.getByText('縦画面モードで起動してください')).toBeInTheDocument();
   });
 
   it('landscape-secondary のときオーバーレイが表示されること', () => {

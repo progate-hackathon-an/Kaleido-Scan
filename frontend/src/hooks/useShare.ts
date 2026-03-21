@@ -15,7 +15,7 @@ export function useShare() {
     backgroundImage: HTMLImageElement | null
   ): Promise<void> => {
     if (!isSupported) {
-      setError('お使いのブラウザは共有機能に対応していません');
+      setError('このブラウザでは共有できません');
       return;
     }
     try {
@@ -24,7 +24,7 @@ export function useShare() {
       setError(null);
     } catch (e) {
       if (e instanceof Error && e.name === 'AbortError') return; // ユーザーがキャンセル
-      setError('共有に失敗しました');
+      setError('シェアできませんでした。もう一度お試しください');
     }
   };
 
