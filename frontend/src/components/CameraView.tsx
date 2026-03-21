@@ -88,7 +88,16 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
     const delta = dragXRef.current;
     resetDrag();
 
-    if (Math.abs(delta) < SWIPE_THRESHOLD) return;
+    if (Math.abs(delta) < SWIPE_THRESHOLD) {
+      // activeModeIndex が変わらないため React は vdom 差分なしと判断し transform を更新しない。
+      // rAF が移動させた DOM の transform を直接リセットする。
+      const pill = pillRef.current;
+      if (pill) {
+        pill.style.transition = 'transform 300ms cubic-bezier(0.34,1.56,0.64,1)';
+        pill.style.transform = `translateX(calc(${activeModeIndex} * (100% + ${PILL_GAP}px)))`;
+      }
+      return;
+    }
 
     // コンテナ幅からピル1ステップ分のピクセル数を算出し、移動ステップ数を決定する
     const containerWidth = tabContainerRef.current?.offsetWidth ?? 0;
@@ -108,8 +117,13 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
 
   // OS によるジェスチャーキャンセル時もドラッグ状態をリセットする（タブ切替は行わない）
   const onTouchCancel = useCallback(() => {
+    const pill = pillRef.current;
+    if (pill) {
+      pill.style.transition = 'transform 300ms cubic-bezier(0.34,1.56,0.64,1)';
+      pill.style.transform = `translateX(calc(${activeModeIndex} * (100% + ${PILL_GAP}px)))`;
+    }
     resetDrag();
-  }, [resetDrag]);
+  }, [activeModeIndex, resetDrag]);
 
   const handleShutter = () => {
     const file = capturePhoto();
