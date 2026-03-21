@@ -42,7 +42,7 @@ const isActiveTab = (label: string) =>
 describe('CameraView', () => {
   it('TestCameraView_RenderShutterButton: シャッターボタンが描画されること', () => {
     render(<CameraView onCapture={vi.fn()} />);
-    expect(screen.getByRole('button', { name: 'オーラを診断する' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'オーラを解析する' })).toBeInTheDocument();
   });
 
   it('TestCameraView_RenderTabs: 3つのモードタブが描画されること', () => {

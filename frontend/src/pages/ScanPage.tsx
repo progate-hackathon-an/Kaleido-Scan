@@ -104,7 +104,8 @@ export function ScanPage() {
   };
 
   const isNoItemDetected = result !== null && result.detected_items.length === 0;
-  const errorMessage = error ?? (isNoItemDetected ? '商品が検出できませんでした' : null);
+  const errorMessage =
+    error ?? (isNoItemDetected ? '商品を捕捉できませんでした — 再スキャンしてください' : null);
 
   return (
     <div className="relative w-full h-dvh overflow-hidden">
@@ -186,10 +187,10 @@ export function ScanPage() {
           >
             <div className="flex flex-col gap-2 text-center">
               <p id="retake-confirm-title" className="font-body text-white text-base font-medium">
-                撮り直しますか？
+                もう一度スキャンしますか？
               </p>
               <p id="retake-confirm-description" className="font-body text-slate-200 text-sm">
-                現在の結果は失われます
+                このオーラは消えます
               </p>
             </div>
             <div className="flex gap-3">

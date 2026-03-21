@@ -16,7 +16,7 @@ export function useScan() {
       setResult(response);
     } catch (e) {
       console.error('[useScan] error:', e);
-      setError('スキャンに失敗しました');
+      setError('オーラを捉えられませんでした — もう一度試してみてください');
     } finally {
       setIsLoading(false);
     }
