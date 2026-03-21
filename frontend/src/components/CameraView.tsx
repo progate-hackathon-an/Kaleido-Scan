@@ -19,6 +19,7 @@ const PILL_PADDING = 4;
 const PILL_GAP = 4;
 // コンテナ幅から pill 幅を算出する際に引く合計オフセット: 左右padding + (TAB_COUNT-1)個のgap
 const PILL_TOTAL_INSET = PILL_PADDING * 2 + PILL_GAP * (TAB_COUNT - 1);
+const PILL_SPRING_TRANSITION = 'transform 300ms cubic-bezier(0.34,1.56,0.64,1)';
 
 type Props = {
   onCapture: (file: File, mode: ScanMode) => void;
@@ -72,6 +73,15 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
     [activeModeIndex]
   );
 
+  // activeModeIndex が変わらない場合 React は vdom 差分なしと判断し transform を更新しない。
+  // rAF が動かした DOM 要素を直接元位置に戻すヘルパー。
+  const resetPillPosition = useCallback((index: number) => {
+    const pill = pillRef.current;
+    if (!pill) return;
+    pill.style.transition = PILL_SPRING_TRANSITION;
+    pill.style.transform = `translateX(calc(${index} * (100% + ${PILL_GAP}px)))`;
+  }, []);
+
   // touchend / touchcancel 共通のドラッグ状態リセット
   const resetDrag = useCallback(() => {
     if (rafRef.current !== null) {
@@ -89,13 +99,7 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
     resetDrag();
 
     if (Math.abs(delta) < SWIPE_THRESHOLD) {
-      // activeModeIndex が変わらないため React は vdom 差分なしと判断し transform を更新しない。
-      // rAF が移動させた DOM の transform を直接リセットする。
-      const pill = pillRef.current;
-      if (pill) {
-        pill.style.transition = 'transform 300ms cubic-bezier(0.34,1.56,0.64,1)';
-        pill.style.transform = `translateX(calc(${activeModeIndex} * (100% + ${PILL_GAP}px)))`;
-      }
+      resetPillPosition(activeModeIndex);
       return;
     }
 
@@ -113,17 +117,13 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
         : Math.max(activeModeIndex - steps, 0);
     const tab = TABS[newIndex];
     if (tab) setActiveMode(tab.mode);
-  }, [activeModeIndex, resetDrag]);
+  }, [activeModeIndex, resetDrag, resetPillPosition]);
 
   // OS によるジェスチャーキャンセル時もドラッグ状態をリセットする（タブ切替は行わない）
   const onTouchCancel = useCallback(() => {
-    const pill = pillRef.current;
-    if (pill) {
-      pill.style.transition = 'transform 300ms cubic-bezier(0.34,1.56,0.64,1)';
-      pill.style.transform = `translateX(calc(${activeModeIndex} * (100% + ${PILL_GAP}px)))`;
-    }
+    resetPillPosition(activeModeIndex);
     resetDrag();
-  }, [activeModeIndex, resetDrag]);
+  }, [activeModeIndex, resetDrag, resetPillPosition]);
 
   const handleShutter = () => {
     const file = capturePhoto();
@@ -177,7 +177,7 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
                 left: `${PILL_PADDING}px`,
                 width: `calc((100% - ${PILL_TOTAL_INSET}px) / ${TAB_COUNT})`,
                 transform: `translateX(calc(${activeModeIndex} * (100% + ${PILL_GAP}px)))`,
-                transition: isDragging ? 'none' : 'transform 300ms cubic-bezier(0.34,1.56,0.64,1)',
+                transition: isDragging ? 'none' : PILL_SPRING_TRANSITION,
               }}
             />
             {TABS.map(({ label, mode }) => (
