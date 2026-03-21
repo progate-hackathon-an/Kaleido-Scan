@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { clsx } from 'clsx';
 import { useCamera } from '../hooks/useCamera';
-import { useSwipeHorizontal } from '../hooks/useSwipeHorizontal';
 import { ShutterButton } from './ShutterButton';
 import type { ScanMode } from '../types/scan';
 
@@ -14,6 +13,12 @@ const TABS: Tab[] = [
 ];
 
 const TAB_COUNT = TABS.length;
+const SWIPE_THRESHOLD = 50;
+// タブセレクターの padding (p-1 = 4px) と pill 間の gap (gap-1 = 4px)
+const PILL_PADDING = 4;
+const PILL_GAP = 4;
+// コンテナ幅から pill 幅を算出する際に引く合計オフセット: 左右padding + (TAB_COUNT-1)個のgap
+const PILL_TOTAL_INSET = PILL_PADDING * 2 + PILL_GAP * (TAB_COUNT - 1);
 
 type Props = {
   onCapture: (file: File, mode: ScanMode) => void;
@@ -23,6 +28,14 @@ type Props = {
 export function CameraView({ onCapture, isScanning = false }: Props) {
   const { videoRef, isReady, startCamera, capturePhoto } = useCamera();
   const [activeMode, setActiveMode] = useState<ScanMode>('ranking');
+  const [isDragging, setIsDragging] = useState(false);
+  const touchStartXRef = useRef<number | null>(null);
+  // ref でも保持しておき、touchend 時に stale closure を避ける
+  const dragXRef = useRef(0);
+  const tabContainerRef = useRef<HTMLDivElement>(null);
+  // ピル要素を ref で直接操作してドラッグ追従の再レンダーを回避する
+  const pillRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     void startCamera();
@@ -32,20 +45,71 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
 
   const activeModeIndex = TABS.findIndex((t) => t.mode === activeMode);
 
-  const handleSwipeLeft = useCallback(() => {
-    const next = TABS[activeModeIndex + 1];
-    if (next) setActiveMode(next.mode);
-  }, [activeModeIndex]);
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    setIsDragging(true);
+  }, []);
 
-  const handleSwipeRight = useCallback(() => {
-    const prev = TABS[activeModeIndex - 1];
-    if (prev) setActiveMode(prev.mode);
-  }, [activeModeIndex]);
+  const onTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartXRef.current === null) return;
+      let delta = e.touches[0].clientX - touchStartXRef.current;
+      // 端のタブで引っ張ったときはゴムバンド効果（1/3に減衰）
+      if (activeModeIndex === 0 && delta < 0) delta /= 3;
+      if (activeModeIndex === TAB_COUNT - 1 && delta > 0) delta /= 3;
+      dragXRef.current = delta;
 
-  const { onTouchStart, onTouchEnd } = useSwipeHorizontal({
-    onSwipeLeft: handleSwipeLeft,
-    onSwipeRight: handleSwipeRight,
-  });
+      // ピル要素の transform を rAF 経由で直接更新し、React の再レンダーをスキップする
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        const pill = pillRef.current;
+        if (pill) {
+          pill.style.transform = `translateX(calc(${activeModeIndex} * (100% + ${PILL_GAP}px) + ${dragXRef.current}px))`;
+        }
+        rafRef.current = null;
+      });
+    },
+    [activeModeIndex]
+  );
+
+  // touchend / touchcancel 共通のドラッグ状態リセット
+  const resetDrag = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+    dragXRef.current = 0;
+    touchStartXRef.current = null;
+    // isDragging を false にすると React が再レンダーし、JSX 側の transform と transition を復元する
+    setIsDragging(false);
+  }, []);
+
+  const onTouchEnd = useCallback(() => {
+    const delta = dragXRef.current;
+    resetDrag();
+
+    if (Math.abs(delta) < SWIPE_THRESHOLD) return;
+
+    // コンテナ幅からピル1ステップ分のピクセル数を算出し、移動ステップ数を決定する
+    const containerWidth = tabContainerRef.current?.offsetWidth ?? 0;
+    const stepWidth =
+      containerWidth > 0
+        ? (containerWidth - PILL_TOTAL_INSET) / TAB_COUNT + PILL_GAP
+        : SWIPE_THRESHOLD * 2;
+    const steps = Math.min(Math.max(1, Math.round(Math.abs(delta) / stepWidth)), TAB_COUNT - 1);
+
+    const newIndex =
+      delta > 0
+        ? Math.min(activeModeIndex + steps, TAB_COUNT - 1)
+        : Math.max(activeModeIndex - steps, 0);
+    const tab = TABS[newIndex];
+    if (tab) setActiveMode(tab.mode);
+  }, [activeModeIndex, resetDrag]);
+
+  // OS によるジェスチャーキャンセル時もドラッグ状態をリセットする（タブ切替は行わない）
+  const onTouchCancel = useCallback(() => {
+    resetDrag();
+  }, [resetDrag]);
 
   const handleShutter = () => {
     const file = capturePhoto();
@@ -56,7 +120,9 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
     <div
       className="relative w-full h-dvh overflow-hidden bg-sw-black"
       onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
+      onTouchCancel={onTouchCancel}
     >
       {/* カメラ映像 */}
       <video
@@ -84,15 +150,20 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
       >
         {/* タブセレクター */}
         <div className="w-full flex justify-center">
-          <div className="relative flex items-center bg-sw-steel/80 backdrop-blur-sm rounded-full p-1 gap-1 w-[min(88vw,22rem)]">
-            {/* スライドするアクティブピル */}
+          <div
+            ref={tabContainerRef}
+            className="relative flex items-center bg-sw-steel/80 backdrop-blur-sm rounded-full p-1 gap-1 w-[min(88vw,22rem)]"
+          >
+            {/* スライドするアクティブピル — ドラッグ中は指に追従し、離したらスナップ */}
             <div
+              ref={pillRef}
               aria-hidden="true"
-              className="absolute top-1 bottom-1 rounded-full bg-white transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+              className="absolute top-1 bottom-1 rounded-full bg-white"
               style={{
-                left: '4px',
-                width: `calc((100% - 16px) / ${TAB_COUNT})`,
-                transform: `translateX(calc(${activeModeIndex} * (100% + 4px)))`,
+                left: `${PILL_PADDING}px`,
+                width: `calc((100% - ${PILL_TOTAL_INSET}px) / ${TAB_COUNT})`,
+                transform: `translateX(calc(${activeModeIndex} * (100% + ${PILL_GAP}px)))`,
+                transition: isDragging ? 'none' : 'transform 300ms cubic-bezier(0.34,1.56,0.64,1)',
               }}
             />
             {TABS.map(({ label, mode }) => (
@@ -100,7 +171,7 @@ export function CameraView({ onCapture, isScanning = false }: Props) {
                 key={mode}
                 onClick={() => setActiveMode(mode)}
                 className={clsx(
-                  'relative z-10 flex-1 py-2 rounded-full font-display font-medium text-sm text-center min-h-11 transition-colors duration-200',
+                  'relative z-10 flex-1 py-2 rounded-full font-display font-medium text-base text-center min-h-11 transition-colors duration-200',
                   activeMode === mode
                     ? 'text-sw-black'
                     : 'text-slate-300 hover:text-white active:scale-95'
