@@ -53,9 +53,9 @@ describe('computeLabelAnchors', () => {
     const items = [makeItem('a', 'テスト', 0.2, 0.6, 0.3, 0.8)];
     const [anchor] = computeLabelAnchors(items);
 
-    expect(anchor.left).toBe('clamp(8px, calc(40% - 80px), calc(100% - 168px))');
+    expect(anchor.left).toBe('clamp(80px, 40%, calc(100% - 80px))');
     expect(anchor.top).toBe('80%');
-    expect(anchor.transform).toBe('translateY(-90%)');
+    expect(anchor.transform).toBe('translateX(-50%) translateY(-90%)');
   });
 
   it('TestComputeLabelAnchors_NearBottom_AboveBBox: y_maxが0.88超のときy_minを起点に配置されること', () => {
@@ -63,7 +63,7 @@ describe('computeLabelAnchors', () => {
     const [anchor] = computeLabelAnchors(items);
 
     expect(anchor.top).toBe('70%'); // y_min = 0.7
-    expect(anchor.transform).toBe('translateY(-10%)');
+    expect(anchor.transform).toBe('translateX(-50%) translateY(-10%)');
   });
 
   it('TestComputeLabelAnchors_RightEdge_ClampedLeft: 右端に近いアイテムの left がクランプされること', () => {
@@ -71,7 +71,20 @@ describe('computeLabelAnchors', () => {
     const items = [makeItem('a', 'テスト', 0.8, 1.0, 0.3, 0.6)];
     const [anchor] = computeLabelAnchors(items);
 
-    expect(anchor.left).toBe('clamp(8px, calc(90% - 80px), calc(100% - 168px))');
+    expect(anchor.left).toBe('clamp(80px, 90%, calc(100% - 80px))');
+  });
+
+  it('TestComputeLabelAnchors_TopFractionClamped: 密集ラベルが連続してずれても topFraction が 0 未満にならないこと', () => {
+    // x が同じで y_max が均等に並ぶ多数アイテム → 上方向へ連続オフセットが発生
+    const items = Array.from({ length: 15 }, (_, i) =>
+      makeItem(`${i}`, `商品${i}`, 0.2, 0.8, 0.0, 0.1 + i * 0.01)
+    );
+    const anchors = computeLabelAnchors(items);
+
+    for (const anchor of anchors) {
+      const top = parseFloat(anchor.top);
+      expect(top).toBeGreaterThanOrEqual(0);
+    }
   });
 
   it('TestComputeLabelAnchors_OverlappingLabels_StaggeredVertically: 水平方向が近いラベルは垂直にずれること', () => {

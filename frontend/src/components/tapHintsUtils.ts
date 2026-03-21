@@ -1,11 +1,11 @@
 import type { DetectedItem } from '../types/scan';
 
 const LABEL_W_PX = 160; // max-w-40 = 10rem
-const SCREEN_MARGIN_PX = 8;
 // 撮り直しボタン: bottom-8(32px) + h-12(48px) + gap(8px) = 88px ≒ 画面高さの約10%
 const RETAKE_BTN_ZONE_THRESHOLD = 0.88;
-// ラベル1行の推定高さ: text-xs(12px) + py-1.5(12px) ≒ 24px → 5%程度 (812pxスクリーン基準)
-const LABEL_H_FRACTION = 0.05;
+// ラベル2行分の推定高さ: text-xs(12px) + py-1.5(12px) × 2行 ≒ 48px → 10%程度 (480pxスクリーン基準)
+// break-words で複数行になり得るため、多めに見積もる
+const LABEL_H_FRACTION = 0.1;
 // 水平方向の重複判定幅: LABEL_W_PX / 典型的なスクリーン幅(390px) ≒ 0.41
 const LABEL_X_OVERLAP_THRESHOLD = 0.42;
 
@@ -17,7 +17,8 @@ export type LabelAnchor = {
 
 /**
  * 全アイテムのラベル配置を計算する。
- * - 画面端クランプ: CSS clamp() でラベルが画面外に出ないよう制御
+ * - 画面端クランプ: CSS clamp() でラベル中心を [LABEL_W_PX/2, 100% - LABEL_W_PX/2] に収め、
+ *   translateX(-50%) と組み合わせてラベル幅によらず画面外に出ないよう制御する
  * - ボタン回避: y_max が撮り直しボタン領域に近い場合はバウンディングボックス上部に配置
  * - ラベル重複回避: y_max 昇順で配置し、近接ラベルを上方向にずらす
  */
@@ -46,13 +47,17 @@ export function computeLabelAnchors(items: DetectedItem[]): LabelAnchor[] {
       }
     }
 
+    // 密集時に連続してずらした結果、画面外(0未満)に出ないようガード
+    topFraction = Math.max(0, topFraction);
+
     placed.push({ cx, topFraction });
     anchors.push({
       idx,
-      // CSS clamp でラベルの左端を [margin, 100% - width - margin] にクランプ
-      left: `clamp(${SCREEN_MARGIN_PX}px, calc(${cx * 100}% - ${LABEL_W_PX / 2}px), calc(100% - ${LABEL_W_PX + SCREEN_MARGIN_PX}px))`,
+      // ラベル中心を clamp でクランプ + translateX(-50%) でセンタリング
+      // → ラベル実幅によらず画面端に収まる（幅 max 160px なら端マージン = 80px）
+      left: `clamp(${LABEL_W_PX / 2}px, ${cx * 100}%, calc(100% - ${LABEL_W_PX / 2}px))`,
       top: `${topFraction * 100}%`,
-      transform: translateY,
+      transform: `translateX(-50%) ${translateY}`,
     });
   }
 
