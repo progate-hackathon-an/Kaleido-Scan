@@ -67,6 +67,26 @@ describe('useShare', () => {
       await result.current.share(canvas, [mockItem], mockItem, null);
     });
 
-    expect(result.current.error).toBeTruthy();
+    expect(result.current.error).toBe('このブラウザでは共有できません');
+  });
+
+  it('TestUseShare_ShareFailure: 共有に失敗した場合にエラーメッセージが設定されること', async () => {
+    const mockShare = vi.fn().mockRejectedValue(new Error('share failed'));
+    Object.defineProperty(navigator, 'share', {
+      value: mockShare,
+      configurable: true,
+      writable: true,
+    });
+
+    const canvas = document.createElement('canvas');
+    const { result } = renderHook(() => useShare());
+
+    expect(result.current.isSupported).toBe(true);
+
+    await act(async () => {
+      await result.current.share(canvas, [mockItem], mockItem, null);
+    });
+
+    expect(result.current.error).toBe('シェアできませんでした。もう一度お試しください');
   });
 });
